@@ -316,4 +316,97 @@ Widget build() {
       expect(rfwtxt, contains('import material;'));
     });
   });
+
+  group('custom widget support', () {
+    late RfwConverter converter;
+
+    setUp(() {
+      final registry = WidgetRegistry.core();
+      registry.registerFromConfig({
+        'MystiqueText': {'import': 'mystique.widgets'},
+        'NullConditionalWidget': {
+          'import': 'custom.widgets',
+          'child_type': 'optionalChild',
+        },
+        'SZSBounceTapper': {
+          'import': 'custom.widgets',
+          'child_type': 'optionalChild',
+          'handlers': ['onTap'],
+        },
+      });
+      converter = RfwConverter(registry: registry);
+    });
+
+    test('simple custom widget with pass-through params', () {
+      const input = '''
+Widget build() {
+  return MystiqueText(text: 'hello', fontType: 'heading24Bold', color: 0xFF141618);
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import mystique.widgets;'));
+      expect(rfwtxt, contains('MystiqueText('));
+      expect(rfwtxt, contains('text: "hello"'));
+      expect(rfwtxt, contains('fontType: "heading24Bold"'));
+      expect(rfwtxt, contains('color: 0xFF141618'));
+      parseLibraryFile(rfwtxt);
+    });
+
+    test('custom widget nested inside core widget generates both imports', () {
+      const input = '''
+Widget build() {
+  return Container(
+    child: MystiqueText(text: 'hello'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('import mystique.widgets;'));
+      parseLibraryFile(rfwtxt);
+    });
+
+    test('widget-value param (nullChild) is preserved in output', () {
+      const input = '''
+Widget build() {
+  return NullConditionalWidget(
+    child: MystiqueText(text: 'visible'),
+    nullChild: MystiqueText(text: 'fallback'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('nullChild: MystiqueText('));
+      expect(rfwtxt, contains('import custom.widgets;'));
+      expect(rfwtxt, contains('import mystique.widgets;'));
+      parseLibraryFile(rfwtxt);
+    });
+
+    test('custom widget with handler param', () {
+      const input = '''
+Widget build() {
+  return SZSBounceTapper(
+    onTap: RfwHandler.event('navigate', {'url': 'szsapp://home'}),
+    child: MystiqueText(text: 'tap me'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('onTap: event "navigate"'));
+      expect(rfwtxt, contains('url: "szsapp://home"'));
+      parseLibraryFile(rfwtxt);
+    });
+
+    test('only used imports are generated', () {
+      const input = '''
+Widget build() {
+  return MystiqueText(text: 'hello');
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import mystique.widgets;'));
+      expect(rfwtxt, isNot(contains('import core.widgets;')));
+      parseLibraryFile(rfwtxt);
+    });
+  });
 }

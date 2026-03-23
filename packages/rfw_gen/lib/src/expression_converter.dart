@@ -371,6 +371,74 @@ class ExpressionConverter {
     return IrMapValue(entries);
   }
 
+  /// Converts a handler expression to an IR handler value.
+  IrValue convertHandler(Expression expr) {
+    if (expr is! MethodInvocation) {
+      throw UnsupportedExpressionError(
+        'Handler must be RfwHandler.setState/setStateFromArg/event',
+        offset: expr.offset,
+      );
+    }
+
+    final target = expr.target;
+    final methodName = expr.methodName.name;
+
+    if (target is SimpleIdentifier && target.name == 'RfwHandler') {
+      if (methodName == 'setState') return _convertSetState(expr);
+      if (methodName == 'setStateFromArg') return _convertSetStateFromArg(expr);
+      if (methodName == 'event') return _convertEvent(expr);
+    }
+
+    if (target == null && methodName == 'RfwSetState') {
+      return _convertSetState(expr);
+    }
+    if (target == null && methodName == 'RfwSetStateFromArg') {
+      return _convertSetStateFromArg(expr);
+    }
+    if (target == null && methodName == 'RfwEvent') {
+      return _convertEvent(expr);
+    }
+
+    throw UnsupportedExpressionError(
+      'Unknown handler expression: $methodName',
+      offset: expr.offset,
+    );
+  }
+
+  IrSetStateValue _convertSetState(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    final field = (args[0] as SimpleStringLiteral).value;
+    final value = convert(args[1]);
+    return IrSetStateValue(field, value);
+  }
+
+  IrSetStateFromArgValue _convertSetStateFromArg(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    final field = (args[0] as SimpleStringLiteral).value;
+    final argName =
+        args.length > 1 ? (args[1] as SimpleStringLiteral).value : 'value';
+    return IrSetStateFromArgValue(field, argName);
+  }
+
+  IrEventValue _convertEvent(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    final name = (args[0] as SimpleStringLiteral).value;
+    if (args.length > 1) {
+      final mapExpr = args[1];
+      if (mapExpr is SetOrMapLiteral) {
+        final entries = <String, IrValue>{};
+        for (final entry in mapExpr.elements) {
+          if (entry is MapLiteralEntry) {
+            final key = (entry.key as SimpleStringLiteral).value;
+            entries[key] = convert(entry.value);
+          }
+        }
+        return IrEventValue(name, entries);
+      }
+    }
+    return IrEventValue(name);
+  }
+
   /// Extracts a double value from a numeric expression.
   /// Converts int literals to double for EdgeInsets consistency.
   double _toDouble(Expression expr) {

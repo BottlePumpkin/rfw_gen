@@ -129,6 +129,7 @@ class WidgetAstVisitor {
             properties[paramName] = IrListValue(children);
           }
         case ChildType.none:
+        case ChildType.namedSlots:
           break;
       }
       return;

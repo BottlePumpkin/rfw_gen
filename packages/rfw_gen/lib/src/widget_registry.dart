@@ -11,6 +11,9 @@ enum ChildType {
 
   /// The widget takes a list of children.
   childList,
+
+  /// Multiple named child slots (e.g., Scaffold: appBar, body, drawer).
+  namedSlots,
 }
 
 /// Describes how a single Flutter parameter maps to an rfwtxt parameter.
@@ -57,6 +60,14 @@ class WidgetMapping {
   /// (default: `'core.widgets'`).
   final String import;
 
+  /// Handler parameter names (e.g., 'onTap', 'onPressed').
+  /// These expect RfwHandler/RfwSetState/RfwEvent expressions.
+  final Set<String> handlerParams;
+
+  /// Named child slots for namedSlots widgets.
+  /// Key: Flutter param name, Value: true if list slot, false if single.
+  final Map<String, bool> namedChildSlots;
+
   const WidgetMapping({
     required this.rfwName,
     required this.params,
@@ -64,6 +75,8 @@ class WidgetMapping {
     this.positionalParam,
     this.childType = ChildType.none,
     this.childParam,
+    this.handlerParams = const {},
+    this.namedChildSlots = const {},
   });
 }
 

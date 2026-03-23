@@ -3,16 +3,17 @@ import 'package:test/test.dart';
 
 void main() {
   group('ChildType', () {
-    test('has four values', () {
-      expect(ChildType.values, hasLength(4));
+    test('has five values', () {
+      expect(ChildType.values, hasLength(5));
     });
 
-    test('contains none, child, optionalChild, childList', () {
+    test('contains none, child, optionalChild, childList, namedSlots', () {
       expect(ChildType.values, containsAll([
         ChildType.none,
         ChildType.child,
         ChildType.optionalChild,
         ChildType.childList,
+        ChildType.namedSlots,
       ]));
     });
   });

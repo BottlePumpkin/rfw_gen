@@ -82,8 +82,8 @@ void main() {
       registry = WidgetRegistry.core();
     });
 
-    test('contains exactly 19 widgets', () {
-      expect(registry.supportedWidgets, hasLength(19));
+    test('contains exactly 29 widgets', () {
+      expect(registry.supportedWidgets, hasLength(29));
     });
 
     test('supports Text, Column, Row, Container, SizedBox, Center', () {
@@ -431,6 +431,90 @@ void main() {
         final w = registry.supportedWidgets['IntrinsicWidth']!;
         expect(w.params.containsKey('width'), isTrue);
         expect(w.params.containsKey('height'), isTrue);
+      });
+    });
+
+    group('Styling widgets', () {
+      test('supports all styling widgets', () {
+        for (final name in [
+          'Padding', 'ClipRRect', 'ColoredBox', 'DefaultTextStyle',
+          'Directionality', 'Icon', 'IconTheme', 'Image', 'Opacity', 'Placeholder',
+        ]) {
+          expect(registry.isSupported(name), isTrue, reason: '$name not found');
+        }
+      });
+
+      test('Padding has edgeInsets padding and animation params', () {
+        final w = registry.supportedWidgets['Padding']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params['padding']!.transformer, equals('edgeInsets'));
+        expect(w.params.containsKey('duration'), isTrue);
+        expect(w.params.containsKey('curve'), isTrue);
+      });
+
+      test('ClipRRect has borderRadius and clipBehavior', () {
+        final w = registry.supportedWidgets['ClipRRect']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params['borderRadius']!.transformer, equals('borderRadius'));
+        expect(w.params['clipBehavior']!.transformer, equals('enum'));
+      });
+
+      test('ColoredBox has color param', () {
+        final w = registry.supportedWidgets['ColoredBox']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params['color']!.transformer, equals('color'));
+      });
+
+      test('DefaultTextStyle has style and animation params', () {
+        final w = registry.supportedWidgets['DefaultTextStyle']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params['style']!.transformer, equals('textStyle'));
+        expect(w.params.containsKey('textAlign'), isTrue);
+        expect(w.params.containsKey('duration'), isTrue);
+      });
+
+      test('Icon has iconData, size, color, semanticLabel', () {
+        final w = registry.supportedWidgets['Icon']!;
+        expect(w.childType, equals(ChildType.none));
+        expect(w.params['icon']!.rfwName, equals('iconData'));
+        expect(w.params.containsKey('size'), isTrue);
+        expect(w.params['color']!.transformer, equals('color'));
+        expect(w.params.containsKey('semanticLabel'), isTrue);
+      });
+
+      test('IconTheme has child and iconThemeData', () {
+        final w = registry.supportedWidgets['IconTheme']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params.containsKey('iconThemeData'), isTrue);
+      });
+
+      test('Image has optionalChild and imageProvider params', () {
+        final w = registry.supportedWidgets['Image']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('imageProvider'), isTrue);
+        expect(w.params['fit']!.transformer, equals('enum'));
+        expect(w.params['color']!.transformer, equals('color'));
+      });
+
+      test('Opacity has opacity and animation params', () {
+        final w = registry.supportedWidgets['Opacity']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('opacity'), isTrue);
+        expect(w.params.containsKey('duration'), isTrue);
+        expect(w.params.containsKey('curve'), isTrue);
+      });
+
+      test('Placeholder has color and dimension params', () {
+        final w = registry.supportedWidgets['Placeholder']!;
+        expect(w.childType, equals(ChildType.none));
+        expect(w.params['color']!.transformer, equals('color'));
+        expect(w.params.containsKey('strokeWidth'), isTrue);
+      });
+
+      test('Directionality has textDirection enum', () {
+        final w = registry.supportedWidgets['Directionality']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params['textDirection']!.transformer, equals('enum'));
       });
     });
   });

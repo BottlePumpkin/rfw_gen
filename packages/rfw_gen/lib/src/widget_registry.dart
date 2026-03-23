@@ -339,6 +339,120 @@ class WidgetRegistry {
             'height': ParamMapping.direct('height'),
           },
         ),
+        'Padding': WidgetMapping(
+          rfwName: 'core.Padding',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'ClipRRect': WidgetMapping(
+          rfwName: 'core.ClipRRect',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'borderRadius':
+                ParamMapping('borderRadius', transformer: 'borderRadius'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+        'ColoredBox': WidgetMapping(
+          rfwName: 'core.ColoredBox',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'color': ParamMapping('color', transformer: 'color'),
+          },
+        ),
+        'DefaultTextStyle': WidgetMapping(
+          rfwName: 'core.DefaultTextStyle',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'style': ParamMapping('style', transformer: 'textStyle'),
+            'textAlign': ParamMapping('textAlign', transformer: 'enum'),
+            'softWrap': ParamMapping.direct('softWrap'),
+            'overflow': ParamMapping('overflow', transformer: 'enum'),
+            'maxLines': ParamMapping.direct('maxLines'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'Directionality': WidgetMapping(
+          rfwName: 'core.Directionality',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'textDirection':
+                ParamMapping('textDirection', transformer: 'enum'),
+          },
+        ),
+        'Icon': WidgetMapping(
+          rfwName: 'core.Icon',
+          import: 'core.widgets',
+          childType: ChildType.none,
+          params: {
+            'icon': ParamMapping('iconData', transformer: 'iconData'),
+            'size': ParamMapping.direct('size'),
+            'color': ParamMapping('color', transformer: 'color'),
+            'semanticLabel': ParamMapping.direct('semanticLabel'),
+          },
+        ),
+        'IconTheme': WidgetMapping(
+          rfwName: 'core.IconTheme',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'iconThemeData': ParamMapping.direct('iconThemeData'),
+          },
+        ),
+        'Image': WidgetMapping(
+          rfwName: 'core.Image',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'imageProvider': ParamMapping.direct('imageProvider'),
+            'semanticLabel': ParamMapping.direct('semanticLabel'),
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+            'color': ParamMapping('color', transformer: 'color'),
+            'fit': ParamMapping('fit', transformer: 'enum'),
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'repeat': ParamMapping('repeat', transformer: 'enum'),
+          },
+        ),
+        'Opacity': WidgetMapping(
+          rfwName: 'core.Opacity',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'opacity': ParamMapping.direct('opacity'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'Placeholder': WidgetMapping(
+          rfwName: 'core.Placeholder',
+          import: 'core.widgets',
+          childType: ChildType.none,
+          params: {
+            'color': ParamMapping('color', transformer: 'color'),
+            'strokeWidth': ParamMapping.direct('strokeWidth'),
+            'placeholderWidth': ParamMapping.direct('placeholderWidth'),
+            'placeholderHeight': ParamMapping.direct('placeholderHeight'),
+          },
+        ),
       };
 
   // ---------------------------------------------------------------------------

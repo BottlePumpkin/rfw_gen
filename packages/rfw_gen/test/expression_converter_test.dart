@@ -456,6 +456,33 @@ void main() {
     });
   });
 
+  group('RfwIcon', () {
+    test('converts RfwIcon.home to iconData map', () {
+      final expr = parseExpression('RfwIcon.home');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries['icon'], isA<IrIntValue>());
+      expect(map.entries['fontFamily'], isA<IrStringValue>());
+      expect((map.entries['fontFamily'] as IrStringValue).value,
+          equals('MaterialIcons'));
+    });
+
+    test('converts RfwIcon.search to iconData map', () {
+      final expr = parseExpression('RfwIcon.search');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries['icon'], isA<IrIntValue>());
+    });
+
+    test('throws for unknown RfwIcon', () {
+      final expr = parseExpression('RfwIcon.nonExistentIcon');
+      expect(() => converter.convert(expr),
+          throwsA(isA<UnsupportedExpressionError>()));
+    });
+  });
+
   group('Unsupported expressions', () {
     test('throws for variable reference', () {
       final expr = parseExpression('myVariable');

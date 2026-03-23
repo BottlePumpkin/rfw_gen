@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 
 import 'ir.dart';
+import 'rfw_icons.dart';
 
 /// Thrown when an expression cannot be converted to an IR value.
 class UnsupportedExpressionError implements Exception {
@@ -242,10 +243,25 @@ class ExpressionConverter {
       return IrListValue([IrMapValue({'x': IrNumberValue(0.0)})]);
     }
 
+    if (prefix == 'RfwIcon') {
+      return _convertRfwIcon(identifier);
+    }
+
     throw UnsupportedExpressionError(
       'Unknown prefixed identifier: $prefix.$identifier',
       offset: expr.offset,
     );
+  }
+
+  IrMapValue _convertRfwIcon(String name) {
+    final codepoint = RfwIcon.lookup(name);
+    if (codepoint == null) {
+      throw UnsupportedExpressionError('Unknown RfwIcon: $name');
+    }
+    return IrMapValue({
+      'icon': IrIntValue(codepoint),
+      'fontFamily': IrStringValue('MaterialIcons'),
+    });
   }
 
   IrIntValue _convertDuration(MethodInvocation expr) {

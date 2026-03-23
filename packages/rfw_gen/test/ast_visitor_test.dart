@@ -222,5 +222,203 @@ Widget build() {
       expect(node.properties, hasLength(1));
       expect(node.properties.containsKey('text'), isTrue);
     });
+
+    // ChildType.child — Expanded, Flexible
+    test('extracts Expanded with child', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Expanded(flex: 2, child: Text('Content'));
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Expanded');
+      final flex = node.properties['flex'] as IrIntValue;
+      expect(flex.value, 2);
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+      expect((child.properties['text'] as IrStringValue).value, 'Content');
+    });
+
+    test('extracts Flexible with child and fit', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Flexible(fit: FlexFit.tight, child: Text('Content'));
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Flexible');
+      final fit = node.properties['fit'] as IrEnumValue;
+      expect(fit.value, 'tight');
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+      expect((child.properties['text'] as IrStringValue).value, 'Content');
+    });
+
+    // ChildType.childList — Stack, Wrap, ListView
+    test('extracts Stack with children', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Stack(children: [Text('A'), Text('B')]);
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Stack');
+      final children = node.properties['children'] as IrListValue;
+      expect(children.values, hasLength(2));
+      final first = children.values[0] as IrWidgetNode;
+      expect(first.name, 'Text');
+      expect((first.properties['text'] as IrStringValue).value, 'A');
+      final second = children.values[1] as IrWidgetNode;
+      expect(second.name, 'Text');
+      expect((second.properties['text'] as IrStringValue).value, 'B');
+    });
+
+    test('extracts Wrap with spacing', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Wrap(
+    spacing: 8.0,
+    runSpacing: 4.0,
+    children: [Text('A'), Text('B')],
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Wrap');
+      final spacing = node.properties['spacing'] as IrNumberValue;
+      expect(spacing.value, 8.0);
+      final runSpacing = node.properties['runSpacing'] as IrNumberValue;
+      expect(runSpacing.value, 4.0);
+      final children = node.properties['children'] as IrListValue;
+      expect(children.values, hasLength(2));
+    });
+
+    test('extracts ListView with padding', () {
+      final fn = parseFunction('''
+Widget build() {
+  return ListView(
+    padding: EdgeInsets.all(16),
+    children: [Text('Item')],
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'ListView');
+      final padding = node.properties['padding'] as IrListValue;
+      expect(padding.values, hasLength(1));
+      expect((padding.values[0] as IrNumberValue).value, 16.0);
+      final children = node.properties['children'] as IrListValue;
+      expect(children.values, hasLength(1));
+      final item = children.values[0] as IrWidgetNode;
+      expect(item.name, 'Text');
+      expect((item.properties['text'] as IrStringValue).value, 'Item');
+    });
+
+    // ChildType.optionalChild — Opacity, ClipRRect, Padding
+    test('extracts Opacity with child', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Opacity(opacity: 0.5, child: Text('Faded'));
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Opacity');
+      final opacity = node.properties['opacity'] as IrNumberValue;
+      expect(opacity.value, 0.5);
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+      expect((child.properties['text'] as IrStringValue).value, 'Faded');
+    });
+
+    test('extracts ClipRRect with borderRadius', () {
+      final fn = parseFunction('''
+Widget build() {
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(8),
+    child: Text('Clipped'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'ClipRRect');
+      final borderRadius = node.properties['borderRadius'] as IrListValue;
+      expect(borderRadius.values, hasLength(1));
+      final radiusMap = borderRadius.values[0] as IrMapValue;
+      expect((radiusMap.entries['x'] as IrNumberValue).value, 8.0);
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+      expect((child.properties['text'] as IrStringValue).value, 'Clipped');
+    });
+
+    test('extracts Padding with edgeInsets', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Padding(
+    padding: EdgeInsets.all(16),
+    child: Text('Padded'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Padding');
+      final padding = node.properties['padding'] as IrListValue;
+      expect(padding.values, hasLength(1));
+      expect((padding.values[0] as IrNumberValue).value, 16.0);
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+      expect((child.properties['text'] as IrStringValue).value, 'Padded');
+    });
+
+    // ChildType.none — Spacer, Placeholder
+    test('extracts Spacer with flex', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Spacer(flex: 2);
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Spacer');
+      final flex = node.properties['flex'] as IrIntValue;
+      expect(flex.value, 2);
+    });
+
+    test('extracts Placeholder with color', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Placeholder(color: Color(0xFFFF0000));
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'Placeholder');
+      final color = node.properties['color'] as IrIntValue;
+      expect(color.value, 0xFFFF0000);
+    });
+
+    // Other — SafeArea
+    test('extracts SafeArea with boolean params', () {
+      final fn = parseFunction('''
+Widget build() {
+  return SafeArea(left: false, child: Text('Safe'));
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'SafeArea');
+      final left = node.properties['left'] as IrBoolValue;
+      expect(left.value, false);
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+      expect((child.properties['text'] as IrStringValue).value, 'Safe');
+    });
   });
 }

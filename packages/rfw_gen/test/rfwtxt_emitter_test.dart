@@ -504,5 +504,245 @@ void main() {
 
       expect(result, contains('  text: "Hello"'));
     });
+
+    // Dynamic IR emission tests
+    group('Dynamic IR references', () {
+      test('IrDataRef emits as data.path', () {
+        final node = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrDataRef('user.name')},
+        );
+        final output = emitter.emit(
+          widgetName: 'greeting',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('text: data.user.name'));
+      });
+
+      test('IrArgsRef emits as args.path', () {
+        final node = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrArgsRef('item.title')},
+        );
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('text: args.item.title'));
+      });
+
+      test('IrStateRef emits as state.path', () {
+        final node = IrWidgetNode(
+          name: 'Container',
+          properties: {'color': IrStateRef('bgColor')},
+        );
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('color: state.bgColor'));
+      });
+
+      test('IrLoopVarRef emits path without prefix', () {
+        final node = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrLoopVarRef('item.name')},
+        );
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('text: item.name'));
+        expect(output, isNot(contains('data.item.name')));
+        expect(output, isNot(contains('args.item.name')));
+        expect(output, isNot(contains('state.item.name')));
+      });
+
+      test('IrConcat emits as list literal', () {
+        final node = IrWidgetNode(
+          name: 'Text',
+          properties: {
+            'text': IrConcat([
+              IrStringValue('Hello, '),
+              IrDataRef('user.name'),
+              IrStringValue('!'),
+            ]),
+          },
+        );
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('text: ["Hello, ", data.user.name, "!"]'));
+      });
+
+      test('IrForLoop emits ...for item in source: body', () {
+        final node = IrWidgetNode(
+          name: 'Column',
+          properties: {
+            'children': IrListValue([
+              IrForLoop(
+                items: IrDataRef('items'),
+                itemName: 'item',
+                body: IrWidgetNode(
+                  name: 'Text',
+                  properties: {'text': IrLoopVarRef('item.name')},
+                ),
+              ),
+            ]),
+          },
+        );
+        final output = emitter.emit(
+          widgetName: 'myList',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('...for item in data.items:'));
+        expect(output, contains('Text('));
+        expect(output, contains('item.name'));
+      });
+
+      test('IrSwitchExpr with default emits switch block', () {
+        final node = IrWidgetNode(
+          name: 'Container',
+          properties: {
+            'color': IrSwitchExpr(
+              value: IrDataRef('status'),
+              cases: {
+                IrStringValue('active'): IrIntValue(0xFF00FF00),
+                IrStringValue('inactive'): IrIntValue(0xFFFF0000),
+              },
+              defaultCase: IrIntValue(0xFF888888),
+            ),
+          },
+        );
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('switch data.status {'));
+        expect(output, contains('"active": 0xFF00FF00'));
+        expect(output, contains('"inactive": 0xFFFF0000'));
+        expect(output, contains('default: 0xFF888888'));
+      });
+
+      test('IrSwitchExpr with widget cases emits widget branches', () {
+        final node = IrWidgetNode(
+          name: 'Container',
+          properties: {
+            'child': IrSwitchExpr(
+              value: IrStateRef('selected'),
+              cases: {
+                IrBoolValue(true): IrWidgetNode(
+                  name: 'Text',
+                  properties: {'text': IrStringValue('On')},
+                ),
+                IrBoolValue(false): IrWidgetNode(
+                  name: 'Text',
+                  properties: {'text': IrStringValue('Off')},
+                ),
+              },
+            ),
+          },
+        );
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: node,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('switch state.selected {'));
+        expect(output, contains('true:'));
+        expect(output, contains('false:'));
+        expect(output, contains('"On"'));
+        expect(output, contains('"Off"'));
+      });
+    });
+
+    // stateDecl tests
+    group('stateDecl parameter', () {
+      test('emits widget with stateDecl block', () {
+        final root = IrWidgetNode(
+          name: 'GestureDetector',
+          properties: {
+            'onTapDown': IrSetStateValue('down', IrBoolValue(true)),
+            'onTapUp': IrSetStateValue('down', IrBoolValue(false)),
+          },
+        );
+        final output = emitter.emit(
+          widgetName: 'toggle',
+          root: root,
+          imports: {'core.widgets'},
+          stateDecl: {'down': IrBoolValue(false)},
+        );
+        expect(output, contains('widget toggle { down: false } = '));
+      });
+
+      test('stateDecl with multiple fields', () {
+        final root = IrWidgetNode(name: 'Container', properties: {});
+        final output = emitter.emit(
+          widgetName: 'myWidget',
+          root: root,
+          imports: {'core.widgets'},
+          stateDecl: {
+            'count': IrIntValue(0),
+            'label': IrStringValue('hello'),
+          },
+        );
+        expect(output, contains('widget myWidget {'));
+        expect(output, contains('count: 0x00000000'));
+        expect(output, contains('label: "hello"'));
+        expect(output, contains('} = '));
+      });
+
+      test('emit without stateDecl produces unchanged behavior (backward compat)', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue('Hello')},
+        );
+        final output = emitter.emit(
+          widgetName: 'greeting',
+          root: root,
+          imports: {'core.widgets'},
+        );
+        expect(output, contains('widget greeting = Text('));
+        expect(output, isNot(contains('{')));
+      });
+
+      test('emit with null stateDecl produces no state block', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue('Hello')},
+        );
+        final output = emitter.emit(
+          widgetName: 'greeting',
+          root: root,
+          imports: {'core.widgets'},
+          stateDecl: null,
+        );
+        expect(output, contains('widget greeting = Text('));
+        expect(output, isNot(contains('{')));
+      });
+
+      test('emit with empty stateDecl map produces no state block', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue('Hello')},
+        );
+        final output = emitter.emit(
+          widgetName: 'greeting',
+          root: root,
+          imports: {'core.widgets'},
+          stateDecl: {},
+        );
+        expect(output, contains('widget greeting = Text('));
+        expect(output, isNot(contains('{')));
+      });
+    });
   });
 }

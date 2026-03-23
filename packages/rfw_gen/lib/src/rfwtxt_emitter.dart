@@ -11,6 +11,7 @@ class RfwtxtEmitter {
     required String widgetName,
     required IrWidgetNode root,
     required Set<String> imports,
+    Map<String, IrValue>? stateDecl,
   }) {
     final buffer = StringBuffer();
 
@@ -25,7 +26,14 @@ class RfwtxtEmitter {
     }
 
     // Emit widget declaration.
-    buffer.write('widget $widgetName = ');
+    buffer.write('widget $widgetName');
+    if (stateDecl != null && stateDecl.isNotEmpty) {
+      final stateEntries = stateDecl.entries
+          .map((e) => '${e.key}: ${_emitValue(e.value, indent: 0)}')
+          .join(', ');
+      buffer.write(' { $stateEntries }');
+    }
+    buffer.write(' = ');
     buffer.write(_emitWidget(root, indent: 0));
     buffer.writeln(';');
 

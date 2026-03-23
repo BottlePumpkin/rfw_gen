@@ -33,6 +33,12 @@ class ExpressionConverter {
     'FlexFit',
     'WrapAlignment',
     'WrapCrossAlignment',
+    'ImageRepeat',
+  };
+
+  static const _knownGridDelegates = <String>{
+    'SliverGridDelegateWithFixedCrossAxisCount',
+    'SliverGridDelegateWithMaxCrossAxisExtent',
   };
 
   /// Converts an [Expression] to an [IrValue].
@@ -95,6 +101,21 @@ class ExpressionConverter {
     // BorderRadius.xxx(...) — parses as MethodInvocation with target 'BorderRadius'
     if (target is SimpleIdentifier && target.name == 'BorderRadius') {
       return _convertBorderRadius(methodName, expr.argumentList);
+    }
+
+    // NetworkImage('url') — parses as MethodInvocation with no target
+    if (target == null && methodName == 'NetworkImage') {
+      return _convertImageProvider(expr);
+    }
+
+    // AssetImage('path') — parses as MethodInvocation with no target
+    if (target == null && methodName == 'AssetImage') {
+      return _convertImageProvider(expr);
+    }
+
+    // SliverGridDelegateWithXxx(...) — parses as MethodInvocation with no target
+    if (target == null && _knownGridDelegates.contains(methodName)) {
+      return _convertGridDelegate(expr);
     }
 
     throw UnsupportedExpressionError(
@@ -298,6 +319,40 @@ class ExpressionConverter {
       'Expected Radius.circular(), got ${expr.runtimeType}',
       offset: expr.offset,
     );
+  }
+
+  IrMapValue _convertImageProvider(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    String? source;
+    double scale = 1.0;
+    for (final arg in args) {
+      if (arg is SimpleStringLiteral) {
+        source = arg.value;
+      } else if (arg is NamedExpression && arg.name.label.name == 'scale') {
+        scale = _toDouble(arg.expression);
+      }
+    }
+    if (source == null) {
+      throw UnsupportedExpressionError(
+        'ImageProvider requires a string argument',
+        offset: expr.offset,
+      );
+    }
+    return IrMapValue({
+      'source': IrStringValue(source),
+      'scale': IrNumberValue(scale),
+    });
+  }
+
+  IrMapValue _convertGridDelegate(MethodInvocation expr) {
+    final entries = <String, IrValue>{};
+    for (final arg in expr.argumentList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        entries[name] = convert(arg.expression);
+      }
+    }
+    return IrMapValue(entries);
   }
 
   /// Extracts a double value from a numeric expression.

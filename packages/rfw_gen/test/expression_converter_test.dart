@@ -275,6 +275,13 @@ void main() {
       expect((result as IrEnumValue).value, equals('cover'));
     });
 
+    test('converts ImageRepeat.repeat', () {
+      final expr = parseExpression('ImageRepeat.repeat');
+      final result = converter.convert(expr);
+      expect(result, isA<IrEnumValue>());
+      expect((result as IrEnumValue).value, equals('repeat'));
+    });
+
     test('converts all known enum prefixes', () {
       final knownEnums = {
         'VerticalDirection.up': 'up',
@@ -385,6 +392,67 @@ void main() {
       final result = converter.convert(expr);
       expect(result, isA<IrStringValue>());
       expect((result as IrStringValue).value, equals('bounceOut'));
+    });
+  });
+
+  group('ImageProvider', () {
+    test('converts NetworkImage to map with source', () {
+      final expr = parseExpression("NetworkImage('https://example.com/img.png')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['source'] as IrStringValue).value,
+          equals('https://example.com/img.png'));
+      expect((map.entries['scale'] as IrNumberValue).value, equals(1.0));
+    });
+
+    test('converts AssetImage to map with source', () {
+      final expr = parseExpression("AssetImage('assets/logo.png')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['source'] as IrStringValue).value,
+          equals('assets/logo.png'));
+      expect((map.entries['scale'] as IrNumberValue).value, equals(1.0));
+    });
+
+    test('converts NetworkImage with scale', () {
+      final expr = parseExpression(
+          "NetworkImage('https://example.com/img.png', scale: 2.0)");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['scale'] as IrNumberValue).value, equals(2.0));
+    });
+  });
+
+  group('SliverGridDelegate', () {
+    test('converts SliverGridDelegateWithFixedCrossAxisCount', () {
+      final expr = parseExpression(
+        'SliverGridDelegateWithFixedCrossAxisCount('
+        '  crossAxisCount: 2,'
+        '  mainAxisSpacing: 4.0,'
+        '  crossAxisSpacing: 4.0,'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['crossAxisCount'] as IrIntValue).value, equals(2));
+      expect((map.entries['mainAxisSpacing'] as IrNumberValue).value, equals(4.0));
+      expect((map.entries['crossAxisSpacing'] as IrNumberValue).value, equals(4.0));
+    });
+
+    test('converts SliverGridDelegateWithMaxCrossAxisExtent', () {
+      final expr = parseExpression(
+        'SliverGridDelegateWithMaxCrossAxisExtent('
+        '  maxCrossAxisExtent: 200.0,'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['maxCrossAxisExtent'] as IrNumberValue).value, equals(200.0));
     });
   });
 

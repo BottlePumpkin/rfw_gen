@@ -459,8 +459,67 @@ class WidgetRegistry {
   // Scrolling widgets (Task 6)
   // ---------------------------------------------------------------------------
 
-  static Map<String, WidgetMapping> _scrollingWidgets() =>
-      const <String, WidgetMapping>{};
+  static Map<String, WidgetMapping> _scrollingWidgets() => const {
+        'ListView': WidgetMapping(
+          rfwName: 'core.ListView',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'scrollDirection':
+                ParamMapping('scrollDirection', transformer: 'enum'),
+            'reverse': ParamMapping.direct('reverse'),
+            'primary': ParamMapping.direct('primary'),
+            'shrinkWrap': ParamMapping.direct('shrinkWrap'),
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'itemExtent': ParamMapping.direct('itemExtent'),
+            'cacheExtent': ParamMapping.direct('cacheExtent'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+        'GridView': WidgetMapping(
+          rfwName: 'core.GridView',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'scrollDirection':
+                ParamMapping('scrollDirection', transformer: 'enum'),
+            'reverse': ParamMapping.direct('reverse'),
+            'primary': ParamMapping.direct('primary'),
+            'shrinkWrap': ParamMapping.direct('shrinkWrap'),
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'gridDelegate':
+                ParamMapping('gridDelegate', transformer: 'gridDelegate'),
+            'cacheExtent': ParamMapping.direct('cacheExtent'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+        'SingleChildScrollView': WidgetMapping(
+          rfwName: 'core.SingleChildScrollView',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'scrollDirection':
+                ParamMapping('scrollDirection', transformer: 'enum'),
+            'reverse': ParamMapping.direct('reverse'),
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'primary': ParamMapping.direct('primary'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+        'ListBody': WidgetMapping(
+          rfwName: 'core.ListBody',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'mainAxis': ParamMapping('mainAxis', transformer: 'enum'),
+            'reverse': ParamMapping.direct('reverse'),
+          },
+        ),
+      };
 
   // ---------------------------------------------------------------------------
   // Transform widgets (Task 7)

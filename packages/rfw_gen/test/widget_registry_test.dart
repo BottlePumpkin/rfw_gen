@@ -82,8 +82,8 @@ void main() {
       registry = WidgetRegistry.core();
     });
 
-    test('contains exactly 29 widgets', () {
-      expect(registry.supportedWidgets, hasLength(29));
+    test('contains exactly 33 widgets', () {
+      expect(registry.supportedWidgets, hasLength(33));
     });
 
     test('supports Text, Column, Row, Container, SizedBox, Center', () {
@@ -431,6 +431,43 @@ void main() {
         final w = registry.supportedWidgets['IntrinsicWidth']!;
         expect(w.params.containsKey('width'), isTrue);
         expect(w.params.containsKey('height'), isTrue);
+      });
+    });
+
+    group('Scrolling widgets', () {
+      test('supports all scrolling widgets', () {
+        for (final name in ['ListView', 'GridView', 'SingleChildScrollView', 'ListBody']) {
+          expect(registry.isSupported(name), isTrue, reason: '$name not found');
+        }
+      });
+
+      test('ListView has childList and scroll params', () {
+        final w = registry.supportedWidgets['ListView']!;
+        expect(w.childType, equals(ChildType.childList));
+        expect(w.childParam, equals('children'));
+        expect(w.params['scrollDirection']!.transformer, equals('enum'));
+        expect(w.params.containsKey('reverse'), isTrue);
+        expect(w.params.containsKey('shrinkWrap'), isTrue);
+        expect(w.params['padding']!.transformer, equals('edgeInsets'));
+      });
+
+      test('GridView has gridDelegate param', () {
+        final w = registry.supportedWidgets['GridView']!;
+        expect(w.childType, equals(ChildType.childList));
+        expect(w.params.containsKey('gridDelegate'), isTrue);
+      });
+
+      test('SingleChildScrollView has optionalChild', () {
+        final w = registry.supportedWidgets['SingleChildScrollView']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params['scrollDirection']!.transformer, equals('enum'));
+      });
+
+      test('ListBody has childList', () {
+        final w = registry.supportedWidgets['ListBody']!;
+        expect(w.childType, equals(ChildType.childList));
+        expect(w.params.containsKey('mainAxis'), isTrue);
+        expect(w.params.containsKey('reverse'), isTrue);
       });
     });
 

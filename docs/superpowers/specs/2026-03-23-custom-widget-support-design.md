@@ -195,7 +195,9 @@ class WidgetRegistry {
   void registerFromConfig(Map<String, dynamic> widgetsConfig) {
     for (final entry in widgetsConfig.entries) {
       final name = entry.key;
-      final config = entry.value as Map<String, dynamic>? ?? {};
+      final config = entry.value is Map
+          ? Map<String, dynamic>.from(entry.value as Map)
+          : <String, dynamic>{};
 
       // import 필드 필수 검증
       final importLib = config['import'] as String?;

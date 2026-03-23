@@ -154,6 +154,15 @@ widget greeting = Text(
     });
   });
 
+  group('Import collection', () {
+    test('core-only widget produces core.widgets import', () {
+      const input = "Widget build() { return Text('Hello'); }";
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, isNot(contains('import material;')));
+    });
+  });
+
   group('Widget name extraction', () {
     test('buildGreeting -> greeting', () {
       const input = "Widget buildGreeting() { return Text('hi'); }";

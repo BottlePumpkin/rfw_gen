@@ -166,6 +166,16 @@ class WidgetRegistry {
           'height': ParamMapping.direct('height'),
         },
       ),
+      'Center': const WidgetMapping(
+        rfwName: 'core.Center',
+        import: 'core.widgets',
+        childType: ChildType.optionalChild,
+        childParam: 'child',
+        params: {
+          'widthFactor': ParamMapping.direct('widthFactor'),
+          'heightFactor': ParamMapping.direct('heightFactor'),
+        },
+      ),
     });
   }
 }

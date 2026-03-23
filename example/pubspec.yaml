@@ -12,6 +12,10 @@ dependencies:
   rfw_gen:
     path: ../packages/rfw_gen
 
+flutter:
+  assets:
+    - assets/
+
 dev_dependencies:
   build_runner: ^2.4.0
   rfw_gen_builder:

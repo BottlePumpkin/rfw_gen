@@ -18,3 +18,285 @@ widget greeting = Column(
     )
   ]
 );
+
+widget profileCard = Container(
+  padding: [24.0],
+  color: 0xFFF5F5F5,
+  child: Row(
+    mainAxisAlignment: "start",
+    children: [
+      Container(
+        width: 64.0,
+        height: 64.0,
+        color: 0xFF9C27B0,
+        child: Center(
+          child: Text(
+            text: "BP"
+          )
+        )
+      ),
+      SizedBox(
+        width: 16.0
+      ),
+      Column(
+        crossAxisAlignment: "start",
+        children: [
+          Text(
+            text: "BottlePumpkin"
+          ),
+          SizedBox(
+            height: 4.0
+          ),
+          Text(
+            text: "Flutter Developer"
+          )
+        ]
+      )
+    ]
+  )
+);
+
+widget statsDashboard = Column(
+  children: [
+    Row(
+      mainAxisAlignment: "spaceEvenly",
+      children: [
+        Container(
+          width: 100.0,
+          padding: [16.0],
+          color: 0xFF4CAF50,
+          child: Column(
+            children: [
+              Text(
+                text: "128"
+              ),
+              SizedBox(
+                height: 4.0
+              ),
+              Text(
+                text: "Users"
+              )
+            ]
+          )
+        ),
+        Container(
+          width: 100.0,
+          padding: [16.0],
+          color: 0xFF2196F3,
+          child: Column(
+            children: [
+              Text(
+                text: "56"
+              ),
+              SizedBox(
+                height: 4.0
+              ),
+              Text(
+                text: "Active"
+              )
+            ]
+          )
+        ),
+        Container(
+          width: 100.0,
+          padding: [16.0],
+          color: 0xFFFF9800,
+          child: Column(
+            children: [
+              Text(
+                text: "89%"
+              ),
+              SizedBox(
+                height: 4.0
+              ),
+              Text(
+                text: "Rate"
+              )
+            ]
+          )
+        )
+      ]
+    )
+  ]
+);
+
+widget listItem = Container(
+  padding: [16.0, 12.0, 16.0, 12.0],
+  child: Row(
+    children: [
+      Container(
+        width: 40.0,
+        height: 40.0,
+        color: 0xFFE0E0E0,
+        child: Center(
+          child: Text(
+            text: "1"
+          )
+        )
+      ),
+      SizedBox(
+        width: 12.0
+      ),
+      Column(
+        crossAxisAlignment: "start",
+        children: [
+          Text(
+            text: "List Item Title"
+          ),
+          SizedBox(
+            height: 2.0
+          ),
+          Text(
+            text: "Subtitle description here"
+          )
+        ]
+      )
+    ]
+  )
+);
+
+widget banner = Container(
+  padding: [20.0],
+  color: 0xFF1565C0,
+  child: Column(
+    children: [
+      Text(
+        text: "Special Offer"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Get 50% off on all items"
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      Container(
+        padding: [24.0, 12.0, 24.0, 12.0],
+        color: 0xFFFFFFFF,
+        child: Text(
+          text: "Shop Now"
+        )
+      )
+    ]
+  )
+);
+
+widget gridLayout = Column(
+  children: [
+    Row(
+      children: [
+        Container(
+          width: 80.0,
+          height: 80.0,
+          color: 0xFFE91E63,
+          child: Center(
+            child: Text(
+              text: "A"
+            )
+          )
+        ),
+        SizedBox(
+          width: 8.0
+        ),
+        Container(
+          width: 80.0,
+          height: 80.0,
+          color: 0xFF9C27B0,
+          child: Center(
+            child: Text(
+              text: "B"
+            )
+          )
+        ),
+        SizedBox(
+          width: 8.0
+        ),
+        Container(
+          width: 80.0,
+          height: 80.0,
+          color: 0xFF3F51B5,
+          child: Center(
+            child: Text(
+              text: "C"
+            )
+          )
+        )
+      ]
+    ),
+    SizedBox(
+      height: 8.0
+    ),
+    Row(
+      children: [
+        Container(
+          width: 80.0,
+          height: 80.0,
+          color: 0xFF009688,
+          child: Center(
+            child: Text(
+              text: "D"
+            )
+          )
+        ),
+        SizedBox(
+          width: 8.0
+        ),
+        Container(
+          width: 80.0,
+          height: 80.0,
+          color: 0xFF4CAF50,
+          child: Center(
+            child: Text(
+              text: "E"
+            )
+          )
+        ),
+        SizedBox(
+          width: 8.0
+        ),
+        Container(
+          width: 80.0,
+          height: 80.0,
+          color: 0xFFFF9800,
+          child: Center(
+            child: Text(
+              text: "F"
+            )
+          )
+        )
+      ]
+    )
+  ]
+);
+
+widget emptyState = Center(
+  child: Column(
+    mainAxisAlignment: "center",
+    children: [
+      Container(
+        width: 80.0,
+        height: 80.0,
+        color: 0xFFEEEEEE,
+        child: Center(
+          child: Text(
+            text: "?"
+          )
+        )
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      Text(
+        text: "No items found"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Try adding something new"
+      )
+    ]
+  )
+);

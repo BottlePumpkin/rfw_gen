@@ -377,6 +377,102 @@ Widget build() {
       expect(onTap.name, 'item.select');
     });
 
+    // -----------------------------------------------------------------
+    // Widget-value param auto-detection
+    // -----------------------------------------------------------------
+
+    test('widget-value param: unknown param with registered widget is converted', () {
+      // Register a custom widget with optionalChild that has a non-standard widget param
+      registry.register('ConditionalWidget', const WidgetMapping(
+        rfwName: 'ConditionalWidget',
+        import: 'custom.widgets',
+        childType: ChildType.optionalChild,
+        childParam: 'child',
+        params: {},
+      ));
+      visitor = WidgetAstVisitor(
+        registry: registry,
+        expressionConverter: expressionConverter,
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return ConditionalWidget(
+    child: Text('visible'),
+    nullChild: Text('fallback'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'ConditionalWidget');
+      expect(node.properties['child'], isA<IrWidgetNode>());
+      expect(node.properties['nullChild'], isA<IrWidgetNode>());
+      final nullChild = node.properties['nullChild'] as IrWidgetNode;
+      expect(nullChild.name, 'Text');
+    });
+
+    test('widget-value param: deeply nested widget-value params are converted', () {
+      registry.register('Outer', const WidgetMapping(
+        rfwName: 'Outer',
+        import: 'custom.widgets',
+        childType: ChildType.none,
+        params: {},
+      ));
+      registry.register('Inner', const WidgetMapping(
+        rfwName: 'Inner',
+        import: 'custom.widgets',
+        childType: ChildType.none,
+        params: {},
+      ));
+      visitor = WidgetAstVisitor(
+        registry: registry,
+        expressionConverter: expressionConverter,
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return Outer(
+    slot: Inner(label: 'hello'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      final slot = node.properties['slot'] as IrWidgetNode;
+      expect(slot.name, 'Inner');
+      expect((slot.properties['label'] as IrStringValue).value, 'hello');
+    });
+
+    test('widget-value param: non-widget unknown params still pass through', () {
+      registry.register('MyWidget', const WidgetMapping(
+        rfwName: 'MyWidget',
+        import: 'custom.widgets',
+        childType: ChildType.none,
+        params: {},
+      ));
+      visitor = WidgetAstVisitor(
+        registry: registry,
+        expressionConverter: expressionConverter,
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return MyWidget(
+    title: 'hello',
+    count: 42,
+    active: true,
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.name, 'MyWidget');
+      expect((node.properties['title'] as IrStringValue).value, 'hello');
+      expect((node.properties['count'] as IrIntValue).value, 42);
+      expect((node.properties['active'] as IrBoolValue).value, true);
+    });
+
     test('throws on unsupported widget', () {
       final fn = parseFunction('''
 Widget build() {

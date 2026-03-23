@@ -173,7 +173,13 @@ class WidgetAstVisitor {
       return;
     }
 
-    // 5. Unknown parameter — try ExpressionConverter, silently skip if unsupported.
+    // 5. Unknown parameter — check if it's a widget first, then try expression.
+    if (expression is MethodInvocation &&
+        expression.target == null &&
+        registry.isSupported(expression.methodName.name)) {
+      properties[paramName] = _convertWidget(expression);
+      return;
+    }
     try {
       final value = expressionConverter.convert(expression);
       properties[paramName] = value;

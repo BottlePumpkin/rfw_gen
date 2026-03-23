@@ -1,0 +1,20 @@
+import core.widgets;
+
+widget greeting = Column(
+  mainAxisAlignment: "center",
+  children: [
+    Text(
+      text: "Hello, RFW!"
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    Container(
+      color: 0xFF2196F3,
+      padding: [16.0],
+      child: Text(
+        text: "Welcome"
+      )
+    )
+  ]
+);

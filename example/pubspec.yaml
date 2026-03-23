@@ -1,0 +1,20 @@
+name: rfw_gen_example
+description: Example app demonstrating rfw_gen code generation.
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  rfw: ^1.0.0
+  rfw_gen:
+    path: ../packages/rfw_gen
+
+dev_dependencies:
+  build_runner: ^2.4.0
+  rfw_gen_builder:
+    path: ../packages/rfw_gen_builder
+  flutter_test:
+    sdk: flutter

@@ -14,7 +14,8 @@ dependencies:
 
 flutter:
   assets:
-    - assets/
+    - assets/catalog_widgets.rfw
+    - assets/shop_widgets.rfw
 
 dev_dependencies:
   build_runner: ^2.4.0

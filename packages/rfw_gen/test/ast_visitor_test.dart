@@ -380,7 +380,7 @@ Widget build() {
     test('throws on unsupported widget', () {
       final fn = parseFunction('''
 Widget build() {
-  return GestureDetector();
+  return CompletelyUnknownWidget();
 }
 ''');
 

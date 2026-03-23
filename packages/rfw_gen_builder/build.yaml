@@ -1,0 +1,7 @@
+builders:
+  rfw_widget_builder:
+    import: "package:rfw_gen_builder/builder.dart"
+    builder_factories: ["rfwWidgetBuilder"]
+    build_extensions: {".dart": [".rfwtxt", ".rfw"]}
+    auto_apply: dependents
+    build_to: source

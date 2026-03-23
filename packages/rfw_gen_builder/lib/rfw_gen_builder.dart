@@ -1,1 +1,1 @@
-library rfw_gen_builder;
+export 'src/rfw_widget_builder.dart';

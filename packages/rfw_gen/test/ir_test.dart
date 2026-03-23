@@ -212,6 +212,130 @@ void main() {
     });
   });
 
+  group('IrDataRef', () {
+    test('stores path', () {
+      final v = IrDataRef('user.name');
+      expect(v.path, equals('user.name'));
+    });
+
+    test('is an IrValue', () {
+      expect(IrDataRef('x'), isA<IrValue>());
+    });
+  });
+
+  group('IrArgsRef', () {
+    test('stores path', () {
+      final v = IrArgsRef('product.id');
+      expect(v.path, equals('product.id'));
+    });
+
+    test('is an IrValue', () {
+      expect(IrArgsRef('x'), isA<IrValue>());
+    });
+  });
+
+  group('IrStateRef', () {
+    test('stores path', () {
+      final v = IrStateRef('selected');
+      expect(v.path, equals('selected'));
+    });
+
+    test('is an IrValue', () {
+      expect(IrStateRef('x'), isA<IrValue>());
+    });
+  });
+
+  group('IrLoopVarRef', () {
+    test('stores path', () {
+      final v = IrLoopVarRef('item.title');
+      expect(v.path, equals('item.title'));
+    });
+
+    test('is an IrValue', () {
+      expect(IrLoopVarRef('item'), isA<IrValue>());
+    });
+  });
+
+  group('IrConcat', () {
+    test('stores parts list', () {
+      final parts = <IrValue>[
+        IrStringValue('Hello, '),
+        IrDataRef('user.name'),
+        IrStringValue('!'),
+      ];
+      final v = IrConcat(parts);
+      expect(v.parts, hasLength(3));
+      expect(v.parts[0], isA<IrStringValue>());
+      expect(v.parts[1], isA<IrDataRef>());
+      expect(v.parts[2], isA<IrStringValue>());
+    });
+
+    test('stores empty parts list', () {
+      final v = IrConcat([]);
+      expect(v.parts, isEmpty);
+    });
+
+    test('is an IrValue', () {
+      expect(IrConcat([]), isA<IrValue>());
+    });
+  });
+
+  group('IrForLoop', () {
+    test('stores items, itemName, and body', () {
+      final items = IrDataRef('products');
+      const itemName = 'item';
+      final body = IrWidgetNode(
+        name: 'ListTile',
+        properties: {'title': IrLoopVarRef('item.name')},
+      );
+      final v = IrForLoop(items: items, itemName: itemName, body: body);
+      expect(v.items, same(items));
+      expect(v.itemName, equals('item'));
+      expect(v.body, same(body));
+    });
+
+    test('is an IrValue', () {
+      final v = IrForLoop(
+        items: IrDataRef('list'),
+        itemName: 'x',
+        body: IrWidgetNode(name: 'Text'),
+      );
+      expect(v, isA<IrValue>());
+    });
+  });
+
+  group('IrSwitchExpr', () {
+    test('stores value, cases, and defaultCase', () {
+      final value = IrStateRef('active');
+      final cases = <IrValue, IrValue>{
+        IrBoolValue(true): IrIntValue(0xFF00FF00),
+        IrBoolValue(false): IrIntValue(0xFFFF0000),
+      };
+      final defaultCase = IrIntValue(0xFF888888);
+      final v = IrSwitchExpr(
+        value: value,
+        cases: cases,
+        defaultCase: defaultCase,
+      );
+      expect(v.value, same(value));
+      expect(v.cases, hasLength(2));
+      expect(v.defaultCase, same(defaultCase));
+    });
+
+    test('allows null defaultCase', () {
+      final v = IrSwitchExpr(
+        value: IrStateRef('x'),
+        cases: {IrBoolValue(true): IrStringValue('yes')},
+      );
+      expect(v.defaultCase, isNull);
+    });
+
+    test('is an IrValue', () {
+      final v = IrSwitchExpr(value: IrBoolValue(true), cases: {});
+      expect(v, isA<IrValue>());
+    });
+  });
+
   group('IrValue sealed hierarchy', () {
     test('each subtype is an IrValue', () {
       final values = <IrValue>[
@@ -226,6 +350,17 @@ void main() {
         IrSetStateValue('f', IrBoolValue(true)),
         IrSetStateFromArgValue('f'),
         IrEventValue('e'),
+        IrDataRef('d.path'),
+        IrArgsRef('a.path'),
+        IrStateRef('s.path'),
+        IrLoopVarRef('item'),
+        IrConcat([IrStringValue('a')]),
+        IrForLoop(
+          items: IrDataRef('list'),
+          itemName: 'item',
+          body: IrWidgetNode(name: 'Text'),
+        ),
+        IrSwitchExpr(value: IrBoolValue(true), cases: {}),
       ];
       for (final v in values) {
         expect(v, isA<IrValue>());

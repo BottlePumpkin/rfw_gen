@@ -76,3 +76,49 @@ class IrEventValue extends IrValue {
   final Map<String, IrValue> args;
   IrEventValue(this.name, [this.args = const {}]);
 }
+
+/// A `data.path` reference to DynamicContent.
+class IrDataRef extends IrValue {
+  final String path;
+  IrDataRef(this.path);
+}
+
+/// An `args.path` reference to widget constructor arguments.
+class IrArgsRef extends IrValue {
+  final String path;
+  IrArgsRef(this.path);
+}
+
+/// A `state.path` reference to widget-local state.
+class IrStateRef extends IrValue {
+  final String path;
+  IrStateRef(this.path);
+}
+
+/// A loop variable reference (no prefix). Used inside `...for` loops.
+class IrLoopVarRef extends IrValue {
+  final String path;
+  IrLoopVarRef(this.path);
+}
+
+/// String concatenation: `["Hello, ", data.name, "!"]`.
+class IrConcat extends IrValue {
+  final List<IrValue> parts;
+  IrConcat(this.parts);
+}
+
+/// A `...for item in source: body` loop.
+class IrForLoop extends IrValue {
+  final IrValue items;
+  final String itemName;
+  final IrWidgetNode body;
+  IrForLoop({required this.items, required this.itemName, required this.body});
+}
+
+/// A `switch value { case1: result1, default: resultN }` expression.
+class IrSwitchExpr extends IrValue {
+  final IrValue value;
+  final Map<IrValue, IrValue> cases;
+  final IrValue? defaultCase;
+  IrSwitchExpr({required this.value, required this.cases, this.defaultCase});
+}

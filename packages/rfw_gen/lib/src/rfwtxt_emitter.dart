@@ -76,6 +76,13 @@ class RfwtxtEmitter {
       IrSetStateFromArgValue v =>
           'set state.${v.field} = args.${v.argName}',
       IrEventValue v => _emitEvent(v, indent: indent),
+      IrDataRef v => 'data.${v.path}',
+      IrArgsRef v => 'args.${v.path}',
+      IrStateRef v => 'state.${v.path}',
+      IrLoopVarRef v => v.path,
+      IrConcat v => _emitConcat(v, indent: indent),
+      IrForLoop v => _emitForLoop(v, indent: indent),
+      IrSwitchExpr v => _emitSwitchExpr(v, indent: indent),
     };
   }
 
@@ -167,6 +174,40 @@ class RfwtxtEmitter {
       if (i < entries.length - 1) buffer.write(', ');
     }
     buffer.write(' }');
+    return buffer.toString();
+  }
+
+  /// Emits a string concatenation as a list literal: `["Hello, ", data.name, "!"]`.
+  String _emitConcat(IrConcat concat, {required int indent}) {
+    final parts = concat.parts.map((p) => _emitValue(p, indent: indent));
+    return '[${parts.join(', ')}]';
+  }
+
+  /// Emits a `...for item in source: body` loop entry.
+  String _emitForLoop(IrForLoop loop, {required int indent}) {
+    final items = _emitValue(loop.items, indent: indent);
+    final body = _emitWidget(loop.body, indent: indent + 1);
+    return '...for ${loop.itemName} in $items:\n${_indentStr(indent + 1)}$body';
+  }
+
+  /// Emits a `switch value { case1: result1, default: resultN }` expression.
+  String _emitSwitchExpr(IrSwitchExpr expr, {required int indent}) {
+    final buffer = StringBuffer();
+    buffer.write('switch ${_emitValue(expr.value, indent: indent)} {');
+    final caseIndent = indent + 1;
+    for (final entry in expr.cases.entries) {
+      buffer.writeln();
+      buffer.write(
+          '${_indentStr(caseIndent)}${_emitValue(entry.key, indent: caseIndent)}: ');
+      buffer.write('${_emitValue(entry.value, indent: caseIndent)},');
+    }
+    if (expr.defaultCase != null) {
+      buffer.writeln();
+      buffer.write(
+          '${_indentStr(caseIndent)}default: ${_emitValue(expr.defaultCase!, indent: caseIndent)},');
+    }
+    buffer.writeln();
+    buffer.write('${_indentStr(indent)}}');
     return buffer.toString();
   }
 

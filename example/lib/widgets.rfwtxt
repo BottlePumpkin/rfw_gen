@@ -531,3 +531,669 @@ widget customWidgetDemo = Column(
     )
   ]
 );
+
+widget dynamicGreeting = Container(
+  padding: [24.0],
+  color: 0xFFF3E5F5,
+  child: Column(
+    mainAxisAlignment: "center",
+    children: [
+      Text(
+        text: ["Hello, ", data.user.name, "!"]
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: ["Your role: ", data.user.role]
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      Text(
+        text: data.user.bio
+      )
+    ]
+  )
+);
+
+widget dynamicList = ListView(
+  padding: [16.0],
+  children: [
+    Text(
+      text: "Item List"
+    ),
+    SizedBox(
+      height: 12.0
+    ),
+    ...for item in data.items:
+      Container(
+        padding: [12.0, 8.0, 12.0, 8.0],
+        child: Row(
+          children: [
+            Container(
+              width: 40.0,
+              height: 40.0,
+              color: 0xFFE3F2FD,
+              child: Center(
+                child: Text(
+                  text: item.icon
+                )
+              )
+            ),
+            SizedBox(
+              width: 12.0
+            ),
+            Column(
+              crossAxisAlignment: "start",
+              children: [
+                Text(
+                  text: item.name
+                ),
+                SizedBox(
+                  height: 2.0
+                ),
+                Text(
+                  text: item.description
+                )
+              ]
+            )
+          ]
+        )
+      )
+  ]
+);
+
+widget conditionalStatus = Center(
+  child: Container(
+    padding: [24.0],
+    child: Column(
+      mainAxisAlignment: "center",
+      children: [
+        Text(
+          text: "Order Status"
+        ),
+        SizedBox(
+          height: 16.0
+        ),
+        switch data.order.status {
+          "pending": Container(
+            padding: [16.0],
+            color: 0xFFFFF9C4,
+            child: Column(
+              children: [
+                Text(
+                  text: "Pending"
+                ),
+                SizedBox(
+                  height: 4.0
+                ),
+                Text(
+                  text: "Your order is being processed"
+                )
+              ]
+            )
+          ),
+          "shipped": Container(
+            padding: [16.0],
+            color: 0xFFE3F2FD,
+            child: Column(
+              children: [
+                Text(
+                  text: "Shipped"
+                ),
+                SizedBox(
+                  height: 4.0
+                ),
+                Text(
+                  text: "Your order is on the way"
+                )
+              ]
+            )
+          ),
+          "delivered": Container(
+            padding: [16.0],
+            color: 0xFFE8F5E9,
+            child: Column(
+              children: [
+                Text(
+                  text: "Delivered"
+                ),
+                SizedBox(
+                  height: 4.0
+                ),
+                Text(
+                  text: "Your order has arrived"
+                )
+              ]
+            )
+          ),
+          default: Container(
+            padding: [16.0],
+            color: 0xFFEEEEEE,
+            child: Text(
+              text: "Unknown status"
+            )
+          ),
+        }
+      ]
+    )
+  )
+);
+
+widget toggleButton { pressed: false } = GestureDetector(
+  onTapDown: set state.pressed = true,
+  onTapUp: set state.pressed = false,
+  onTapCancel: set state.pressed = false,
+  child: Container(
+    padding: [32.0, 16.0, 32.0, 16.0],
+    color: switch state.pressed {
+      true: 0xFF1565C0,
+      false: 0xFF42A5F5,
+    },
+    child: Center(
+      child: switch state.pressed {
+        true: Text(
+          text: "Pressing..."
+        ),
+        false: Text(
+          text: "Press Me"
+        ),
+      }
+    )
+  )
+);
+
+widget userProfile = Container(
+  padding: [20.0],
+  color: 0xFFF5F5F5,
+  child: Column(
+    children: [
+      Row(
+        children: [
+          Container(
+            width: 64.0,
+            height: 64.0,
+            color: 0xFF9C27B0,
+            child: Center(
+              child: Text(
+                text: data.profile.initials
+              )
+            )
+          ),
+          SizedBox(
+            width: 16.0
+          ),
+          Column(
+            crossAxisAlignment: "start",
+            children: [
+              Text(
+                text: data.profile.displayName
+              ),
+              SizedBox(
+                height: 4.0
+              ),
+              Text(
+                text: [data.profile.department, " - ", data.profile.title]
+              )
+            ]
+          )
+        ]
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      switch data.profile.isVerified {
+        true: Container(
+          padding: [12.0, 6.0, 12.0, 6.0],
+          color: 0xFF4CAF50,
+          child: Text(
+            text: "Verified Account"
+          )
+        ),
+        false: Container(
+          padding: [12.0, 6.0, 12.0, 6.0],
+          color: 0xFFFF9800,
+          child: Text(
+            text: "Unverified — Please verify your email"
+          )
+        ),
+      },
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: ["Member since ", data.profile.joinDate]
+      )
+    ]
+  )
+);
+
+widget productList = ListView(
+  padding: [12.0],
+  children: [
+    Text(
+      text: "Products"
+    ),
+    SizedBox(
+      height: 8.0
+    ),
+    ...for product in data.products:
+      GestureDetector(
+        onTap: event "product.select" { productId: args.product.id, action: "view" },
+        child: Container(
+          padding: [12.0],
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: "start",
+                children: [
+                  Text(
+                    text: product.name
+                  ),
+                  SizedBox(
+                    height: 4.0
+                  ),
+                  Text(
+                    text: product.price
+                  )
+                ]
+              ),
+              SizedBox(
+                width: 16.0
+              ),
+              switch product.inStock {
+                true: Container(
+                  padding: [8.0, 4.0, 8.0, 4.0],
+                  color: 0xFF4CAF50,
+                  child: Text(
+                    text: "In Stock"
+                  )
+                ),
+                false: Container(
+                  padding: [8.0, 4.0, 8.0, 4.0],
+                  color: 0xFFE0E0E0,
+                  child: Text(
+                    text: "Sold Out"
+                  )
+                ),
+              }
+            ]
+          )
+        )
+      )
+  ]
+);
+
+widget notificationList = ListView(
+  padding: [16.0],
+  children: [
+    Text(
+      text: "Notifications"
+    ),
+    SizedBox(
+      height: 12.0
+    ),
+    ...for notif in data.notifications:
+      Container(
+        padding: [12.0, 8.0, 12.0, 8.0],
+        child: Row(
+          children: [
+            Column(
+              crossAxisAlignment: "start",
+              children: [
+                Text(
+                  text: [notif.sender, ": ", notif.message]
+                ),
+                SizedBox(
+                  height: 4.0
+                ),
+                Text(
+                  text: notif.time
+                )
+              ]
+            ),
+            SizedBox(
+              width: 8.0
+            ),
+            GestureDetector(
+              onTap: event "notification.dismiss" { notifId: args.notif.id },
+              child: Container(
+                padding: [8.0],
+                color: 0xFFEF5350,
+                child: Text(
+                  text: "X"
+                )
+              )
+            )
+          ]
+        )
+      )
+  ]
+);
+
+widget tabSelector { activeTab: 0x00000000 } = Column(
+  children: [
+    Row(
+      mainAxisAlignment: "spaceEvenly",
+      children: [
+        GestureDetector(
+          onTap: set state.activeTab = 0x00000000,
+          child: Container(
+            padding: [20.0, 12.0, 20.0, 12.0],
+            color: switch state.activeTab {
+              0x00000000: 0xFF1976D2,
+              default: 0xFFBBDEFB,
+            },
+            child: Text(
+              text: "Home"
+            )
+          )
+        ),
+        GestureDetector(
+          onTap: set state.activeTab = 0x00000001,
+          child: Container(
+            padding: [20.0, 12.0, 20.0, 12.0],
+            color: switch state.activeTab {
+              0x00000001: 0xFF1976D2,
+              default: 0xFFBBDEFB,
+            },
+            child: Text(
+              text: "Search"
+            )
+          )
+        ),
+        GestureDetector(
+          onTap: set state.activeTab = 0x00000002,
+          child: Container(
+            padding: [20.0, 12.0, 20.0, 12.0],
+            color: switch state.activeTab {
+              0x00000002: 0xFF1976D2,
+              default: 0xFFBBDEFB,
+            },
+            child: Text(
+              text: "Settings"
+            )
+          )
+        )
+      ]
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    switch state.activeTab {
+      0x00000000: Center(
+        child: Text(
+          text: "Home Content"
+        )
+      ),
+      0x00000001: Center(
+        child: Text(
+          text: "Search Content"
+        )
+      ),
+      0x00000002: Center(
+        child: Text(
+          text: "Settings Content"
+        )
+      ),
+    }
+  ]
+);
+
+widget searchResults = Column(
+  children: [
+    Container(
+      padding: [16.0],
+      color: 0xFFF5F5F5,
+      child: Text(
+        text: ["Results for \"", data.search.query, "\""]
+      )
+    ),
+    SizedBox(
+      height: 8.0
+    ),
+    switch data.search.hasResults {
+      true: ListView(
+        shrinkWrap: true,
+        children: [
+          ...for result in data.search.results:
+            Container(
+              padding: [16.0, 8.0, 16.0, 8.0],
+              child: Column(
+                crossAxisAlignment: "start",
+                children: [
+                  Text(
+                    text: result.title
+                  ),
+                  SizedBox(
+                    height: 2.0
+                  ),
+                  Text(
+                    text: result.snippet
+                  )
+                ]
+              )
+            )
+        ]
+      ),
+      false: Center(
+        child: Column(
+          mainAxisAlignment: "center",
+          children: [
+            SizedBox(
+              height: 32.0
+            ),
+            Text(
+              text: "No results found"
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "Try a different search term"
+            )
+          ]
+        )
+      ),
+    }
+  ]
+);
+
+widget settingsToggle { darkMode: false, notifications: true } = Container(
+  padding: [20.0],
+  child: Column(
+    children: [
+      Text(
+        text: "Settings"
+      ),
+      SizedBox(
+        height: 20.0
+      ),
+      GestureDetector(
+        onTap: set state.darkMode = true,
+        onDoubleTap: set state.darkMode = false,
+        child: Container(
+          padding: [16.0, 12.0, 16.0, 12.0],
+          color: switch state.darkMode {
+            true: 0xFF424242,
+            false: 0xFFF5F5F5,
+          },
+          child: Row(
+            children: [
+              Text(
+                text: "Dark Mode"
+              ),
+              SizedBox(
+                width: 12.0
+              ),
+              switch state.darkMode {
+                true: Text(
+                  text: "ON"
+                ),
+                false: Text(
+                  text: "OFF"
+                ),
+              }
+            ]
+          )
+        )
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      GestureDetector(
+        onTap: set state.notifications = false,
+        onDoubleTap: set state.notifications = true,
+        child: Container(
+          padding: [16.0, 12.0, 16.0, 12.0],
+          color: switch state.notifications {
+            true: 0xFFE8F5E9,
+            false: 0xFFFCE4EC,
+          },
+          child: Row(
+            children: [
+              Text(
+                text: "Notifications"
+              ),
+              SizedBox(
+                width: 12.0
+              ),
+              switch state.notifications {
+                true: Text(
+                  text: "ON"
+                ),
+                false: Text(
+                  text: "OFF"
+                ),
+              }
+            ]
+          )
+        )
+      ),
+      SizedBox(
+        height: 20.0
+      ),
+      GestureDetector(
+        onTap: event "settings.save" { darkMode: state.darkMode, notifications: state.notifications },
+        child: Container(
+          padding: [24.0, 12.0, 24.0, 12.0],
+          color: 0xFF1976D2,
+          child: Center(
+            child: Text(
+              text: "Save Settings"
+            )
+          )
+        )
+      )
+    ]
+  )
+);
+
+widget chatMessages = ListView(
+  padding: [12.0],
+  children: [
+    ...for msg in data.chat.messages:
+      Container(
+        padding: [0.0, 4.0, 0.0, 4.0],
+        child: switch msg.isMine {
+          true: Row(
+            mainAxisAlignment: "end",
+            children: [
+              Container(
+                padding: [12.0],
+                color: 0xFF42A5F5,
+                child: Text(
+                  text: msg.text
+                )
+              )
+            ]
+          ),
+          false: Row(
+            mainAxisAlignment: "start",
+            children: [
+              Container(
+                padding: [12.0],
+                color: 0xFFE0E0E0,
+                child: Column(
+                  crossAxisAlignment: "start",
+                  children: [
+                    Text(
+                      text: msg.sender
+                    ),
+                    SizedBox(
+                      height: 2.0
+                    ),
+                    Text(
+                      text: msg.text
+                    )
+                  ]
+                )
+              )
+            ]
+          ),
+        }
+      )
+  ]
+);
+
+widget counter { count: 0x00000000 } = Center(
+  child: Column(
+    mainAxisAlignment: "center",
+    children: [
+      Text(
+        text: "Counter"
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      Row(
+        mainAxisAlignment: "center",
+        children: [
+          GestureDetector(
+            onTap: event "counter.decrement" {},
+            child: Container(
+              width: 48.0,
+              height: 48.0,
+              color: 0xFFEF5350,
+              child: Center(
+                child: Text(
+                  text: "-"
+                )
+              )
+            )
+          ),
+          SizedBox(
+            width: 24.0
+          ),
+          Container(
+            width: 80.0,
+            height: 48.0,
+            color: 0xFFF5F5F5,
+            child: Center(
+              child: Text(
+                text: state.count
+              )
+            )
+          ),
+          SizedBox(
+            width: 24.0
+          ),
+          GestureDetector(
+            onTap: event "counter.increment" {},
+            child: Container(
+              width: 48.0,
+              height: 48.0,
+              color: 0xFF66BB6A,
+              child: Center(
+                child: Text(
+                  text: "+"
+                )
+              )
+            )
+          )
+        ]
+      )
+    ]
+  )
+);

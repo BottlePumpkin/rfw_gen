@@ -53,6 +53,19 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
     'toggleCard',
     'scaffoldPage',
     'customWidgetDemo',
+    // 동적 기능 예제
+    'dynamicGreeting',
+    'dynamicList',
+    'conditionalStatus',
+    'toggleButton',
+    'userProfile',
+    'productList',
+    'notificationList',
+    'tabSelector',
+    'searchResults',
+    'settingsToggle',
+    'chatMessages',
+    'counter',
   ];
 
   String _currentWidget = 'greeting';
@@ -98,6 +111,50 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
         },
       }),
     );
+    // 동적 위젯용 샘플 데이터
+    _data.update('user', <String, Object>{
+      'name': 'Alice',
+      'role': 'Developer',
+      'bio': 'Flutter enthusiast building amazing apps.',
+    });
+    _data.update('items', <Object>[
+      <String, Object>{'icon': 'A', 'name': 'Alpha Item', 'description': 'First item in the list'},
+      <String, Object>{'icon': 'B', 'name': 'Beta Item', 'description': 'Second item in the list'},
+      <String, Object>{'icon': 'C', 'name': 'Gamma Item', 'description': 'Third item in the list'},
+    ]);
+    _data.update('order', <String, Object>{'status': 'shipped'});
+    _data.update('profile', <String, Object>{
+      'initials': 'AK',
+      'displayName': 'Alice Kim',
+      'department': 'Engineering',
+      'title': 'Senior Developer',
+      'isVerified': true,
+      'joinDate': '2024-01-15',
+    });
+    _data.update('products', <Object>[
+      <String, Object>{'id': '1', 'name': 'Widget Pro', 'price': '\$29.99', 'inStock': true},
+      <String, Object>{'id': '2', 'name': 'Widget Lite', 'price': '\$9.99', 'inStock': false},
+      <String, Object>{'id': '3', 'name': 'Widget Max', 'price': '\$49.99', 'inStock': true},
+    ]);
+    _data.update('notifications', <Object>[
+      <String, Object>{'id': '1', 'sender': 'System', 'message': 'Update available', 'time': '2m ago'},
+      <String, Object>{'id': '2', 'sender': 'Bob', 'message': 'PR approved', 'time': '1h ago'},
+    ]);
+    _data.update('search', <String, Object>{
+      'query': 'flutter',
+      'hasResults': true,
+      'results': <Object>[
+        <String, Object>{'title': 'Flutter Widgets', 'snippet': 'Build beautiful native apps...'},
+        <String, Object>{'title': 'RFW Guide', 'snippet': 'Remote Flutter Widgets overview...'},
+      ],
+    });
+    _data.update('chat', <String, Object>{
+      'messages': <Object>[
+        <String, Object>{'isMine': false, 'sender': 'Bob', 'text': 'Hey, how is it going?'},
+        <String, Object>{'isMine': true, 'sender': 'Me', 'text': 'Great! Working on RFW.'},
+        <String, Object>{'isMine': false, 'sender': 'Bob', 'text': 'Cool, show me a demo!'},
+      ],
+    });
     _loadWidget();
   }
 

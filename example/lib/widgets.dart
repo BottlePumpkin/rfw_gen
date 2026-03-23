@@ -450,3 +450,623 @@ Widget buildCustomWidgetDemo() {
     ],
   );
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// 동적 기능 예제 (Dynamic Features Examples)
+// ══════════════════════════════════════════════════════════════════════
+
+// ─── 1. 동적 인사 — DataRef + RfwConcat ───
+// data.user.name 을 참조하여 동적으로 인사 문구를 구성합니다.
+
+@RfwWidget('dynamicGreeting')
+Widget buildDynamicGreeting() {
+  return Container(
+    padding: EdgeInsets.all(24.0),
+    color: Color(0xFFF3E5F5),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(RfwConcat(['Hello, ', DataRef('user.name'), '!'])),
+        SizedBox(height: 8.0),
+        Text(RfwConcat(['Your role: ', DataRef('user.role')])),
+        SizedBox(height: 16.0),
+        Text(DataRef('user.bio')),
+      ],
+    ),
+  );
+}
+
+// ─── 2. 동적 리스트 — RfwFor + LoopVar ───
+// data.items 리스트를 순회하며 각 아이템의 name과 description을 표시합니다.
+
+@RfwWidget('dynamicList')
+Widget buildDynamicList() {
+  return ListView(
+    padding: EdgeInsets.all(16.0),
+    children: [
+      Text('Item List'),
+      SizedBox(height: 12.0),
+      RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          child: Row(
+            children: [
+              Container(
+                width: 40.0,
+                height: 40.0,
+                color: Color(0xFFE3F2FD),
+                child: Center(child: Text(item['icon'])),
+              ),
+              SizedBox(width: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item['name']),
+                  SizedBox(height: 2.0),
+                  Text(item['description']),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// ─── 3. 조건부 상태 표시 — RfwSwitch + DataRef ───
+// data.status 값에 따라 다른 UI를 표시합니다.
+
+@RfwWidget('conditionalStatus')
+Widget buildConditionalStatus() {
+  return Center(
+    child: Container(
+      padding: EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Order Status'),
+          SizedBox(height: 16.0),
+          RfwSwitch(
+            value: DataRef('order.status'),
+            cases: {
+              'pending': Container(
+                padding: EdgeInsets.all(16.0),
+                color: Color(0xFFFFF9C4),
+                child: Column(
+                  children: [
+                    Text('Pending'),
+                    SizedBox(height: 4.0),
+                    Text('Your order is being processed'),
+                  ],
+                ),
+              ),
+              'shipped': Container(
+                padding: EdgeInsets.all(16.0),
+                color: Color(0xFFE3F2FD),
+                child: Column(
+                  children: [
+                    Text('Shipped'),
+                    SizedBox(height: 4.0),
+                    Text('Your order is on the way'),
+                  ],
+                ),
+              ),
+              'delivered': Container(
+                padding: EdgeInsets.all(16.0),
+                color: Color(0xFFE8F5E9),
+                child: Column(
+                  children: [
+                    Text('Delivered'),
+                    SizedBox(height: 4.0),
+                    Text('Your order has arrived'),
+                  ],
+                ),
+              ),
+            },
+            defaultCase: Container(
+              padding: EdgeInsets.all(16.0),
+              color: Color(0xFFEEEEEE),
+              child: Text('Unknown status'),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+// ─── 4. 토글 버튼 — StateRef + setState + state 선언 ───
+// 위젯 로컬 상태(pressed)를 사용하여 탭 시 시각적 피드백을 제공합니다.
+
+@RfwWidget('toggleButton', state: {'pressed': false})
+Widget buildToggleButton() {
+  return GestureDetector(
+    onTapDown: RfwHandler.setState('pressed', true),
+    onTapUp: RfwHandler.setState('pressed', false),
+    onTapCancel: RfwHandler.setState('pressed', false),
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+      color: RfwSwitchValue(
+        value: StateRef('pressed'),
+        cases: {
+          true: 0xFF1565C0,
+          false: 0xFF42A5F5,
+        },
+      ),
+      child: Center(
+        child: RfwSwitch(
+          value: StateRef('pressed'),
+          cases: {
+            true: Text('Pressing...'),
+            false: Text('Press Me'),
+          },
+        ),
+      ),
+    ),
+  );
+}
+
+// ─── 5. 사용자 프로필 — DataRef + ArgsRef + RfwConcat + RfwSwitch ───
+// 여러 동적 기능을 조합하여 사용자 프로필 카드를 구성합니다.
+
+@RfwWidget('userProfile')
+Widget buildUserProfile() {
+  return Container(
+    padding: EdgeInsets.all(20.0),
+    color: Color(0xFFF5F5F5),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 64.0,
+              height: 64.0,
+              color: Color(0xFF9C27B0),
+              child: Center(
+                child: Text(DataRef('profile.initials')),
+              ),
+            ),
+            SizedBox(width: 16.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(DataRef('profile.displayName')),
+                SizedBox(height: 4.0),
+                Text(RfwConcat([DataRef('profile.department'), ' - ', DataRef('profile.title')])),
+              ],
+            ),
+          ],
+        ),
+        SizedBox(height: 16.0),
+        RfwSwitch(
+          value: DataRef('profile.isVerified'),
+          cases: {
+            true: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              color: Color(0xFF4CAF50),
+              child: Text('Verified Account'),
+            ),
+            false: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+              color: Color(0xFFFF9800),
+              child: Text('Unverified — Please verify your email'),
+            ),
+          },
+        ),
+        SizedBox(height: 12.0),
+        Text(RfwConcat(['Member since ', DataRef('profile.joinDate')])),
+      ],
+    ),
+  );
+}
+
+// ─── 6. 상품 목록 — RfwFor + RfwSwitch + 이벤트 (동적 페이로드) ───
+// 상품 리스트를 순회하고, 재고 상태에 따라 UI를 분기하며,
+// 탭 시 상품 ID가 포함된 이벤트를 발송합니다.
+
+@RfwWidget('productList')
+Widget buildProductList() {
+  return ListView(
+    padding: EdgeInsets.all(12.0),
+    children: [
+      Text('Products'),
+      SizedBox(height: 8.0),
+      RfwFor(
+        items: DataRef('products'),
+        itemName: 'product',
+        builder: (product) => GestureDetector(
+          onTap: RfwHandler.event('product.select', {
+            'productId': ArgsRef('product.id'),
+            'action': 'view',
+          }),
+          child: Container(
+            padding: EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(product['name']),
+                    SizedBox(height: 4.0),
+                    Text(product['price']),
+                  ],
+                ),
+                SizedBox(width: 16.0),
+                RfwSwitch(
+                  value: product['inStock'],
+                  cases: {
+                    true: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      color: Color(0xFF4CAF50),
+                      child: Text('In Stock'),
+                    ),
+                    false: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                      color: Color(0xFFE0E0E0),
+                      child: Text('Sold Out'),
+                    ),
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// ─── 7. 알림 목록 — RfwFor + RfwConcat + 이벤트 ───
+// 알림 리스트를 순회하며 포맷된 텍스트와 해제 이벤트를 보여줍니다.
+
+@RfwWidget('notificationList')
+Widget buildNotificationList() {
+  return ListView(
+    padding: EdgeInsets.all(16.0),
+    children: [
+      Text('Notifications'),
+      SizedBox(height: 12.0),
+      RfwFor(
+        items: DataRef('notifications'),
+        itemName: 'notif',
+        builder: (notif) => Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(RfwConcat([notif['sender'], ': ', notif['message']])),
+                  SizedBox(height: 4.0),
+                  Text(notif['time']),
+                ],
+              ),
+              SizedBox(width: 8.0),
+              GestureDetector(
+                onTap: RfwHandler.event('notification.dismiss', {
+                  'notifId': ArgsRef('notif.id'),
+                }),
+                child: Container(
+                  padding: EdgeInsets.all(8.0),
+                  color: Color(0xFFEF5350),
+                  child: Text('X'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// ─── 8. 탭 선택기 — state + switch + 다중 핸들러 ───
+// 로컬 상태를 사용하여 3개 탭 사이를 전환합니다.
+
+@RfwWidget('tabSelector', state: {'activeTab': 0})
+Widget buildTabSelector() {
+  return Column(
+    children: [
+      // 탭 바
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GestureDetector(
+            onTap: RfwHandler.setState('activeTab', 0),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              color: RfwSwitchValue(
+                value: StateRef('activeTab'),
+                cases: {0: 0xFF1976D2},
+                defaultCase: 0xFFBBDEFB,
+              ),
+              child: Text('Home'),
+            ),
+          ),
+          GestureDetector(
+            onTap: RfwHandler.setState('activeTab', 1),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              color: RfwSwitchValue(
+                value: StateRef('activeTab'),
+                cases: {1: 0xFF1976D2},
+                defaultCase: 0xFFBBDEFB,
+              ),
+              child: Text('Search'),
+            ),
+          ),
+          GestureDetector(
+            onTap: RfwHandler.setState('activeTab', 2),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+              color: RfwSwitchValue(
+                value: StateRef('activeTab'),
+                cases: {2: 0xFF1976D2},
+                defaultCase: 0xFFBBDEFB,
+              ),
+              child: Text('Settings'),
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 16.0),
+      // 탭 콘텐츠
+      RfwSwitch(
+        value: StateRef('activeTab'),
+        cases: {
+          0: Center(
+            child: Text('Home Content'),
+          ),
+          1: Center(
+            child: Text('Search Content'),
+          ),
+          2: Center(
+            child: Text('Settings Content'),
+          ),
+        },
+      ),
+    ],
+  );
+}
+
+// ─── 9. 검색 결과 — DataRef + RfwFor + 조건부 빈 상태 ───
+// 결과가 있으면 리스트를 표시하고, 없으면 빈 상태를 표시합니다.
+
+@RfwWidget('searchResults')
+Widget buildSearchResults() {
+  return Column(
+    children: [
+      Container(
+        padding: EdgeInsets.all(16.0),
+        color: Color(0xFFF5F5F5),
+        child: Text(RfwConcat(['Results for "', DataRef('search.query'), '"'])),
+      ),
+      SizedBox(height: 8.0),
+      RfwSwitch(
+        value: DataRef('search.hasResults'),
+        cases: {
+          true: ListView(
+            shrinkWrap: true,
+            children: [
+              RfwFor(
+                items: DataRef('search.results'),
+                itemName: 'result',
+                builder: (result) => Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(result['title']),
+                      SizedBox(height: 2.0),
+                      Text(result['snippet']),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          false: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 32.0),
+                Text('No results found'),
+                SizedBox(height: 8.0),
+                Text('Try a different search term'),
+              ],
+            ),
+          ),
+        },
+      ),
+    ],
+  );
+}
+
+// ─── 10. 설정 토글 — state + switch + 이벤트 디스패치 ───
+// 로컬 상태를 토글하면서 동시에 호스트 앱에 이벤트를 전송합니다.
+
+@RfwWidget('settingsToggle', state: {'darkMode': false, 'notifications': true})
+Widget buildSettingsToggle() {
+  return Container(
+    padding: EdgeInsets.all(20.0),
+    child: Column(
+      children: [
+        Text('Settings'),
+        SizedBox(height: 20.0),
+        // 다크 모드 토글
+        GestureDetector(
+          onTap: RfwHandler.setState('darkMode', true),
+          onDoubleTap: RfwHandler.setState('darkMode', false),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            color: RfwSwitchValue(
+              value: StateRef('darkMode'),
+              cases: {
+                true: 0xFF424242,
+                false: 0xFFF5F5F5,
+              },
+            ),
+            child: Row(
+              children: [
+                Text('Dark Mode'),
+                SizedBox(width: 12.0),
+                RfwSwitch(
+                  value: StateRef('darkMode'),
+                  cases: {
+                    true: Text('ON'),
+                    false: Text('OFF'),
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 12.0),
+        // 알림 토글
+        GestureDetector(
+          onTap: RfwHandler.setState('notifications', false),
+          onDoubleTap: RfwHandler.setState('notifications', true),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            color: RfwSwitchValue(
+              value: StateRef('notifications'),
+              cases: {
+                true: 0xFFE8F5E9,
+                false: 0xFFFCE4EC,
+              },
+            ),
+            child: Row(
+              children: [
+                Text('Notifications'),
+                SizedBox(width: 12.0),
+                RfwSwitch(
+                  value: StateRef('notifications'),
+                  cases: {
+                    true: Text('ON'),
+                    false: Text('OFF'),
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 20.0),
+        // 설정 저장 버튼 — 이벤트 디스패치
+        GestureDetector(
+          onTap: RfwHandler.event('settings.save', {
+            'darkMode': StateRef('darkMode'),
+            'notifications': StateRef('notifications'),
+          }),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+            color: Color(0xFF1976D2),
+            child: Center(child: Text('Save Settings')),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// ─── 11. 채팅 메시지 — RfwFor + RfwConcat + RfwSwitch (발신/수신 분기) ───
+// 메시지 리스트를 순회하며 발신/수신에 따라 정렬 방향을 분기합니다.
+
+@RfwWidget('chatMessages')
+Widget buildChatMessages() {
+  return ListView(
+    padding: EdgeInsets.all(12.0),
+    children: [
+      RfwFor(
+        items: DataRef('chat.messages'),
+        itemName: 'msg',
+        builder: (msg) => Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0),
+          child: RfwSwitch(
+            value: msg['isMine'],
+            cases: {
+              true: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12.0),
+                    color: Color(0xFF42A5F5),
+                    child: Text(msg['text']),
+                  ),
+                ],
+              ),
+              false: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(12.0),
+                    color: Color(0xFFE0E0E0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(msg['sender']),
+                        SizedBox(height: 2.0),
+                        Text(msg['text']),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            },
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// ─── 12. 카운터 — state + 증감 핸들러 ───
+// 상태를 사용하여 간단한 카운터 UI를 구현합니다.
+
+@RfwWidget('counter', state: {'count': 0})
+Widget buildCounter() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Counter'),
+        SizedBox(height: 16.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: RfwHandler.event('counter.decrement'),
+              child: Container(
+                width: 48.0,
+                height: 48.0,
+                color: Color(0xFFEF5350),
+                child: Center(child: Text('-')),
+              ),
+            ),
+            SizedBox(width: 24.0),
+            Container(
+              width: 80.0,
+              height: 48.0,
+              color: Color(0xFFF5F5F5),
+              child: Center(
+                child: Text(StateRef('count')),
+              ),
+            ),
+            SizedBox(width: 24.0),
+            GestureDetector(
+              onTap: RfwHandler.event('counter.increment'),
+              child: Container(
+                width: 48.0,
+                height: 48.0,
+                color: Color(0xFF66BB6A),
+                child: Center(child: Text('+')),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}

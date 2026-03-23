@@ -87,6 +87,16 @@ class ExpressionConverter {
       return _convertEdgeInsets(methodName, expr.argumentList);
     }
 
+    // Duration(milliseconds: 300) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'Duration') {
+      return _convertDuration(expr);
+    }
+
+    // BorderRadius.xxx(...) — parses as MethodInvocation with target 'BorderRadius'
+    if (target is SimpleIdentifier && target.name == 'BorderRadius') {
+      return _convertBorderRadius(methodName, expr.argumentList);
+    }
+
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
@@ -203,8 +213,89 @@ class ExpressionConverter {
       return IrEnumValue(identifier);
     }
 
+    if (prefix == 'Curves') {
+      return IrStringValue(identifier);
+    }
+
+    if (prefix == 'BorderRadius' && identifier == 'zero') {
+      return IrListValue([IrMapValue({'x': IrNumberValue(0.0)})]);
+    }
+
     throw UnsupportedExpressionError(
       'Unknown prefixed identifier: $prefix.$identifier',
+      offset: expr.offset,
+    );
+  }
+
+  IrIntValue _convertDuration(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    for (final arg in args) {
+      if (arg is NamedExpression && arg.name.label.name == 'milliseconds') {
+        final value = arg.expression;
+        if (value is IntegerLiteral) {
+          return IrIntValue(value.value!);
+        }
+      }
+    }
+    throw UnsupportedExpressionError(
+      'Duration requires a milliseconds named argument',
+      offset: expr.offset,
+    );
+  }
+
+  IrListValue _convertBorderRadius(String method, ArgumentList argList) {
+    switch (method) {
+      case 'circular':
+        return _convertBorderRadiusCircular(argList);
+      case 'only':
+        return _convertBorderRadiusOnly(argList);
+      default:
+        throw UnsupportedExpressionError(
+          'Unsupported BorderRadius constructor: $method',
+        );
+    }
+  }
+
+  IrListValue _convertBorderRadiusCircular(ArgumentList argList) {
+    final value = _toDouble(argList.arguments.first);
+    return IrListValue([IrMapValue({'x': IrNumberValue(value)})]);
+  }
+
+  IrListValue _convertBorderRadiusOnly(ArgumentList argList) {
+    final corners = <IrValue>[
+      IrMapValue({'x': IrNumberValue(0.0)}),
+      IrMapValue({'x': IrNumberValue(0.0)}),
+      IrMapValue({'x': IrNumberValue(0.0)}),
+      IrMapValue({'x': IrNumberValue(0.0)}),
+    ];
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        final radiusValue = _extractRadiusValue(arg.expression);
+        switch (name) {
+          case 'topLeft':
+            corners[0] = IrMapValue({'x': IrNumberValue(radiusValue)});
+          case 'topRight':
+            corners[1] = IrMapValue({'x': IrNumberValue(radiusValue)});
+          case 'bottomLeft':
+            corners[2] = IrMapValue({'x': IrNumberValue(radiusValue)});
+          case 'bottomRight':
+            corners[3] = IrMapValue({'x': IrNumberValue(radiusValue)});
+        }
+      }
+    }
+    return IrListValue(corners);
+  }
+
+  double _extractRadiusValue(Expression expr) {
+    if (expr is MethodInvocation &&
+        expr.target is SimpleIdentifier &&
+        (expr.target as SimpleIdentifier).name == 'Radius' &&
+        expr.methodName.name == 'circular') {
+      return _toDouble(expr.argumentList.arguments.first);
+    }
+    throw UnsupportedExpressionError(
+      'Expected Radius.circular(), got ${expr.runtimeType}',
       offset: expr.offset,
     );
   }

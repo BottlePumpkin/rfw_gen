@@ -301,6 +301,93 @@ void main() {
     });
   });
 
+  group('BorderRadius', () {
+    test('converts BorderRadius.circular(8) to single-element radius list', () {
+      final expr = parseExpression('BorderRadius.circular(8)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(8.0));
+    });
+
+    test('converts BorderRadius.circular with double', () {
+      final expr = parseExpression('BorderRadius.circular(12.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(12.0));
+    });
+
+    test('converts BorderRadius.only with all corners', () {
+      final expr = parseExpression(
+        'BorderRadius.only('
+        '  topLeft: Radius.circular(4),'
+        '  topRight: Radius.circular(8),'
+        '  bottomLeft: Radius.circular(12),'
+        '  bottomRight: Radius.circular(16),'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(4));
+      expect((list.values[0] as IrMapValue).entries['x'], isA<IrNumberValue>());
+    });
+
+    test('converts BorderRadius.zero', () {
+      final expr = parseExpression('BorderRadius.zero');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(0.0));
+    });
+  });
+
+  group('Duration', () {
+    test('converts Duration(milliseconds: 300) to int', () {
+      final expr = parseExpression('Duration(milliseconds: 300)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, equals(300));
+    });
+
+    test('converts Duration(milliseconds: 0)', () {
+      final expr = parseExpression('Duration(milliseconds: 0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, equals(0));
+    });
+  });
+
+  group('Curves', () {
+    test('converts Curves.easeIn to string', () {
+      final expr = parseExpression('Curves.easeIn');
+      final result = converter.convert(expr);
+      expect(result, isA<IrStringValue>());
+      expect((result as IrStringValue).value, equals('easeIn'));
+    });
+
+    test('converts Curves.linear to string', () {
+      final expr = parseExpression('Curves.linear');
+      final result = converter.convert(expr);
+      expect(result, isA<IrStringValue>());
+      expect((result as IrStringValue).value, equals('linear'));
+    });
+
+    test('converts Curves.bounceOut to string', () {
+      final expr = parseExpression('Curves.bounceOut');
+      final result = converter.convert(expr);
+      expect(result, isA<IrStringValue>());
+      expect((result as IrStringValue).value, equals('bounceOut'));
+    });
+  });
+
   group('Unsupported expressions', () {
     test('throws for variable reference', () {
       final expr = parseExpression('myVariable');

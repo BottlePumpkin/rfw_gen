@@ -1,4 +1,4 @@
-// ignore_for_file: argument_type_not_assignable
+// ignore_for_file: argument_type_not_assignable, undefined_function
 import 'package:flutter/material.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 

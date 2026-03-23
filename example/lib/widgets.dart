@@ -1,5 +1,5 @@
+// ignore_for_file: argument_type_not_assignable
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 
 // ─── 기본: 인사 카드 ───
@@ -289,7 +289,7 @@ Widget buildOverlayLayout() {
       ),
       Positioned(
         top: 10.0,
-        start: 10.0,
+        left: 10.0,
         child: Opacity(
           opacity: 0.9,
           child: Container(

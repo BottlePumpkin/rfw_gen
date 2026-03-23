@@ -14,8 +14,8 @@ Widget buildShopHome() {
       children: [
         // Promotion Banner
         Container(
-          height: 160,
-          padding: const EdgeInsets.all(24),
+          height: 160.0,
+          padding: const EdgeInsets.all(24.0),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment(-1.0, 0.0),
@@ -31,7 +31,7 @@ Widget buildShopHome() {
                 DataRef('banners.items.0.title'),
                 style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Color(0xFFFFFFFF)),
               ),
-              SizedBox(height: 4),
+              SizedBox(height: 4.0),
               Text(
                 DataRef('banners.items.0.subtitle'),
                 style: const TextStyle(fontSize: 14.0, color: Color(0xFFFFFFFF)),
@@ -42,7 +42,7 @@ Widget buildShopHome() {
 
         // Categories header
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Text(
             '카테고리',
             style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
@@ -50,7 +50,7 @@ Widget buildShopHome() {
         ),
         // Category list
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -62,7 +62,7 @@ Widget buildShopHome() {
                   child: Column(
                     children: [
                       Icon(icon: cat['icon'], size: 32.0, color: const Color(0xFF2196F3)),
-                      SizedBox(height: 4),
+                      SizedBox(height: 4.0),
                       Text(cat['name'], style: const TextStyle(fontSize: 12.0)),
                     ],
                   ),
@@ -74,7 +74,7 @@ Widget buildShopHome() {
 
         // Recommended header
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Text(
             '추천 상품',
             style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
@@ -82,10 +82,10 @@ Widget buildShopHome() {
         ),
         // Recommended products horizontal scroll
         SizedBox(
-          height: 180,
+          height: 180.0,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             children: [
               RfwFor(
                 items: DataRef('recommended.items'),
@@ -93,8 +93,8 @@ Widget buildShopHome() {
                 builder: (product) => GestureDetector(
                   onTap: RfwHandler.event('navigate', {'page': 'productDetail'}),
                   child: Container(
-                    width: 140,
-                    margin: const EdgeInsets.only(right: 12),
+                    width: 140.0,
+                    margin: const EdgeInsets.only(right: 12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -102,12 +102,12 @@ Widget buildShopHome() {
                           borderRadius: const BorderRadius.all(Radius.circular(8)),
                           child: Image(
                             image: NetworkImage(product['image']),
-                            width: 140,
-                            height: 100,
+                            width: 140.0,
+                            height: 100.0,
                             fit: BoxFit.cover,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 8.0),
                         Text(
                           product['name'],
                           style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
@@ -138,7 +138,7 @@ Widget buildProductList() {
   return Column(
     children: [
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         color: const Color(0xFF2196F3),
         child: Text(
           '상품 목록',
@@ -147,7 +147,7 @@ Widget buildProductList() {
       ),
       Expanded(
         child: ListView(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8.0),
           children: [
             RfwFor(
               items: DataRef('products.items'),
@@ -155,21 +155,21 @@ Widget buildProductList() {
               builder: (item) => GestureDetector(
                 onTap: RfwHandler.event('navigate', {'page': 'productDetail'}),
                 child: Card(
-                  margin: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.all(4.0),
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12.0),
                     child: Row(
                       children: [
                         ClipRRect(
                           borderRadius: const BorderRadius.all(Radius.circular(8)),
                           child: Image(
                             image: NetworkImage(item['image']),
-                            width: 80,
-                            height: 80,
+                            width: 80.0,
+                            height: 80.0,
                             fit: BoxFit.cover,
                           ),
                         ),
-                        SizedBox(width: 12),
+                        SizedBox(width: 12.0),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,14 +178,14 @@ Widget buildProductList() {
                                 item['name'],
                                 style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(height: 4),
+                              SizedBox(height: 4.0),
                               Text(
                                 RfwConcat([item['price'], '원']),
                                 style: const TextStyle(fontSize: 14.0, color: Color(0xFF757575)),
                               ),
-                              SizedBox(height: 4),
+                              SizedBox(height: 4.0),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                                 color: RfwSwitchValue<int>(
                                   value: item['inStock'],
                                   cases: {true: 0xFF4CAF50, false: 0xFFFF5722},
@@ -227,13 +227,13 @@ Widget buildProductDetail() {
         // Product Image
         Image(
           image: NetworkImage(DataRef('product.image')),
-          width: 400,
-          height: 300,
+          width: 400.0,
+          height: 300.0,
           fit: BoxFit.cover,
         ),
 
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -242,17 +242,17 @@ Widget buildProductDetail() {
                 DataRef('product.name'),
                 style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 8.0),
               Text(
                 RfwConcat([DataRef('product.price'), '원']),
                 style: const TextStyle(fontSize: 20.0, color: Color(0xFF2196F3), fontWeight: FontWeight.bold),
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 16.0),
 
               // Stock status
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
                 color: RfwSwitchValue<int>(
                   value: DataRef('product.inStock'),
                   cases: {true: 0xFF4CAF50, false: 0xFFFF5722},
@@ -266,7 +266,7 @@ Widget buildProductDetail() {
                 ),
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 16.0),
 
               // Description
               Text(
@@ -274,7 +274,7 @@ Widget buildProductDetail() {
                 style: const TextStyle(fontSize: 15.0, color: Color(0xFF616161)),
               ),
 
-              SizedBox(height: 24),
+              SizedBox(height: 24.0),
 
               // Quantity selector
               Row(
@@ -285,7 +285,7 @@ Widget buildProductDetail() {
                     child: Text('-'),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Text(
                       StateRef('quantity'),
                       style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -298,7 +298,7 @@ Widget buildProductDetail() {
                 ],
               ),
 
-              SizedBox(height: 24),
+              SizedBox(height: 24.0),
 
               // Add to cart button
               ElevatedButton(
@@ -322,7 +322,7 @@ Widget buildCart() {
   return Column(
     children: [
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         color: const Color(0xFF2196F3),
         child: Text(
           '장바구니',
@@ -332,13 +332,13 @@ Widget buildCart() {
 
       Expanded(
         child: ListView(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8.0),
           children: [
             RfwFor(
               items: DataRef('cart.items'),
               itemName: 'cartItem',
               builder: (cartItem) => Card(
-                margin: const EdgeInsets.symmetric(vertical: 4),
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
                 child: ListTile(
                   title: Text(cartItem['name']),
                   subtitle: Text(RfwConcat([cartItem['price'], '원 × ', cartItem['quantity']])),
@@ -350,7 +350,7 @@ Widget buildCart() {
                         child: Icon(icon: RfwIcon.remove, color: const Color(0xFF757575)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           cartItem['quantity'],
                           style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
@@ -371,7 +371,7 @@ Widget buildCart() {
 
       // Total + Checkout
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         color: const Color(0xFFF5F5F5),
         child: Column(
           children: [
@@ -388,7 +388,7 @@ Widget buildCart() {
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            SizedBox(height: 12.0),
             ElevatedButton(
               onPressed: RfwHandler.event('checkout', {}),
               child: Text(RfwConcat(['주문하기 (', DataRef('cart.itemCount'), '개)'])),
@@ -408,27 +408,27 @@ Widget buildCart() {
 Widget buildOrderComplete() {
   return Center(
     child: Padding(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(32.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon: RfwIcon.check, size: 80.0, color: const Color(0xFF4CAF50)),
-          SizedBox(height: 24),
+          SizedBox(height: 24.0),
           Text(
             '주문이 완료되었습니다!',
             style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 12.0),
           Text(
             RfwConcat(['주문번호: ', DataRef('order.orderNumber')]),
             style: const TextStyle(fontSize: 16.0, color: Color(0xFF757575)),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 8.0),
           Text(
             RfwConcat(['총 ', DataRef('order.itemCount'), '개 상품 / ', DataRef('order.totalPrice'), '원']),
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF757575)),
           ),
-          SizedBox(height: 32),
+          SizedBox(height: 32.0),
           ElevatedButton(
             onPressed: RfwHandler.event('navigate', {'page': 'shopHome'}),
             child: Text('홈으로 돌아가기'),

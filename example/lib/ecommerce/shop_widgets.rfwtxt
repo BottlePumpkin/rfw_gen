@@ -6,7 +6,7 @@ widget shopHome = SingleChildScrollView(
     crossAxisAlignment: "start",
     children: [
       Container(
-        height: 0x000000A0,
+        height: 160.0,
         child: Column(
           crossAxisAlignment: "start",
           mainAxisAlignment: "center",
@@ -15,7 +15,7 @@ widget shopHome = SingleChildScrollView(
               text: data.banners.items.0.title
             ),
             SizedBox(
-              height: 0x00000004
+              height: 4.0
             ),
             Text(
               text: data.banners.items.0.subtitle
@@ -42,7 +42,7 @@ widget shopHome = SingleChildScrollView(
                       size: 32.0
                     ),
                     SizedBox(
-                      height: 0x00000004
+                      height: 4.0
                     ),
                     Text(
                       text: cat.name
@@ -59,7 +59,7 @@ widget shopHome = SingleChildScrollView(
         )
       ),
       SizedBox(
-        height: 0x000000B4,
+        height: 180.0,
         child: ListView(
           scrollDirection: "horizontal",
           children: [
@@ -67,19 +67,19 @@ widget shopHome = SingleChildScrollView(
               GestureDetector(
                 onTap: event "navigate" { page: "productDetail" },
                 child: Container(
-                  width: 0x0000008C,
+                  width: 140.0,
                   child: Column(
                     crossAxisAlignment: "start",
                     children: [
                       ClipRRect(
                         child: Image(
-                          width: 0x0000008C,
-                          height: 0x00000064,
+                          width: 140.0,
+                          height: 100.0,
                           fit: "cover"
                         )
                       ),
                       SizedBox(
-                        height: 0x00000008
+                        height: 8.0
                       ),
                       Text(
                         text: product.name
@@ -117,13 +117,13 @@ widget productList = Column(
                     children: [
                       ClipRRect(
                         child: Image(
-                          width: 0x00000050,
-                          height: 0x00000050,
+                          width: 80.0,
+                          height: 80.0,
                           fit: "cover"
                         )
                       ),
                       SizedBox(
-                        width: 0x0000000C
+                        width: 12.0
                       ),
                       Expanded(
                         child: Column(
@@ -133,13 +133,13 @@ widget productList = Column(
                               text: item.name
                             ),
                             SizedBox(
-                              height: 0x00000004
+                              height: 4.0
                             ),
                             Text(
                               text: [item.price, "원"]
                             ),
                             SizedBox(
-                              height: 0x00000004
+                              height: 4.0
                             ),
                             Container(
                               color: switch item.inStock {
@@ -172,8 +172,8 @@ widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
     crossAxisAlignment: "start",
     children: [
       Image(
-        width: 0x00000190,
-        height: 0x0000012C,
+        width: 400.0,
+        height: 300.0,
         fit: "cover"
       ),
       Padding(
@@ -184,13 +184,13 @@ widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
               text: data.product.name
             ),
             SizedBox(
-              height: 0x00000008
+              height: 8.0
             ),
             Text(
               text: [data.product.price, "원"]
             ),
             SizedBox(
-              height: 0x00000010
+              height: 16.0
             ),
             Container(
               color: switch data.product.inStock {
@@ -205,13 +205,13 @@ widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
               )
             ),
             SizedBox(
-              height: 0x00000010
+              height: 16.0
             ),
             Text(
               text: data.product.description
             ),
             SizedBox(
-              height: 0x00000018
+              height: 24.0
             ),
             Row(
               mainAxisAlignment: "center",
@@ -236,7 +236,7 @@ widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
               ]
             ),
             SizedBox(
-              height: 0x00000018
+              height: 24.0
             ),
             ElevatedButton(
               onPressed: event "addToCart" { id: data.product.id },
@@ -318,7 +318,7 @@ widget cart = Column(
             ]
           ),
           SizedBox(
-            height: 0x0000000C
+            height: 12.0
           ),
           ElevatedButton(
             onPressed: event "checkout" {},
@@ -345,25 +345,25 @@ widget orderComplete = Center(
           size: 80.0
         ),
         SizedBox(
-          height: 0x00000018
+          height: 24.0
         ),
         Text(
           text: "주문이 완료되었습니다!"
         ),
         SizedBox(
-          height: 0x0000000C
+          height: 12.0
         ),
         Text(
           text: ["주문번호: ", data.order.orderNumber]
         ),
         SizedBox(
-          height: 0x00000008
+          height: 8.0
         ),
         Text(
           text: ["총 ", data.order.itemCount, "개 상품 / ", data.order.totalPrice, "원"]
         ),
         SizedBox(
-          height: 0x00000020
+          height: 32.0
         ),
         ElevatedButton(
           onPressed: event "navigate" { page: "shopHome" },

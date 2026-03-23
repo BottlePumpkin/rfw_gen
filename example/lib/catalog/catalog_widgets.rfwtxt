@@ -6,16 +6,16 @@ widget columnDemo = Column(
   mainAxisSize: "max",
   children: [
     Container(
-      width: 0x0000003C,
-      height: 0x0000003C
+      width: 60.0,
+      height: 60.0
     ),
     Container(
-      width: 0x0000003C,
-      height: 0x0000003C
+      width: 60.0,
+      height: 60.0
     ),
     Container(
-      width: 0x0000003C,
-      height: 0x0000003C
+      width: 60.0,
+      height: 60.0
     )
   ]
 );
@@ -25,16 +25,16 @@ widget rowDemo = Row(
   mainAxisAlignment: "spaceAround",
   children: [
     Container(
-      width: 0x00000032,
-      height: 0x00000050
+      width: 50.0,
+      height: 80.0
     ),
     Container(
-      width: 0x00000032,
-      height: 0x0000003C
+      width: 50.0,
+      height: 60.0
     ),
     Container(
-      width: 0x00000032,
-      height: 0x00000028
+      width: 50.0,
+      height: 40.0
     )
   ]
 );
@@ -74,19 +74,19 @@ widget wrapDemo = Wrap(
 widget stackDemo = Stack(
   children: [
     Container(
-      width: 0x000000C8,
-      height: 0x000000C8
+      width: 200.0,
+      height: 200.0
     ),
     Container(
-      width: 0x00000096,
-      height: 0x00000096
+      width: 150.0,
+      height: 150.0
     ),
     Positioned(
       top: 10.0,
       end: 10.0,
       child: Container(
-        width: 0x00000028,
-        height: 0x00000028
+        width: 40.0,
+        height: 40.0
       )
     )
   ]
@@ -97,21 +97,21 @@ widget expandedDemo = Row(
     Expanded(
       flex: 0x00000002,
       child: Container(
-        height: 0x0000003C
+        height: 60.0
       )
     ),
     Expanded(
       flex: 0x00000001,
       child: Container(
-        height: 0x0000003C
+        height: 60.0
       )
     ),
     Flexible(
       flex: 0x00000001,
       fit: "loose",
       child: Container(
-        width: 0x0000001E,
-        height: 0x0000003C
+        width: 30.0,
+        height: 60.0
       )
     )
   ]
@@ -120,8 +120,8 @@ widget expandedDemo = Row(
 widget sizedBoxDemo = Column(
   children: [
     SizedBox(
-      width: 0x00000064,
-      height: 0x00000032,
+      width: 100.0,
+      height: 50.0,
       child: ColoredBox(
       )
     ),
@@ -138,16 +138,16 @@ widget sizedBoxDemo = Column(
 );
 
 widget alignDemo = SizedBox(
-  width: 0x000000C8,
-  height: 0x000000C8,
+  width: 200.0,
+  height: 200.0,
   child: Stack(
     children: [
       Container(
       ),
       Align(
         child: Container(
-          width: 0x00000028,
-          height: 0x00000028
+          width: 40.0,
+          height: 40.0
         )
       ),
       Center(
@@ -157,8 +157,8 @@ widget alignDemo = SizedBox(
       ),
       Align(
         child: Container(
-          width: 0x00000028,
-          height: 0x00000028
+          width: 40.0,
+          height: 40.0
         )
       )
     ]
@@ -173,12 +173,12 @@ widget aspectRatioDemo = Column(
       )
     ),
     SizedBox(
-      height: 0x00000008
+      height: 8.0
     ),
     FractionallySizedBox(
       widthFactor: 0.7,
       child: Container(
-        height: 0x00000028
+        height: 40.0
       )
     )
   ]
@@ -191,17 +191,17 @@ widget intrinsicDemo = Column(
         crossAxisAlignment: "stretch",
         children: [
           Container(
-            width: 0x00000032
+            width: 50.0
           ),
           Column(
             children: [
               Container(
-                width: 0x00000064,
-                height: 0x0000001E
+                width: 100.0,
+                height: 30.0
               ),
               Container(
-                width: 0x00000064,
-                height: 0x0000003C
+                width: 100.0,
+                height: 60.0
               )
             ]
           )
@@ -209,19 +209,19 @@ widget intrinsicDemo = Column(
       )
     ),
     SizedBox(
-      height: 0x00000008
+      height: 8.0
     ),
     IntrinsicWidth(
       child: Column(
         crossAxisAlignment: "stretch",
         children: [
           Container(
-            height: 0x0000001E,
-            width: 0x00000050
+            height: 30.0,
+            width: 80.0
           ),
           Container(
-            height: 0x0000001E,
-            width: 0x00000078
+            height: 30.0,
+            width: 120.0
           )
         ]
       )
@@ -232,16 +232,16 @@ widget intrinsicDemo = Column(
 widget listViewDemo = ListView(
   children: [
     Container(
-      height: 0x00000032
+      height: 50.0
     ),
     Container(
-      height: 0x00000032
+      height: 50.0
     ),
     Container(
-      height: 0x00000032
+      height: 50.0
     ),
     Container(
-      height: 0x00000032
+      height: 50.0
     )
   ]
 );
@@ -264,19 +264,19 @@ widget scrollViewDemo = SingleChildScrollView(
   child: Column(
     children: [
       Container(
-        height: 0x00000064
+        height: 100.0
       ),
       SizedBox(
-        height: 0x00000008
+        height: 8.0
       ),
       Container(
-        height: 0x00000064
+        height: 100.0
       ),
       SizedBox(
-        height: 0x00000008
+        height: 8.0
       ),
       Container(
-        height: 0x00000064
+        height: 100.0
       )
     ]
   )
@@ -286,21 +286,21 @@ widget listBodyDemo = SingleChildScrollView(
   child: ListBody(
     children: [
       Container(
-        height: 0x00000028
+        height: 40.0
       ),
       Container(
-        height: 0x00000028
+        height: 40.0
       ),
       Container(
-        height: 0x00000028
+        height: 40.0
       )
     ]
   )
 );
 
 widget containerDemo = Container(
-  width: 0x000000C8,
-  height: 0x000000C8,
+  width: 200.0,
+  height: 200.0,
   child: Center(
     child: Text(
       text: "Container"
@@ -313,16 +313,16 @@ widget paddingOpacityDemo = Column(
     Padding(
       curve: "easeInOut",
       child: Container(
-        width: 0x00000064,
-        height: 0x00000032
+        width: 100.0,
+        height: 50.0
       )
     ),
     Opacity(
       opacity: 0.5,
       curve: "easeOut",
       child: Container(
-        width: 0x00000064,
-        height: 0x00000032
+        width: 100.0,
+        height: 50.0
       )
     )
   ]
@@ -330,8 +330,8 @@ widget paddingOpacityDemo = Column(
 
 widget clipRRectDemo = ClipRRect(
   child: Container(
-    width: 0x00000096,
-    height: 0x00000064,
+    width: 150.0,
+    height: 100.0,
     child: Center(
       child: Text(
         text: "Clipped"
@@ -438,8 +438,8 @@ widget iconThemeDemo = IconTheme(
 );
 
 widget imageDemo = Image(
-  width: 0x0000012C,
-  height: 0x000000C8,
+  width: 300.0,
+  height: 200.0,
   fit: "cover"
 );
 
@@ -467,17 +467,17 @@ widget coloredBoxDemo = Column(
   children: [
     ColoredBox(
       child: SizedBox(
-        width: 0x00000064,
-        height: 0x00000032
+        width: 100.0,
+        height: 50.0
       )
     ),
     SizedBox(
-      height: 0x00000008
+      height: 8.0
     ),
     Placeholder(
       strokeWidth: 2.0,
-      placeholderWidth: 0x00000064,
-      placeholderHeight: 0x00000032
+      placeholderWidth: 100.0,
+      placeholderHeight: 50.0
     )
   ]
 );
@@ -489,15 +489,15 @@ widget rotationDemo = Row(
       turns: 0.125,
       curve: "easeInOut",
       child: Container(
-        width: 0x0000003C,
-        height: 0x0000003C
+        width: 60.0,
+        height: 60.0
       )
     ),
     Rotation(
       turns: 0.25,
       child: Container(
-        width: 0x0000003C,
-        height: 0x0000003C
+        width: 60.0,
+        height: 60.0
       )
     )
   ]
@@ -510,23 +510,23 @@ widget scaleDemo = Row(
       scale: 1.5,
       curve: "easeOut",
       child: Container(
-        width: 0x00000028,
-        height: 0x00000028
+        width: 40.0,
+        height: 40.0
       )
     ),
     Scale(
       scale: 0.5,
       child: Container(
-        width: 0x00000050,
-        height: 0x00000050
+        width: 80.0,
+        height: 80.0
       )
     )
   ]
 );
 
 widget fittedBoxDemo = SizedBox(
-  width: 0x000000C8,
-  height: 0x00000064,
+  width: 200.0,
+  height: 100.0,
   child: FittedBox(
     fit: "contain",
     child: Text(
@@ -540,8 +540,8 @@ widget gestureDetectorDemo { tapped: false, longPressed: false } = GestureDetect
   onLongPress: set state.longPressed = true,
   onDoubleTap: event "gesture.doubleTap" {},
   child: Container(
-    width: 0x000000C8,
-    height: 0x00000050,
+    width: 200.0,
+    height: 80.0,
     color: switch state.tapped {
       true: 0xFF4CAF50,
       false: 0xFF2196F3,
@@ -571,17 +571,17 @@ widget animationDefaultsDemo = AnimationDefaults(
       Opacity(
         opacity: 0.5,
         child: Container(
-          width: 0x00000078,
-          height: 0x00000028
+          width: 120.0,
+          height: 40.0
         )
       ),
       SizedBox(
-        height: 0x00000008
+        height: 8.0
       ),
       Padding(
         child: Container(
-          width: 0x00000078,
-          height: 0x00000028
+          width: 120.0,
+          height: 40.0
         )
       )
     ]
@@ -604,11 +604,11 @@ widget argsPatternDemo = Column(
       text: data.catalog.sampleItems.0.name
     ),
     SizedBox(
-      height: 0x00000008
+      height: 8.0
     ),
     Container(
-      width: 0x00000064,
-      height: 0x00000028,
+      width: 100.0,
+      height: 40.0,
       color: switch data.catalog.sampleItems.0.name {
         "Apple": 0xFFFF0000,
         "Banana": 0xFFFFEB3B,
@@ -672,7 +672,7 @@ widget buttonDemo = Column(
       )
     ),
     SizedBox(
-      height: 0x00000008
+      height: 8.0
     ),
     TextButton(
       onPressed: event "button.text" {},
@@ -681,7 +681,7 @@ widget buttonDemo = Column(
       )
     ),
     SizedBox(
-      height: 0x00000008
+      height: 8.0
     ),
     OutlinedButton(
       onPressed: event "button.outlined" {},
@@ -805,7 +805,7 @@ widget dividerDemo = Column(
       text: "Below Divider"
     ),
     SizedBox(
-      height: 0x00000010
+      height: 16.0
     ),
     Row(
       mainAxisAlignment: "center",
@@ -814,7 +814,7 @@ widget dividerDemo = Column(
           text: "Left"
         ),
         SizedBox(
-          height: 0x00000028,
+          height: 40.0,
           child: VerticalDivider(
             thickness: 2.0
           )
@@ -835,7 +835,7 @@ widget progressDemo = Column(
       strokeWidth: 6.0
     ),
     SizedBox(
-      height: 0x00000010
+      height: 16.0
     ),
     LinearProgressIndicator(
       value: 0.4

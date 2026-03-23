@@ -12,9 +12,9 @@ Widget buildColumnDemo() {
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     mainAxisSize: MainAxisSize.max,
     children: [
-      Container(width: 60, height: 60, color: const Color(0xFF2196F3)),
-      Container(width: 60, height: 60, color: const Color(0xFF4CAF50)),
-      Container(width: 60, height: 60, color: const Color(0xFFFF9800)),
+      Container(width: 60.0, height: 60.0, color: const Color(0xFF2196F3)),
+      Container(width: 60.0, height: 60.0, color: const Color(0xFF4CAF50)),
+      Container(width: 60.0, height: 60.0, color: const Color(0xFFFF9800)),
     ],
   );
 }
@@ -25,9 +25,9 @@ Widget buildRowDemo() {
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     children: [
-      Container(width: 50, height: 80, color: const Color(0xFFE91E63)),
-      Container(width: 50, height: 60, color: const Color(0xFF9C27B0)),
-      Container(width: 50, height: 40, color: const Color(0xFF673AB7)),
+      Container(width: 50.0, height: 80.0, color: const Color(0xFFE91E63)),
+      Container(width: 50.0, height: 60.0, color: const Color(0xFF9C27B0)),
+      Container(width: 50.0, height: 40.0, color: const Color(0xFF673AB7)),
     ],
   );
 }
@@ -39,27 +39,27 @@ Widget buildWrapDemo() {
     runSpacing: 8.0,
     children: [
       Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         color: const Color(0xFF2196F3),
         child: Text('Flutter', style: const TextStyle(color: Color(0xFFFFFFFF))),
       ),
       Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         color: const Color(0xFF4CAF50),
         child: Text('RFW', style: const TextStyle(color: Color(0xFFFFFFFF))),
       ),
       Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         color: const Color(0xFFFF9800),
         child: Text('Dart', style: const TextStyle(color: Color(0xFFFFFFFF))),
       ),
       Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         color: const Color(0xFFE91E63),
         child: Text('Widget', style: const TextStyle(color: Color(0xFFFFFFFF))),
       ),
       Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         color: const Color(0xFF9C27B0),
         child: Text('Remote', style: const TextStyle(color: Color(0xFFFFFFFF))),
       ),
@@ -72,12 +72,12 @@ Widget buildStackDemo() {
   return Stack(
     alignment: const Alignment(0.0, 0.0),
     children: [
-      Container(width: 200, height: 200, color: const Color(0xFF2196F3)),
-      Container(width: 150, height: 150, color: const Color(0xFF4CAF50)),
+      Container(width: 200.0, height: 200.0, color: const Color(0xFF2196F3)),
+      Container(width: 150.0, height: 150.0, color: const Color(0xFF4CAF50)),
       Positioned(
         top: 10.0,
         end: 10.0,
-        child: Container(width: 40, height: 40, color: const Color(0xFFFF9800)),
+        child: Container(width: 40.0, height: 40.0, color: const Color(0xFFFF9800)),
       ),
     ],
   );
@@ -89,16 +89,16 @@ Widget buildExpandedDemo() {
     children: [
       Expanded(
         flex: 2,
-        child: Container(height: 60, color: const Color(0xFF2196F3)),
+        child: Container(height: 60.0, color: const Color(0xFF2196F3)),
       ),
       Expanded(
         flex: 1,
-        child: Container(height: 60, color: const Color(0xFF4CAF50)),
+        child: Container(height: 60.0, color: const Color(0xFF4CAF50)),
       ),
       Flexible(
         flex: 1,
         fit: FlexFit.loose,
-        child: Container(width: 30, height: 60, color: const Color(0xFFFF9800)),
+        child: Container(width: 30.0, height: 60.0, color: const Color(0xFFFF9800)),
       ),
     ],
   );
@@ -109,8 +109,8 @@ Widget buildSizedBoxDemo() {
   return Column(
     children: [
       SizedBox(
-        width: 100,
-        height: 50,
+        width: 100.0,
+        height: 50.0,
         child: ColoredBox(color: const Color(0xFF2196F3)),
       ),
       Spacer(flex: 1),
@@ -125,21 +125,21 @@ Widget buildSizedBoxDemo() {
 @RfwWidget('alignDemo')
 Widget buildAlignDemo() {
   return SizedBox(
-    width: 200,
-    height: 200,
+    width: 200.0,
+    height: 200.0,
     child: Stack(
       children: [
         Container(color: const Color(0xFFE8EAF6)),
         Align(
           alignment: const Alignment(-1.0, -1.0),
-          child: Container(width: 40, height: 40, color: const Color(0xFFFF5722)),
+          child: Container(width: 40.0, height: 40.0, color: const Color(0xFFFF5722)),
         ),
         Center(
           child: Text('Center'),
         ),
         Align(
           alignment: const Alignment(1.0, 1.0),
-          child: Container(width: 40, height: 40, color: const Color(0xFF4CAF50)),
+          child: Container(width: 40.0, height: 40.0, color: const Color(0xFF4CAF50)),
         ),
       ],
     ),
@@ -154,10 +154,10 @@ Widget buildAspectRatioDemo() {
         aspectRatio: 1.78,
         child: Container(color: const Color(0xFF2196F3)),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 8.0),
       FractionallySizedBox(
         widthFactor: 0.7,
-        child: Container(height: 40, color: const Color(0xFF4CAF50)),
+        child: Container(height: 40.0, color: const Color(0xFF4CAF50)),
       ),
     ],
   );
@@ -171,23 +171,23 @@ Widget buildIntrinsicDemo() {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(width: 50, color: const Color(0xFF2196F3)),
+            Container(width: 50.0, color: const Color(0xFF2196F3)),
             Column(
               children: [
-                Container(width: 100, height: 30, color: const Color(0xFF4CAF50)),
-                Container(width: 100, height: 60, color: const Color(0xFFFF9800)),
+                Container(width: 100.0, height: 30.0, color: const Color(0xFF4CAF50)),
+                Container(width: 100.0, height: 60.0, color: const Color(0xFFFF9800)),
               ],
             ),
           ],
         ),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 8.0),
       IntrinsicWidth(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(height: 30, width: 80, color: const Color(0xFFE91E63)),
-            Container(height: 30, width: 120, color: const Color(0xFF9C27B0)),
+            Container(height: 30.0, width: 80.0, color: const Color(0xFFE91E63)),
+            Container(height: 30.0, width: 120.0, color: const Color(0xFF9C27B0)),
           ],
         ),
       ),
@@ -202,12 +202,12 @@ Widget buildIntrinsicDemo() {
 @RfwWidget('listViewDemo')
 Widget buildListViewDemo() {
   return ListView(
-    padding: const EdgeInsets.all(8),
+    padding: const EdgeInsets.all(8.0),
     children: [
-      Container(height: 50, color: const Color(0xFF2196F3), margin: const EdgeInsets.only(bottom: 4)),
-      Container(height: 50, color: const Color(0xFF4CAF50), margin: const EdgeInsets.only(bottom: 4)),
-      Container(height: 50, color: const Color(0xFFFF9800), margin: const EdgeInsets.only(bottom: 4)),
-      Container(height: 50, color: const Color(0xFFE91E63)),
+      Container(height: 50.0, color: const Color(0xFF2196F3), margin: const EdgeInsets.only(bottom: 4.0)),
+      Container(height: 50.0, color: const Color(0xFF4CAF50), margin: const EdgeInsets.only(bottom: 4.0)),
+      Container(height: 50.0, color: const Color(0xFFFF9800), margin: const EdgeInsets.only(bottom: 4.0)),
+      Container(height: 50.0, color: const Color(0xFFE91E63)),
     ],
   );
 }
@@ -218,10 +218,10 @@ Widget buildGridViewDemo() {
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     shrinkWrap: true,
     children: [
-      Container(color: const Color(0xFF2196F3), margin: const EdgeInsets.all(4)),
-      Container(color: const Color(0xFF4CAF50), margin: const EdgeInsets.all(4)),
-      Container(color: const Color(0xFFFF9800), margin: const EdgeInsets.all(4)),
-      Container(color: const Color(0xFFE91E63), margin: const EdgeInsets.all(4)),
+      Container(color: const Color(0xFF2196F3), margin: const EdgeInsets.all(4.0)),
+      Container(color: const Color(0xFF4CAF50), margin: const EdgeInsets.all(4.0)),
+      Container(color: const Color(0xFFFF9800), margin: const EdgeInsets.all(4.0)),
+      Container(color: const Color(0xFFE91E63), margin: const EdgeInsets.all(4.0)),
     ],
   );
 }
@@ -229,14 +229,14 @@ Widget buildGridViewDemo() {
 @RfwWidget('scrollViewDemo')
 Widget buildScrollViewDemo() {
   return SingleChildScrollView(
-    padding: const EdgeInsets.all(16),
+    padding: const EdgeInsets.all(16.0),
     child: Column(
       children: [
-        Container(height: 100, color: const Color(0xFF2196F3)),
-        SizedBox(height: 8),
-        Container(height: 100, color: const Color(0xFF4CAF50)),
-        SizedBox(height: 8),
-        Container(height: 100, color: const Color(0xFFFF9800)),
+        Container(height: 100.0, color: const Color(0xFF2196F3)),
+        SizedBox(height: 8.0),
+        Container(height: 100.0, color: const Color(0xFF4CAF50)),
+        SizedBox(height: 8.0),
+        Container(height: 100.0, color: const Color(0xFFFF9800)),
       ],
     ),
   );
@@ -247,9 +247,9 @@ Widget buildListBodyDemo() {
   return SingleChildScrollView(
     child: ListBody(
       children: [
-        Container(height: 40, color: const Color(0xFF2196F3), margin: const EdgeInsets.only(bottom: 4)),
-        Container(height: 40, color: const Color(0xFF4CAF50), margin: const EdgeInsets.only(bottom: 4)),
-        Container(height: 40, color: const Color(0xFFFF9800)),
+        Container(height: 40.0, color: const Color(0xFF2196F3), margin: const EdgeInsets.only(bottom: 4.0)),
+        Container(height: 40.0, color: const Color(0xFF4CAF50), margin: const EdgeInsets.only(bottom: 4.0)),
+        Container(height: 40.0, color: const Color(0xFFFF9800)),
       ],
     ),
   );
@@ -262,10 +262,10 @@ Widget buildListBodyDemo() {
 @RfwWidget('containerDemo')
 Widget buildContainerDemo() {
   return Container(
-    width: 200,
-    height: 200,
-    padding: const EdgeInsets.all(16),
-    margin: const EdgeInsets.all(8),
+    width: 200.0,
+    height: 200.0,
+    padding: const EdgeInsets.all(16.0),
+    margin: const EdgeInsets.all(8.0),
     decoration: const BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment(-1.0, -1.0),
@@ -286,16 +286,16 @@ Widget buildPaddingOpacityDemo() {
   return Column(
     children: [
       Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24.0),
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        child: Container(width: 100, height: 50, color: const Color(0xFF2196F3)),
+        child: Container(width: 100.0, height: 50.0, color: const Color(0xFF2196F3)),
       ),
       Opacity(
         opacity: 0.5,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
-        child: Container(width: 100, height: 50, color: const Color(0xFFFF9800)),
+        child: Container(width: 100.0, height: 50.0, color: const Color(0xFFFF9800)),
       ),
     ],
   );
@@ -306,8 +306,8 @@ Widget buildClipRRectDemo() {
   return ClipRRect(
     borderRadius: const BorderRadius.all(Radius.circular(20)),
     child: Container(
-      width: 150,
-      height: 100,
+      width: 150.0,
+      height: 100.0,
       color: const Color(0xFF4CAF50),
       child: Center(
         child: Text('Clipped', style: const TextStyle(color: Color(0xFFFFFFFF))),
@@ -387,8 +387,8 @@ Widget buildIconThemeDemo() {
 Widget buildImageDemo() {
   return Image(
     image: const NetworkImage('https://picsum.photos/seed/rfw/300/200'),
-    width: 300,
-    height: 200,
+    width: 300.0,
+    height: 200.0,
     fit: BoxFit.cover,
   );
 }
@@ -412,14 +412,14 @@ Widget buildColoredBoxDemo() {
     children: [
       ColoredBox(
         color: const Color(0xFF2196F3),
-        child: SizedBox(width: 100, height: 50),
+        child: SizedBox(width: 100.0, height: 50.0),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 8.0),
       Placeholder(
         color: const Color(0xFFFF5722),
         strokeWidth: 2.0,
-        placeholderWidth: 100,
-        placeholderHeight: 50,
+        placeholderWidth: 100.0,
+        placeholderHeight: 50.0,
       ),
     ],
   );
@@ -438,11 +438,11 @@ Widget buildRotationDemo() {
         turns: 0.125,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
-        child: Container(width: 60, height: 60, color: const Color(0xFF2196F3)),
+        child: Container(width: 60.0, height: 60.0, color: const Color(0xFF2196F3)),
       ),
       Rotation(
         turns: 0.25,
-        child: Container(width: 60, height: 60, color: const Color(0xFF4CAF50)),
+        child: Container(width: 60.0, height: 60.0, color: const Color(0xFF4CAF50)),
       ),
     ],
   );
@@ -457,11 +457,11 @@ Widget buildScaleDemo() {
         scale: 1.5,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeOut,
-        child: Container(width: 40, height: 40, color: const Color(0xFFE91E63)),
+        child: Container(width: 40.0, height: 40.0, color: const Color(0xFFE91E63)),
       ),
       Scale(
         scale: 0.5,
-        child: Container(width: 80, height: 80, color: const Color(0xFF9C27B0)),
+        child: Container(width: 80.0, height: 80.0, color: const Color(0xFF9C27B0)),
       ),
     ],
   );
@@ -470,8 +470,8 @@ Widget buildScaleDemo() {
 @RfwWidget('fittedBoxDemo')
 Widget buildFittedBoxDemo() {
   return SizedBox(
-    width: 200,
-    height: 100,
+    width: 200.0,
+    height: 100.0,
     child: FittedBox(
       fit: BoxFit.contain,
       child: Text('FittedBox', style: const TextStyle(fontSize: 60.0)),
@@ -490,8 +490,8 @@ Widget buildGestureDetectorDemo() {
     onLongPress: RfwHandler.setState('longPressed', true),
     onDoubleTap: RfwHandler.event('gesture.doubleTap', {}),
     child: Container(
-      width: 200,
-      height: 80,
+      width: 200.0,
+      height: 80.0,
       color: RfwSwitchValue<int>(
         value: StateRef('tapped'),
         cases: {true: 0xFF4CAF50, false: 0xFF2196F3},
@@ -510,7 +510,7 @@ Widget buildInkWellDemo() {
     onLongPress: RfwHandler.event('inkwell.longPress', {}),
     splashColor: const Color(0x402196F3),
     child: Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
       child: Text('InkWell with Ripple', style: const TextStyle(fontSize: 16.0)),
     ),
   );
@@ -529,12 +529,12 @@ Widget buildAnimationDefaultsDemo() {
       children: [
         Opacity(
           opacity: 0.5,
-          child: Container(width: 120, height: 40, color: const Color(0xFF2196F3)),
+          child: Container(width: 120.0, height: 40.0, color: const Color(0xFF2196F3)),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 8.0),
         Padding(
-          padding: const EdgeInsets.all(8),
-          child: Container(width: 120, height: 40, color: const Color(0xFF4CAF50)),
+          padding: const EdgeInsets.all(8.0),
+          child: Container(width: 120.0, height: 40.0, color: const Color(0xFF4CAF50)),
         ),
       ],
     ),
@@ -559,11 +559,11 @@ Widget buildArgsPatternDemo() {
     children: [
       // data.list.0 index access
       Text(DataRef('catalog.sampleItems.0.name')),
-      SizedBox(height: 8),
+      SizedBox(height: 8.0),
       // RfwSwitch with default case
       Container(
-        width: 100,
-        height: 40,
+        width: 100.0,
+        height: 40.0,
         color: RfwSwitchValue<int>(
           value: DataRef('catalog.sampleItems.0.name'),
           cases: {'Apple': 0xFFFF0000, 'Banana': 0xFFFFEB3B},
@@ -601,7 +601,7 @@ Widget buildMaterialDemo() {
     elevation: 4.0,
     color: const Color(0xFFFFFFFF),
     child: Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
       child: Text('Material Surface', style: const TextStyle(fontSize: 16.0)),
     ),
   );
@@ -613,9 +613,9 @@ Widget buildCardDemo() {
     children: [
       Card(
         elevation: 4.0,
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8.0),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16.0),
           child: Text('Rounded Card', style: const TextStyle(fontSize: 16.0)),
         ),
       ),
@@ -632,12 +632,12 @@ Widget buildButtonDemo() {
         onPressed: RfwHandler.event('button.elevated', {}),
         child: Text('Elevated'),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 8.0),
       TextButton(
         onPressed: RfwHandler.event('button.text', {}),
         child: Text('Text Button'),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 8.0),
       OutlinedButton(
         onPressed: RfwHandler.event('button.outlined', {}),
         child: Text('Outlined'),
@@ -717,13 +717,13 @@ Widget buildDividerDemo() {
       Text('Above Divider'),
       Divider(thickness: 2.0, color: const Color(0xFF2196F3)),
       Text('Below Divider'),
-      SizedBox(height: 16),
+      SizedBox(height: 16.0),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('Left'),
           SizedBox(
-            height: 40,
+            height: 40.0,
             child: VerticalDivider(thickness: 2.0, color: const Color(0xFFFF9800)),
           ),
           Text('Right'),
@@ -739,7 +739,7 @@ Widget buildProgressDemo() {
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
       CircularProgressIndicator(value: 0.7, color: const Color(0xFF2196F3), strokeWidth: 6.0),
-      SizedBox(height: 16),
+      SizedBox(height: 16.0),
       LinearProgressIndicator(value: 0.4, color: const Color(0xFF4CAF50), backgroundColor: const Color(0xFFE0E0E0)),
     ],
   );

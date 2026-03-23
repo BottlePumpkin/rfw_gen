@@ -1,0 +1,29 @@
+# rfw_gen
+
+Flutter Widget 코드를 RFW(Remote Flutter Widgets) 형식으로 변환하는 코드 생성기.
+
+## 아키텍처
+
+모노레포 구조:
+- `packages/rfw_gen/` — 코어: 어노테이션(@RfwWidget) + 변환 엔진(RfwConverter) + 위젯 매핑(WidgetRegistry)
+- `packages/rfw_gen_builder/` — build_runner generator
+- `example/` — 예제 앱 + Widgetbook 디버깅
+
+## 개발 규칙
+
+- 위젯 매핑 추가 시 반드시 유닛 + 통합 + 골든 테스트 동반
+- rfwtxt 출력은 반드시 `parseLibraryFile()`로 파싱 검증
+- 지원 안 되는 패턴은 빌드 타임 에러 + 대안 제안
+- `@RfwWidget`은 top-level 함수에만 사용
+
+## 명령어
+
+- `melos bootstrap` — 패키지 의존성 설치
+- `melos exec -- dart test` — 전체 테스트
+- `dart analyze` — 정적 분석
+
+## 참고
+
+- @rules/rfw-syntax.md: rfwtxt 문법
+- @rules/rfw-widgets.md: 위젯 목록 + 파라미터
+- @rules/rfw-types.md: 인자 타입 인코딩

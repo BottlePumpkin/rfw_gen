@@ -46,6 +46,74 @@ Widget buildSomething() {
       expect(result.succeeded, isTrue);
     });
 
+    test('loads custom widgets from rfw_gen.yaml', () async {
+      final result = await testBuilder(
+        rfwWidgetBuilder(BuilderOptions.empty),
+        {
+          'a|rfw_gen.yaml': '''
+widgets:
+  MystiqueText:
+    import: mystique.widgets
+''',
+          'a|lib/widgets.dart': '''
+@RfwWidget('card')
+Widget buildCard() {
+  return MystiqueText(text: 'hello', fontType: 'heading24Bold');
+}
+''',
+        },
+        outputs: {
+          'a|lib/widgets.rfwtxt': decodedMatches(
+            allOf(
+              contains('import mystique.widgets;'),
+              contains('widget card'),
+              contains('MystiqueText('),
+              contains('text: "hello"'),
+              contains('fontType: "heading24Bold"'),
+            ),
+          ),
+          'a|lib/widgets.rfw': isNotEmpty,
+        },
+      );
+      expect(result.succeeded, isTrue);
+    });
+
+    test('custom widget with widget-value param in rfw_gen.yaml', () async {
+      final result = await testBuilder(
+        rfwWidgetBuilder(BuilderOptions.empty),
+        {
+          'a|rfw_gen.yaml': '''
+widgets:
+  NullConditional:
+    import: custom.widgets
+    child_type: optionalChild
+  MyText:
+    import: mystique.widgets
+''',
+          'a|lib/widgets.dart': '''
+@RfwWidget('card')
+Widget buildCard() {
+  return NullConditional(
+    child: MyText(text: 'visible'),
+    nullChild: MyText(text: 'fallback'),
+  );
+}
+''',
+        },
+        outputs: {
+          'a|lib/widgets.rfwtxt': decodedMatches(
+            allOf(
+              contains('import custom.widgets;'),
+              contains('import mystique.widgets;'),
+              contains('nullChild: MyText('),
+            ),
+          ),
+          'a|lib/widgets.rfw': isNotEmpty,
+        },
+      );
+      expect(result.succeeded, isTrue);
+    });
+
     test('handles multiple @RfwWidget functions in one file', () async {
       final result = await testBuilder(
         rfwWidgetBuilder(BuilderOptions.empty),

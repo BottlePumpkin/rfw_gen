@@ -4,6 +4,7 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:build/build.dart';
 import 'package:rfw_gen/rfw_gen.dart';
+import 'package:yaml/yaml.dart';
 
 /// A custom [Builder] that finds `@RfwWidget`-annotated top-level functions
 /// and generates `.rfwtxt` (text) and `.rfw` (binary) output files.
@@ -30,7 +31,21 @@ class RfwWidgetBuilder implements Builder {
 
     if (annotatedFunctions.isEmpty) return;
 
-    final converter = RfwConverter(registry: WidgetRegistry.core());
+    // Build registry: core + custom widgets from rfw_gen.yaml.
+    final registry = WidgetRegistry.core();
+    final configId = AssetId(buildStep.inputId.package, 'rfw_gen.yaml');
+    if (await buildStep.canRead(configId)) {
+      final yamlStr = await buildStep.readAsString(configId);
+      final yaml = loadYaml(yamlStr);
+      if (yaml is Map) {
+        final widgets = yaml['widgets'];
+        if (widgets is Map) {
+          registry.registerFromConfig(Map<String, dynamic>.from(widgets));
+        }
+      }
+    }
+
+    final converter = RfwConverter(registry: registry);
     final parts = <String>[];
 
     for (final function in annotatedFunctions) {

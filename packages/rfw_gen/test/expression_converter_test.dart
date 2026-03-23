@@ -568,6 +568,100 @@ void main() {
     });
   });
 
+  group('Dynamic references', () {
+    test("converts DataRef('user.name') to IrDataRef", () {
+      final expr = parseExpression("DataRef('user.name')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrDataRef>());
+      expect((result as IrDataRef).path, equals('user.name'));
+    });
+
+    test("converts ArgsRef('item.title') to IrArgsRef", () {
+      final expr = parseExpression("ArgsRef('item.title')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrArgsRef>());
+      expect((result as IrArgsRef).path, equals('item.title'));
+    });
+
+    test("converts StateRef('isOpen') to IrStateRef", () {
+      final expr = parseExpression("StateRef('isOpen')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrStateRef>());
+      expect((result as IrStateRef).path, equals('isOpen'));
+    });
+  });
+
+  group('RfwConcat', () {
+    test('converts RfwConcat with mixed parts', () {
+      final expr = parseExpression(
+          "RfwConcat(['Hello, ', DataRef('name'), '!'])");
+      final result = converter.convert(expr);
+      expect(result, isA<IrConcat>());
+      final concat = result as IrConcat;
+      expect(concat.parts, hasLength(3));
+      expect(concat.parts[0], isA<IrStringValue>());
+      expect((concat.parts[0] as IrStringValue).value, equals('Hello, '));
+      expect(concat.parts[1], isA<IrDataRef>());
+      expect((concat.parts[1] as IrDataRef).path, equals('name'));
+      expect(concat.parts[2], isA<IrStringValue>());
+      expect((concat.parts[2] as IrStringValue).value, equals('!'));
+    });
+  });
+
+  group('SetOrMapLiteral', () {
+    test('converts simple map literal to IrMapValue', () {
+      final expr = parseExpression("{'key': 'value', 'count': 1}");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries, hasLength(2));
+      expect((map.entries['key'] as IrStringValue).value, equals('value'));
+      expect((map.entries['count'] as IrIntValue).value, equals(1));
+    });
+
+    test('converts nested map with DataRef values', () {
+      final expr = parseExpression("{'name': DataRef('user.name'), 'age': 25}");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries['name'], isA<IrDataRef>());
+      expect((map.entries['name'] as IrDataRef).path, equals('user.name'));
+      expect((map.entries['age'] as IrIntValue).value, equals(25));
+    });
+  });
+
+  group('RfwSwitchValue', () {
+    test('converts RfwSwitchValue with cases and default', () {
+      final expr = parseExpression(
+        "RfwSwitchValue(value: StateRef('status'), "
+        "cases: {'active': 0xFF00FF00, 'inactive': 0xFFFF0000}, "
+        "defaultCase: 0xFF888888)",
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrSwitchExpr>());
+      final sw = result as IrSwitchExpr;
+      expect(sw.value, isA<IrStateRef>());
+      expect(sw.cases, hasLength(2));
+      expect(sw.defaultCase, isA<IrIntValue>());
+    });
+  });
+
+  group('IndexExpression', () {
+    test("converts item['name'] to IrLoopVarRef", () {
+      final expr = parseExpression("item['name']");
+      final result = converter.convert(expr);
+      expect(result, isA<IrLoopVarRef>());
+      expect((result as IrLoopVarRef).path, equals('item.name'));
+    });
+
+    test("converts item['a']['b'] to IrLoopVarRef with dotted path", () {
+      final expr = parseExpression("item['a']['b']");
+      final result = converter.convert(expr);
+      expect(result, isA<IrLoopVarRef>());
+      expect((result as IrLoopVarRef).path, equals('item.a.b'));
+    });
+  });
+
   group('Unsupported expressions', () {
     test('throws for variable reference', () {
       final expr = parseExpression('myVariable');

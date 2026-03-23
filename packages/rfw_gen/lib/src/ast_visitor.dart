@@ -66,6 +66,17 @@ class WidgetAstVisitor {
     return null;
   }
 
+  /// Converts an expression that could be a widget OR a special construct
+  /// (RfwFor, RfwSwitch).
+  IrValue _convertWidgetOrSpecial(Expression expr) {
+    if (expr is MethodInvocation && expr.target == null) {
+      final name = expr.methodName.name;
+      if (name == 'RfwFor') return _convertRfwFor(expr);
+      if (name == 'RfwSwitch') return _convertRfwSwitch(expr);
+    }
+    return _convertWidget(expr);
+  }
+
   /// Converts a [MethodInvocation] (widget constructor) to an [IrWidgetNode].
   IrWidgetNode _convertWidget(Expression expr) {
     if (expr is! MethodInvocation || expr.target != null) {
@@ -130,11 +141,11 @@ class WidgetAstVisitor {
       final isList = mapping.namedChildSlots[paramName]!;
       if (isList && expression is ListLiteral) {
         final children = expression.elements
-            .map((e) => _convertWidget(e as Expression))
+            .map((e) => _convertWidgetOrSpecial(e as Expression))
             .toList();
         properties[paramName] = IrListValue(children);
       } else if (!isList) {
-        properties[paramName] = _convertWidget(expression);
+        properties[paramName] = _convertWidgetOrSpecial(expression);
       }
       return;
     }
@@ -144,13 +155,13 @@ class WidgetAstVisitor {
       switch (mapping.childType) {
         case ChildType.child:
         case ChildType.optionalChild:
-          // Single child: recurse to convert the widget.
-          properties[paramName] = _convertWidget(expression);
+          // Single child: recurse to convert the widget or special construct.
+          properties[paramName] = _convertWidgetOrSpecial(expression);
         case ChildType.childList:
           // List of children: expect a ListLiteral.
           if (expression is ListLiteral) {
             final children = expression.elements
-                .map((e) => _convertWidget(e as Expression))
+                .map((e) => _convertWidgetOrSpecial(e as Expression))
                 .toList();
             properties[paramName] = IrListValue(children);
           }
@@ -173,12 +184,16 @@ class WidgetAstVisitor {
       return;
     }
 
-    // 5. Unknown parameter — check if it's a widget first, then try expression.
-    if (expression is MethodInvocation &&
-        expression.target == null &&
-        registry.isSupported(expression.methodName.name)) {
-      properties[paramName] = _convertWidget(expression);
-      return;
+    // 5. Unknown parameter — check if it's a widget or special construct first,
+    // then try expression.
+    if (expression is MethodInvocation && expression.target == null) {
+      final exprName = expression.methodName.name;
+      if (registry.isSupported(exprName) ||
+          exprName == 'RfwFor' ||
+          exprName == 'RfwSwitch') {
+        properties[paramName] = _convertWidgetOrSpecial(expression);
+        return;
+      }
     }
     try {
       final value = expressionConverter.convert(expression);
@@ -186,5 +201,81 @@ class WidgetAstVisitor {
     } on UnsupportedExpressionError {
       // Silently skip.
     }
+  }
+
+  IrForLoop _convertRfwFor(MethodInvocation expr) {
+    IrValue? items;
+    String? itemName;
+    IrWidgetNode? body;
+
+    for (final arg in expr.argumentList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        if (name == 'items') {
+          items = expressionConverter.convert(arg.expression);
+        } else if (name == 'itemName') {
+          itemName = (arg.expression as SimpleStringLiteral).value;
+        } else if (name == 'builder') {
+          // builder: (item) => Widget(...)
+          final funcExpr = arg.expression as FunctionExpression;
+          final funcBody = funcExpr.body;
+          Expression? bodyExpr;
+          if (funcBody is ExpressionFunctionBody) {
+            bodyExpr = funcBody.expression;
+          } else if (funcBody is BlockFunctionBody) {
+            for (final stmt in funcBody.block.statements) {
+              if (stmt is ReturnStatement) {
+                bodyExpr = stmt.expression;
+                break;
+              }
+            }
+          }
+          if (bodyExpr != null) {
+            body = _convertWidget(bodyExpr);
+          }
+        }
+      }
+    }
+
+    if (items == null || itemName == null || body == null) {
+      throw UnsupportedWidgetError(
+          'RfwFor requires items, itemName, and builder');
+    }
+
+    return IrForLoop(items: items, itemName: itemName, body: body);
+  }
+
+  IrSwitchExpr _convertRfwSwitch(MethodInvocation expr) {
+    IrValue? value;
+    final cases = <IrValue, IrValue>{};
+    IrValue? defaultCase;
+
+    for (final arg in expr.argumentList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        if (name == 'value') {
+          value = expressionConverter.convert(arg.expression);
+        } else if (name == 'cases') {
+          if (arg.expression is SetOrMapLiteral) {
+            for (final entry
+                in (arg.expression as SetOrMapLiteral).elements) {
+              if (entry is MapLiteralEntry) {
+                final key = expressionConverter.convert(entry.key);
+                final val = _convertWidgetOrSpecial(entry.value);
+                cases[key] = val;
+              }
+            }
+          }
+        } else if (name == 'defaultCase') {
+          defaultCase = _convertWidgetOrSpecial(arg.expression);
+        }
+      }
+    }
+
+    if (value == null) {
+      throw UnsupportedWidgetError('RfwSwitch requires a value parameter');
+    }
+
+    return IrSwitchExpr(value: value, cases: cases, defaultCase: defaultCase);
   }
 }

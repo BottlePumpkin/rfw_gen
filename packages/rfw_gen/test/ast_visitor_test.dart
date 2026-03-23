@@ -473,6 +473,101 @@ Widget build() {
       expect((node.properties['active'] as IrBoolValue).value, true);
     });
 
+    // -----------------------------------------------------------------
+    // Dynamic feature recognition: RfwFor, RfwSwitch, DataRef
+    // -----------------------------------------------------------------
+
+    test('converts RfwFor in children list', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Column(
+    children: [
+      RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => Text('hello'),
+      ),
+    ],
+  );
+}
+''');
+      final node = visitor.extractWidgetTree(fn);
+      final children = node.properties['children'] as IrListValue;
+      expect(children.values.first, isA<IrForLoop>());
+      final loop = children.values.first as IrForLoop;
+      expect(loop.items, isA<IrDataRef>());
+      expect(loop.itemName, 'item');
+      expect(loop.body, isA<IrWidgetNode>());
+      expect(loop.body.name, 'Text');
+    });
+
+    test('converts RfwSwitch in child position', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Container(
+    child: RfwSwitch(
+      value: DataRef('status'),
+      cases: {
+        'active': SizedBox(),
+      },
+      defaultCase: SizedBox(),
+    ),
+  );
+}
+''');
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.properties['child'], isA<IrSwitchExpr>());
+      final sw = node.properties['child'] as IrSwitchExpr;
+      expect(sw.value, isA<IrDataRef>());
+      expect(sw.cases, hasLength(1));
+      expect(sw.defaultCase, isA<IrWidgetNode>());
+    });
+
+    test('converts DataRef as pass-through param', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Container(
+    color: DataRef('theme.primary'),
+  );
+}
+''');
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.properties['color'], isA<IrDataRef>());
+      expect((node.properties['color'] as IrDataRef).path, 'theme.primary');
+    });
+
+    test('nested RfwFor containing RfwSwitch', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Column(
+    children: [
+      RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => Container(
+          child: RfwSwitch(
+            value: DataRef('mode'),
+            cases: {
+              'a': Text('A'),
+            },
+            defaultCase: Text('default'),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+''');
+      final node = visitor.extractWidgetTree(fn);
+      final children = node.properties['children'] as IrListValue;
+      final loop = children.values.first as IrForLoop;
+      expect(loop.body.name, 'Container');
+      // The child of the Container is a RfwSwitch, but _convertWidget
+      // is called for the builder body, and Container's child processing
+      // uses _convertWidgetOrSpecial.
+      expect(loop.body.properties['child'], isA<IrSwitchExpr>());
+    });
+
     test('throws on unsupported widget', () {
       final fn = parseFunction('''
 Widget build() {

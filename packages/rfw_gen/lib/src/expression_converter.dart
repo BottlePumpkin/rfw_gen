@@ -44,6 +44,8 @@ class ExpressionConverter {
     'SliverGridDelegateWithMaxCrossAxisExtent',
   };
 
+  static const _knownDynamicRefs = <String>{'DataRef', 'ArgsRef', 'StateRef'};
+
   /// Converts an [Expression] to an [IrValue].
   IrValue convert(Expression expr) {
     return switch (expr) {
@@ -52,9 +54,11 @@ class ExpressionConverter {
       DoubleLiteral() => IrNumberValue(expr.value),
       BooleanLiteral() => IrBoolValue(expr.value),
       ListLiteral() => _convertListLiteral(expr),
+      SetOrMapLiteral() => _convertMapLiteral(expr),
       PrefixExpression() => _convertPrefixExpression(expr),
       MethodInvocation() => _convertMethodInvocation(expr),
       PrefixedIdentifier() => _convertPrefixedIdentifier(expr),
+      IndexExpression() => _convertIndexExpression(expr),
       _ => throw UnsupportedExpressionError(
           'Unsupported expression type: ${expr.runtimeType}',
           offset: expr.offset,
@@ -85,6 +89,21 @@ class ExpressionConverter {
   IrValue _convertMethodInvocation(MethodInvocation expr) {
     final target = expr.target;
     final methodName = expr.methodName.name;
+
+    // Dynamic references: DataRef, ArgsRef, StateRef
+    if (target == null && _knownDynamicRefs.contains(methodName)) {
+      return _convertDynamicRef(methodName, expr);
+    }
+
+    // RfwConcat(['Hello, ', DataRef('name'), '!'])
+    if (target == null && methodName == 'RfwConcat') {
+      return _convertConcat(expr);
+    }
+
+    // RfwSwitchValue(value: ..., cases: {...}, defaultCase: ...)
+    if (target == null && methodName == 'RfwSwitchValue') {
+      return _convertSwitchValue(expr);
+    }
 
     // Color(0xFFxxxxxx) — parses as MethodInvocation with no target
     if (target == null && methodName == 'Color') {
@@ -439,6 +458,103 @@ class ExpressionConverter {
       }
     }
     return IrEventValue(name);
+  }
+
+  IrMapValue _convertMapLiteral(SetOrMapLiteral expr) {
+    final entries = <String, IrValue>{};
+    for (final element in expr.elements) {
+      if (element is MapLiteralEntry) {
+        final key = (element.key as SimpleStringLiteral).value;
+        entries[key] = convert(element.value);
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  IrValue _convertDynamicRef(String refType, MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    if (args.length == 1 && args.first is SimpleStringLiteral) {
+      final path = (args.first as SimpleStringLiteral).value;
+      return switch (refType) {
+        'DataRef' => IrDataRef(path),
+        'ArgsRef' => IrArgsRef(path),
+        'StateRef' => IrStateRef(path),
+        _ => throw UnsupportedExpressionError('Unknown ref type: $refType'),
+      };
+    }
+    throw UnsupportedExpressionError(
+      '$refType requires a single string argument',
+      offset: expr.offset,
+    );
+  }
+
+  IrConcat _convertConcat(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    if (args.length == 1 && args.first is ListLiteral) {
+      final list = args.first as ListLiteral;
+      final parts = list.elements.map((e) => convert(e as Expression)).toList();
+      return IrConcat(parts);
+    }
+    throw UnsupportedExpressionError(
+      'RfwConcat requires a single list argument',
+      offset: expr.offset,
+    );
+  }
+
+  IrSwitchExpr _convertSwitchValue(MethodInvocation expr) {
+    IrValue? value;
+    final cases = <IrValue, IrValue>{};
+    IrValue? defaultCase;
+
+    for (final arg in expr.argumentList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        if (name == 'value') {
+          value = convert(arg.expression);
+        } else if (name == 'cases') {
+          if (arg.expression is SetOrMapLiteral) {
+            for (final entry
+                in (arg.expression as SetOrMapLiteral).elements) {
+              if (entry is MapLiteralEntry) {
+                cases[convert(entry.key)] = convert(entry.value);
+              }
+            }
+          }
+        } else if (name == 'defaultCase') {
+          defaultCase = convert(arg.expression);
+        }
+      }
+    }
+
+    if (value == null) {
+      throw UnsupportedExpressionError(
+        'RfwSwitchValue requires a value parameter',
+        offset: expr.offset,
+      );
+    }
+
+    return IrSwitchExpr(value: value, cases: cases, defaultCase: defaultCase);
+  }
+
+  IrValue _convertIndexExpression(IndexExpression expr) {
+    // Build the path by walking the chain: item['a']['b'] -> 'item.a.b'
+    final parts = <String>[];
+    Expression current = expr;
+    while (current is IndexExpression) {
+      if (current.index is SimpleStringLiteral) {
+        parts.insert(0, (current.index as SimpleStringLiteral).value);
+      }
+      current = current.target!;
+    }
+    // The base should be a SimpleIdentifier (the loop var name)
+    if (current is SimpleIdentifier) {
+      parts.insert(0, current.name);
+      return IrLoopVarRef(parts.join('.'));
+    }
+    throw UnsupportedExpressionError(
+      'Unsupported index expression base: ${current.runtimeType}',
+      offset: expr.offset,
+    );
   }
 
   /// Extracts a double value from a numeric expression.

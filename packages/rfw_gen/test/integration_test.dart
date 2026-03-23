@@ -231,5 +231,89 @@ Widget buildAnimated() {
       expect(lib1.widgets, isNotEmpty);
       expect(lib2.widgets, isNotEmpty);
     });
+
+    test('GestureDetector with setState handler parses', () {
+      const input = '''
+Widget build() {
+  return GestureDetector(
+    onTap: RfwHandler.setState('active', true),
+    child: Text('Tap me'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('set state.active = true'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('ElevatedButton with event handler parses', () {
+      const input = '''
+Widget build() {
+  return ElevatedButton(
+    onPressed: RfwHandler.event('button.click'),
+    child: Text('Click'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('event "button.click" {}'));
+      expect(rfwtxt, contains('import material;'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('Scaffold with AppBar and body parses', () {
+      const input = '''
+Widget build() {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Title'),
+    ),
+    body: Center(
+      child: Text('Body'),
+    ),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('import material;'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('Slider with setStateFromArg handler parses', () {
+      const input = '''
+Widget build() {
+  return Slider(
+    min: 0.0,
+    max: 100.0,
+    value: 50.0,
+    onChanged: RfwHandler.setStateFromArg('sliderValue'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('set state.sliderValue = args.value'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('mixed core and material produces both imports', () {
+      const input = '''
+Widget build() {
+  return Card(
+    child: Padding(
+      padding: EdgeInsets.all(16),
+      child: Text('Hello'),
+    ),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('import material;'));
+    });
   });
 }

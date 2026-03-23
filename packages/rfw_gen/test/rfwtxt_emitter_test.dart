@@ -464,7 +464,7 @@ void main() {
           'onPressed': IrEventValue('button.click'),
         });
         final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
-        expect(output, contains('onPressed: event "button.click"'));
+        expect(output, contains('onPressed: event "button.click" {}'));
       });
 
       test('emits event with args', () {

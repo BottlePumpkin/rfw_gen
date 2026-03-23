@@ -156,7 +156,7 @@ class RfwtxtEmitter {
   /// Emits an event handler value.
   String _emitEvent(IrEventValue event, {required int indent}) {
     if (event.args.isEmpty) {
-      return 'event "${event.name}"';
+      return 'event "${event.name}" {}';
     }
     final buffer = StringBuffer();
     buffer.write('event "${event.name}" { ');

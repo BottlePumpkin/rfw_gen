@@ -82,8 +82,8 @@ void main() {
       registry = WidgetRegistry.core();
     });
 
-    test('contains exactly 33 widgets', () {
-      expect(registry.supportedWidgets, hasLength(33));
+    test('contains exactly 38 widgets', () {
+      expect(registry.supportedWidgets, hasLength(38));
     });
 
     test('supports Text, Column, Row, Container, SizedBox, Center', () {
@@ -552,6 +552,64 @@ void main() {
         final w = registry.supportedWidgets['Directionality']!;
         expect(w.childType, equals(ChildType.child));
         expect(w.params['textDirection']!.transformer, equals('enum'));
+      });
+    });
+
+    group('Transform widgets', () {
+      test('supports all transform widgets', () {
+        for (final name in ['Positioned', 'Rotation', 'Scale']) {
+          expect(registry.isSupported(name), isTrue, reason: '$name not found');
+        }
+      });
+
+      test('Positioned has child and position params', () {
+        final w = registry.supportedWidgets['Positioned']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params.containsKey('start'), isTrue);
+        expect(w.params.containsKey('top'), isTrue);
+        expect(w.params.containsKey('end'), isTrue);
+        expect(w.params.containsKey('bottom'), isTrue);
+        expect(w.params.containsKey('duration'), isTrue);
+      });
+
+      test('Rotation has turns and alignment', () {
+        final w = registry.supportedWidgets['Rotation']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('turns'), isTrue);
+        expect(w.params['alignment']!.transformer, equals('alignment'));
+        expect(w.params.containsKey('duration'), isTrue);
+      });
+
+      test('Scale has scale and alignment', () {
+        final w = registry.supportedWidgets['Scale']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('scale'), isTrue);
+        expect(w.params['alignment']!.transformer, equals('alignment'));
+        expect(w.params.containsKey('duration'), isTrue);
+      });
+    });
+
+    group('Other widgets', () {
+      test('supports AnimationDefaults and SafeArea', () {
+        expect(registry.isSupported('AnimationDefaults'), isTrue);
+        expect(registry.isSupported('SafeArea'), isTrue);
+      });
+
+      test('AnimationDefaults has duration and curve', () {
+        final w = registry.supportedWidgets['AnimationDefaults']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params.containsKey('duration'), isTrue);
+        expect(w.params.containsKey('curve'), isTrue);
+      });
+
+      test('SafeArea has boolean params and minimum', () {
+        final w = registry.supportedWidgets['SafeArea']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params.containsKey('left'), isTrue);
+        expect(w.params.containsKey('top'), isTrue);
+        expect(w.params.containsKey('right'), isTrue);
+        expect(w.params.containsKey('bottom'), isTrue);
+        expect(w.params['minimum']!.transformer, equals('edgeInsets'));
       });
     });
   });

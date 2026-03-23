@@ -525,13 +525,76 @@ class WidgetRegistry {
   // Transform widgets (Task 7)
   // ---------------------------------------------------------------------------
 
-  static Map<String, WidgetMapping> _transformWidgets() =>
-      const <String, WidgetMapping>{};
+  static Map<String, WidgetMapping> _transformWidgets() => const {
+        'Positioned': WidgetMapping(
+          rfwName: 'core.Positioned',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'start': ParamMapping.direct('start'),
+            'top': ParamMapping.direct('top'),
+            'end': ParamMapping.direct('end'),
+            'bottom': ParamMapping.direct('bottom'),
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'Rotation': WidgetMapping(
+          rfwName: 'core.Rotation',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'turns': ParamMapping.direct('turns'),
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'Scale': WidgetMapping(
+          rfwName: 'core.Scale',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'scale': ParamMapping.direct('scale'),
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+      };
 
   // ---------------------------------------------------------------------------
   // Other widgets (Task 7)
   // ---------------------------------------------------------------------------
 
-  static Map<String, WidgetMapping> _otherWidgets() =>
-      const <String, WidgetMapping>{};
+  static Map<String, WidgetMapping> _otherWidgets() => const {
+        'AnimationDefaults': WidgetMapping(
+          rfwName: 'core.AnimationDefaults',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'SafeArea': WidgetMapping(
+          rfwName: 'core.SafeArea',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'left': ParamMapping.direct('left'),
+            'top': ParamMapping.direct('top'),
+            'right': ParamMapping.direct('right'),
+            'bottom': ParamMapping.direct('bottom'),
+            'minimum': ParamMapping('minimum', transformer: 'edgeInsets'),
+          },
+        ),
+      };
 }

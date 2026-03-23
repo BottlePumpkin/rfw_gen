@@ -99,7 +99,7 @@ Widget buildToolbar() {
     test('throws on unsupported widget', () {
       const input = '''
 Widget buildBad() {
-  return Scaffold(body: Text('hello'));
+  return CupertinoButton(child: Text('hello'));
 }
 ''';
       expect(

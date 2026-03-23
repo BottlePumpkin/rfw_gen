@@ -117,6 +117,7 @@ class WidgetRegistry {
       ..._transformWidgets(),
       ..._interactionWidgets(),
       ..._otherWidgets(),
+      ..._materialWidgets(),
     });
   }
 
@@ -633,6 +634,235 @@ class WidgetRegistry {
             'bottom': ParamMapping.direct('bottom'),
             'minimum': ParamMapping('minimum', transformer: 'edgeInsets'),
           },
+        ),
+      };
+
+  // ---------------------------------------------------------------------------
+  // Material widgets (Task 8)
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _materialWidgets() => const {
+        'Scaffold': WidgetMapping(
+          rfwName: 'material.Scaffold',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'appBar': false,
+            'body': false,
+            'floatingActionButton': false,
+            'drawer': false,
+            'bottomNavigationBar': false,
+          },
+          params: {
+            'backgroundColor':
+                ParamMapping('backgroundColor', transformer: 'color'),
+            'resizeToAvoidBottomInset':
+                ParamMapping.direct('resizeToAvoidBottomInset'),
+          },
+        ),
+        'AppBar': WidgetMapping(
+          rfwName: 'material.AppBar',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'leading': false,
+            'title': false,
+            'actions': true,
+          },
+          params: {
+            'backgroundColor':
+                ParamMapping('backgroundColor', transformer: 'color'),
+            'elevation': ParamMapping.direct('elevation'),
+            'centerTitle': ParamMapping.direct('centerTitle'),
+            'toolbarHeight': ParamMapping.direct('toolbarHeight'),
+          },
+        ),
+        'ListTile': WidgetMapping(
+          rfwName: 'material.ListTile',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'leading': false,
+            'title': false,
+            'subtitle': false,
+            'trailing': false,
+          },
+          params: {
+            'dense': ParamMapping.direct('dense'),
+            'enabled': ParamMapping.direct('enabled'),
+            'selected': ParamMapping.direct('selected'),
+            'contentPadding':
+                ParamMapping('contentPadding', transformer: 'edgeInsets'),
+          },
+          handlerParams: {'onTap', 'onLongPress'},
+        ),
+        'ElevatedButton': WidgetMapping(
+          rfwName: 'material.ElevatedButton',
+          import: 'material',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'autofocus': ParamMapping.direct('autofocus'),
+            'clipBehavior':
+                ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+          handlerParams: {'onPressed', 'onLongPress'},
+        ),
+        'TextButton': WidgetMapping(
+          rfwName: 'material.TextButton',
+          import: 'material',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'autofocus': ParamMapping.direct('autofocus'),
+            'clipBehavior':
+                ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+          handlerParams: {'onPressed', 'onLongPress'},
+        ),
+        'OutlinedButton': WidgetMapping(
+          rfwName: 'material.OutlinedButton',
+          import: 'material',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'autofocus': ParamMapping.direct('autofocus'),
+            'clipBehavior':
+                ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+          handlerParams: {'onPressed', 'onLongPress'},
+        ),
+        'FloatingActionButton': WidgetMapping(
+          rfwName: 'material.FloatingActionButton',
+          import: 'material',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'tooltip': ParamMapping.direct('tooltip'),
+            'backgroundColor':
+                ParamMapping('backgroundColor', transformer: 'color'),
+            'elevation': ParamMapping.direct('elevation'),
+            'mini': ParamMapping.direct('mini'),
+          },
+          handlerParams: {'onPressed'},
+        ),
+        'InkWell': WidgetMapping(
+          rfwName: 'material.InkWell',
+          import: 'material',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'splashColor':
+                ParamMapping('splashColor', transformer: 'color'),
+            'highlightColor':
+                ParamMapping('highlightColor', transformer: 'color'),
+            'borderRadius':
+                ParamMapping('borderRadius', transformer: 'borderRadius'),
+          },
+          handlerParams: {'onTap', 'onDoubleTap', 'onLongPress'},
+        ),
+        'Card': WidgetMapping(
+          rfwName: 'material.Card',
+          import: 'material',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'color': ParamMapping('color', transformer: 'color'),
+            'elevation': ParamMapping.direct('elevation'),
+            'margin': ParamMapping('margin', transformer: 'edgeInsets'),
+          },
+        ),
+        'Material': WidgetMapping(
+          rfwName: 'material.Material',
+          import: 'material',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'type': ParamMapping('type', transformer: 'enum'),
+            'elevation': ParamMapping.direct('elevation'),
+            'color': ParamMapping('color', transformer: 'color'),
+            'shadowColor':
+                ParamMapping('shadowColor', transformer: 'color'),
+          },
+        ),
+        'Divider': WidgetMapping(
+          rfwName: 'material.Divider',
+          import: 'material',
+          childType: ChildType.none,
+          params: {
+            'height': ParamMapping.direct('height'),
+            'thickness': ParamMapping.direct('thickness'),
+            'indent': ParamMapping.direct('indent'),
+            'endIndent': ParamMapping.direct('endIndent'),
+            'color': ParamMapping('color', transformer: 'color'),
+          },
+        ),
+        'VerticalDivider': WidgetMapping(
+          rfwName: 'material.VerticalDivider',
+          import: 'material',
+          childType: ChildType.none,
+          params: {
+            'width': ParamMapping.direct('width'),
+            'thickness': ParamMapping.direct('thickness'),
+            'indent': ParamMapping.direct('indent'),
+            'endIndent': ParamMapping.direct('endIndent'),
+            'color': ParamMapping('color', transformer: 'color'),
+          },
+        ),
+        'CircularProgressIndicator': WidgetMapping(
+          rfwName: 'material.CircularProgressIndicator',
+          import: 'material',
+          childType: ChildType.none,
+          params: {
+            'value': ParamMapping.direct('value'),
+            'color': ParamMapping('color', transformer: 'color'),
+            'strokeWidth': ParamMapping.direct('strokeWidth'),
+          },
+        ),
+        'LinearProgressIndicator': WidgetMapping(
+          rfwName: 'material.LinearProgressIndicator',
+          import: 'material',
+          childType: ChildType.none,
+          params: {
+            'value': ParamMapping.direct('value'),
+            'color': ParamMapping('color', transformer: 'color'),
+            'backgroundColor':
+                ParamMapping('backgroundColor', transformer: 'color'),
+          },
+        ),
+        'Drawer': WidgetMapping(
+          rfwName: 'material.Drawer',
+          import: 'material',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'elevation': ParamMapping.direct('elevation'),
+          },
+        ),
+        'OverflowBar': WidgetMapping(
+          rfwName: 'material.OverflowBar',
+          import: 'material',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'spacing': ParamMapping.direct('spacing'),
+            'alignment': ParamMapping('alignment', transformer: 'enum'),
+            'overflowSpacing': ParamMapping.direct('overflowSpacing'),
+          },
+        ),
+        'Slider': WidgetMapping(
+          rfwName: 'material.Slider',
+          import: 'material',
+          childType: ChildType.none,
+          params: {
+            'min': ParamMapping.direct('min'),
+            'max': ParamMapping.direct('max'),
+            'value': ParamMapping.direct('value'),
+            'divisions': ParamMapping.direct('divisions'),
+            'activeColor':
+                ParamMapping('activeColor', transformer: 'color'),
+          },
+          handlerParams: {'onChanged', 'onChangeStart', 'onChangeEnd'},
         ),
       };
 }

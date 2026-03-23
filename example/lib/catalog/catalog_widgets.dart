@@ -573,3 +573,196 @@ Widget buildArgsPatternDemo() {
     ],
   );
 }
+
+// ============================================================
+// Material Category
+// ============================================================
+
+@RfwWidget('scaffoldDemo')
+Widget buildScaffoldDemo() {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Scaffold Demo'),
+      backgroundColor: const Color(0xFF2196F3),
+    ),
+    body: Center(
+      child: Text('Scaffold Body', style: const TextStyle(fontSize: 18.0)),
+    ),
+    floatingActionButton: FloatingActionButton(
+      onPressed: RfwHandler.event('fab.pressed', {}),
+      child: Icon(icon: RfwIcon.add),
+    ),
+  );
+}
+
+@RfwWidget('materialDemo')
+Widget buildMaterialDemo() {
+  return Material(
+    elevation: 4.0,
+    color: const Color(0xFFFFFFFF),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Text('Material Surface', style: const TextStyle(fontSize: 16.0)),
+    ),
+  );
+}
+
+@RfwWidget('cardDemo')
+Widget buildCardDemo() {
+  return Column(
+    children: [
+      Card(
+        elevation: 4.0,
+        margin: const EdgeInsets.all(8),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text('Rounded Card', style: const TextStyle(fontSize: 16.0)),
+        ),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('buttonDemo')
+Widget buildButtonDemo() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      ElevatedButton(
+        onPressed: RfwHandler.event('button.elevated', {}),
+        child: Text('Elevated'),
+      ),
+      SizedBox(height: 8),
+      TextButton(
+        onPressed: RfwHandler.event('button.text', {}),
+        child: Text('Text Button'),
+      ),
+      SizedBox(height: 8),
+      OutlinedButton(
+        onPressed: RfwHandler.event('button.outlined', {}),
+        child: Text('Outlined'),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('listTileDemo')
+Widget buildListTileDemo() {
+  return Column(
+    children: [
+      ListTile(
+        leading: Icon(icon: RfwIcon.email, size: 40.0, color: const Color(0xFF2196F3)),
+        title: Text('List Tile Title'),
+        subtitle: Text('Subtitle text here'),
+        trailing: Icon(icon: RfwIcon.chevronRight),
+        onTap: RfwHandler.event('listTile.tap', {}),
+      ),
+      Divider(),
+      ListTile(
+        leading: Icon(icon: RfwIcon.settings, size: 40.0, color: const Color(0xFF757575)),
+        title: Text('Settings'),
+        onTap: RfwHandler.event('listTile.settings', {}),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('sliderDemo', state: {'value': 50.0})
+Widget buildSliderDemo() {
+  return Column(
+    children: [
+      Slider(
+        min: 0.0,
+        max: 100.0,
+        value: StateRef('value'),
+        onChanged: RfwHandler.setStateFromArg('value'),
+        onChangeStart: RfwHandler.event('slider.start', {}),
+        onChangeEnd: RfwHandler.event('slider.end', {}),
+      ),
+      Text(RfwConcat(['Value: ', StateRef('value')])),
+    ],
+  );
+}
+
+@RfwWidget('drawerDemo')
+Widget buildDrawerDemo() {
+  return Scaffold(
+    appBar: AppBar(title: Text('Drawer Demo')),
+    drawer: Drawer(
+      child: ListView(
+        children: [
+          ListTile(
+            leading: Icon(icon: RfwIcon.home),
+            title: Text('Home'),
+            onTap: RfwHandler.event('drawer.home', {}),
+          ),
+          ListTile(
+            leading: Icon(icon: RfwIcon.settings),
+            title: Text('Settings'),
+            onTap: RfwHandler.event('drawer.settings', {}),
+          ),
+        ],
+      ),
+    ),
+    body: Center(
+      child: Text('Swipe or tap menu to open drawer'),
+    ),
+  );
+}
+
+@RfwWidget('dividerDemo')
+Widget buildDividerDemo() {
+  return Column(
+    children: [
+      Text('Above Divider'),
+      Divider(thickness: 2.0, color: const Color(0xFF2196F3)),
+      Text('Below Divider'),
+      SizedBox(height: 16),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Left'),
+          SizedBox(
+            height: 40,
+            child: VerticalDivider(thickness: 2.0, color: const Color(0xFFFF9800)),
+          ),
+          Text('Right'),
+        ],
+      ),
+    ],
+  );
+}
+
+@RfwWidget('progressDemo')
+Widget buildProgressDemo() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      CircularProgressIndicator(value: 0.7, color: const Color(0xFF2196F3), strokeWidth: 6.0),
+      SizedBox(height: 16),
+      LinearProgressIndicator(value: 0.4, color: const Color(0xFF4CAF50), backgroundColor: const Color(0xFFE0E0E0)),
+    ],
+  );
+}
+
+@RfwWidget('overflowBarDemo')
+Widget buildOverflowBarDemo() {
+  return OverflowBar(
+    spacing: 8.0,
+    overflowSpacing: 4.0,
+    children: [
+      ElevatedButton(
+        onPressed: RfwHandler.event('overflow.1', {}),
+        child: Text('Action 1'),
+      ),
+      OutlinedButton(
+        onPressed: RfwHandler.event('overflow.2', {}),
+        child: Text('Action 2'),
+      ),
+      TextButton(
+        onPressed: RfwHandler.event('overflow.3', {}),
+        child: Text('Action 3'),
+      ),
+    ],
+  );
+}

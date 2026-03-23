@@ -4,6 +4,7 @@ export 'src/converter.dart';
 export 'src/errors.dart';
 export 'src/expression_converter.dart';
 export 'src/ir.dart';
+export 'src/rfw_handler.dart';
 export 'src/rfw_icons.dart';
 export 'src/rfwtxt_emitter.dart';
 export 'src/widget_registry.dart';

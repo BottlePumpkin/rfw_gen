@@ -49,6 +49,9 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
     'responsiveWrap',
     'animatedCard',
     'expandedLayout',
+    'interactiveButton',
+    'toggleCard',
+    'scaffoldPage',
   ];
 
   String _currentWidget = 'greeting';

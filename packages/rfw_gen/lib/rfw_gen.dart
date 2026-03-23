@@ -1,5 +1,6 @@
 export 'src/annotations.dart';
 export 'src/ast_visitor.dart';
+export 'src/converter.dart';
 export 'src/errors.dart';
 export 'src/expression_converter.dart';
 export 'src/ir.dart';

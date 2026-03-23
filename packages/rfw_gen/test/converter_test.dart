@@ -1,0 +1,185 @@
+import 'dart:typed_data';
+
+import 'package:rfw_gen/rfw_gen.dart';
+import 'package:test/test.dart';
+
+void main() {
+  late RfwConverter converter;
+
+  setUp(() {
+    converter = RfwConverter(registry: WidgetRegistry.core());
+  });
+
+  group('RfwConverter.convertFromSource', () {
+    test('converts simple Text widget', () {
+      const input = "Widget buildGreeting() { return Text('Hello'); }";
+      final result = converter.convertFromSource(input);
+      expect(result, contains('import core.widgets;'));
+      expect(result, contains('widget greeting = Text('));
+      expect(result, contains('text: "Hello"'));
+    });
+
+    test('converts Column with children', () {
+      const input = '''
+Widget buildMyList() {
+  return Column(
+    children: [
+      Text('First'),
+      Text('Second'),
+    ],
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result, contains('import core.widgets;'));
+      expect(result, contains('widget myList = Column('));
+      expect(result, contains('text: "First"'));
+      expect(result, contains('text: "Second"'));
+    });
+
+    test('converts nested Container > Text with color and padding', () {
+      const input = '''
+Widget buildCard() {
+  return Container(
+    color: Color(0xFF42A5F5),
+    padding: EdgeInsets.all(16.0),
+    child: Text('Inside'),
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result, contains('import core.widgets;'));
+      expect(result, contains('widget card = Container('));
+      expect(result, contains('color: 0xFF42A5F5'));
+      expect(result, contains('padding: [16.0]'));
+      expect(result, contains('text: "Inside"'));
+    });
+
+    test('extracts custom name from @RfwWidget annotation', () {
+      const input = '''
+@RfwWidget('myCustomName')
+Widget buildSomething() {
+  return Text('Annotated');
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget myCustomName = Text('));
+      expect(result, contains('text: "Annotated"'));
+    });
+
+    test('converts SizedBox with dimensions', () {
+      const input = '''
+Widget buildSpacer() {
+  return SizedBox(width: 100.0, height: 50.0);
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget spacer = SizedBox('));
+      expect(result, contains('width: 100.0'));
+      expect(result, contains('height: 50.0'));
+    });
+
+    test('converts Row with mainAxisAlignment enum', () {
+      const input = '''
+Widget buildToolbar() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text('Left'),
+      Text('Right'),
+    ],
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget toolbar = Row('));
+      expect(result, contains('mainAxisAlignment: "center"'));
+    });
+
+    test('throws on unsupported widget', () {
+      const input = '''
+Widget buildBad() {
+  return Scaffold(body: Text('hello'));
+}
+''';
+      expect(
+        () => converter.convertFromSource(input),
+        throwsA(isA<UnsupportedWidgetError>()),
+      );
+    });
+
+    test('arrow function body works', () {
+      const input = "Widget buildArrow() => Text('Arrow');";
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget arrow = Text('));
+      expect(result, contains('text: "Arrow"'));
+    });
+
+    test('function name fallback without build prefix', () {
+      const input = "Widget simple() { return Text('Plain'); }";
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget simple = Text('));
+      expect(result, contains('text: "Plain"'));
+    });
+
+    test('throws StateError when no function declaration found', () {
+      const input = 'var x = 42;';
+      expect(
+        () => converter.convertFromSource(input),
+        throwsStateError,
+      );
+    });
+  });
+
+  group('RfwConverter.toBlob', () {
+    test('produces non-empty Uint8List from valid rfwtxt', () {
+      const rfwtxt = '''
+import core.widgets;
+
+widget greeting = Text(
+  text: "Hello"
+);
+''';
+      final blob = converter.toBlob(rfwtxt);
+      expect(blob, isA<Uint8List>());
+      expect(blob.isNotEmpty, isTrue);
+    });
+
+    test('round-trip: source -> rfwtxt -> blob produces valid binary', () {
+      const input = "Widget buildGreeting() { return Text('Hello'); }";
+      final rfwtxt = converter.convertFromSource(input);
+      final blob = converter.toBlob(rfwtxt);
+      expect(blob, isA<Uint8List>());
+      expect(blob.isNotEmpty, isTrue);
+    });
+  });
+
+  group('Widget name extraction', () {
+    test('buildGreeting -> greeting', () {
+      const input = "Widget buildGreeting() { return Text('hi'); }";
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget greeting ='));
+    });
+
+    test('buildMyCard -> myCard', () {
+      const input = "Widget buildMyCard() { return Text('hi'); }";
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget myCard ='));
+    });
+
+    test('simple -> simple (no build prefix)', () {
+      const input = "Widget simple() { return Text('hi'); }";
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget simple ='));
+    });
+
+    test('@RfwWidget annotation takes precedence over function name', () {
+      const input = '''
+@RfwWidget('override')
+Widget buildSomethingElse() { return Text('hi'); }
+''';
+      final result = converter.convertFromSource(input);
+      expect(result, contains('widget override ='));
+    });
+  });
+}

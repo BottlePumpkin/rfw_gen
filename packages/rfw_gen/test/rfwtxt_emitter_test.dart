@@ -352,6 +352,95 @@ void main() {
       expect(result, endsWith(');\n'));
     });
 
+    // New type output verification tests
+    test('emits IrMapValue with icon and fontFamily (iconData)', () {
+      final node = IrWidgetNode(
+        name: 'Icon',
+        properties: {
+          'iconData': IrMapValue({
+            'icon': IrIntValue(0xe318),
+            'fontFamily': IrStringValue('MaterialIcons'),
+          }),
+        },
+      );
+      final output = emitter.emit(
+        widgetName: 'test',
+        root: node,
+        imports: {'core.widgets'},
+      );
+      expect(output, contains('icon: 0x0000E318'));
+      expect(output, contains('fontFamily: "MaterialIcons"'));
+    });
+
+    test('emits Duration as integer', () {
+      final node = IrWidgetNode(
+        name: 'Opacity',
+        properties: {
+          'opacity': IrNumberValue(0.5),
+          'duration': IrIntValue(300),
+        },
+      );
+      final output = emitter.emit(
+        widgetName: 'test',
+        root: node,
+        imports: {'core.widgets'},
+      );
+      expect(output, contains('duration: 0x0000012C'));
+    });
+
+    test('emits Curve as string', () {
+      final node = IrWidgetNode(
+        name: 'Opacity',
+        properties: {
+          'opacity': IrNumberValue(0.5),
+          'curve': IrStringValue('easeIn'),
+        },
+      );
+      final output = emitter.emit(
+        widgetName: 'test',
+        root: node,
+        imports: {'core.widgets'},
+      );
+      expect(output, contains('curve: "easeIn"'));
+    });
+
+    test('emits BorderRadius as list of radius maps', () {
+      final node = IrWidgetNode(
+        name: 'ClipRRect',
+        properties: {
+          'borderRadius': IrListValue([
+            IrMapValue({'x': IrNumberValue(8.0)}),
+          ]),
+        },
+      );
+      final output = emitter.emit(
+        widgetName: 'test',
+        root: node,
+        imports: {'core.widgets'},
+      );
+      expect(output, contains('borderRadius:'));
+      expect(output, contains('x: 8.0'));
+    });
+
+    test('emits ImageProvider as map with source and scale', () {
+      final node = IrWidgetNode(
+        name: 'Image',
+        properties: {
+          'imageProvider': IrMapValue({
+            'source': IrStringValue('https://example.com/img.png'),
+            'scale': IrNumberValue(1.0),
+          }),
+        },
+      );
+      final output = emitter.emit(
+        widgetName: 'test',
+        root: node,
+        imports: {'core.widgets'},
+      );
+      expect(output, contains('source: "https://example.com/img.png"'));
+      expect(output, contains('scale: 1.0'));
+    });
+
     // Indentation check
     test('widget properties are indented with 2 spaces', () {
       final root = IrWidgetNode(

@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 
 import 'ir.dart';
+import 'rfw_icons.dart';
 
 /// Thrown when an expression cannot be converted to an IR value.
 class UnsupportedExpressionError implements Exception {
@@ -33,6 +34,12 @@ class ExpressionConverter {
     'FlexFit',
     'WrapAlignment',
     'WrapCrossAlignment',
+    'ImageRepeat',
+  };
+
+  static const _knownGridDelegates = <String>{
+    'SliverGridDelegateWithFixedCrossAxisCount',
+    'SliverGridDelegateWithMaxCrossAxisExtent',
   };
 
   /// Converts an [Expression] to an [IrValue].
@@ -85,6 +92,31 @@ class ExpressionConverter {
     // EdgeInsets.xxx(...) — parses as MethodInvocation with target 'EdgeInsets'
     if (target is SimpleIdentifier && target.name == 'EdgeInsets') {
       return _convertEdgeInsets(methodName, expr.argumentList);
+    }
+
+    // Duration(milliseconds: 300) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'Duration') {
+      return _convertDuration(expr);
+    }
+
+    // BorderRadius.xxx(...) — parses as MethodInvocation with target 'BorderRadius'
+    if (target is SimpleIdentifier && target.name == 'BorderRadius') {
+      return _convertBorderRadius(methodName, expr.argumentList);
+    }
+
+    // NetworkImage('url') — parses as MethodInvocation with no target
+    if (target == null && methodName == 'NetworkImage') {
+      return _convertImageProvider(expr);
+    }
+
+    // AssetImage('path') — parses as MethodInvocation with no target
+    if (target == null && methodName == 'AssetImage') {
+      return _convertImageProvider(expr);
+    }
+
+    // SliverGridDelegateWithXxx(...) — parses as MethodInvocation with no target
+    if (target == null && _knownGridDelegates.contains(methodName)) {
+      return _convertGridDelegate(expr);
     }
 
     throw UnsupportedExpressionError(
@@ -203,10 +235,140 @@ class ExpressionConverter {
       return IrEnumValue(identifier);
     }
 
+    if (prefix == 'Curves') {
+      return IrStringValue(identifier);
+    }
+
+    if (prefix == 'BorderRadius' && identifier == 'zero') {
+      return IrListValue([IrMapValue({'x': IrNumberValue(0.0)})]);
+    }
+
+    if (prefix == 'RfwIcon') {
+      return _convertRfwIcon(identifier);
+    }
+
     throw UnsupportedExpressionError(
       'Unknown prefixed identifier: $prefix.$identifier',
       offset: expr.offset,
     );
+  }
+
+  IrMapValue _convertRfwIcon(String name) {
+    final codepoint = RfwIcon.lookup(name);
+    if (codepoint == null) {
+      throw UnsupportedExpressionError('Unknown RfwIcon: $name');
+    }
+    return IrMapValue({
+      'icon': IrIntValue(codepoint),
+      'fontFamily': IrStringValue('MaterialIcons'),
+    });
+  }
+
+  IrIntValue _convertDuration(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    for (final arg in args) {
+      if (arg is NamedExpression && arg.name.label.name == 'milliseconds') {
+        final value = arg.expression;
+        if (value is IntegerLiteral) {
+          return IrIntValue(value.value!);
+        }
+      }
+    }
+    throw UnsupportedExpressionError(
+      'Duration requires a milliseconds named argument',
+      offset: expr.offset,
+    );
+  }
+
+  IrListValue _convertBorderRadius(String method, ArgumentList argList) {
+    switch (method) {
+      case 'circular':
+        return _convertBorderRadiusCircular(argList);
+      case 'only':
+        return _convertBorderRadiusOnly(argList);
+      default:
+        throw UnsupportedExpressionError(
+          'Unsupported BorderRadius constructor: $method',
+        );
+    }
+  }
+
+  IrListValue _convertBorderRadiusCircular(ArgumentList argList) {
+    final value = _toDouble(argList.arguments.first);
+    return IrListValue([IrMapValue({'x': IrNumberValue(value)})]);
+  }
+
+  IrListValue _convertBorderRadiusOnly(ArgumentList argList) {
+    final corners = <IrValue>[
+      IrMapValue({'x': IrNumberValue(0.0)}),
+      IrMapValue({'x': IrNumberValue(0.0)}),
+      IrMapValue({'x': IrNumberValue(0.0)}),
+      IrMapValue({'x': IrNumberValue(0.0)}),
+    ];
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        final radiusValue = _extractRadiusValue(arg.expression);
+        switch (name) {
+          case 'topLeft':
+            corners[0] = IrMapValue({'x': IrNumberValue(radiusValue)});
+          case 'topRight':
+            corners[1] = IrMapValue({'x': IrNumberValue(radiusValue)});
+          case 'bottomLeft':
+            corners[2] = IrMapValue({'x': IrNumberValue(radiusValue)});
+          case 'bottomRight':
+            corners[3] = IrMapValue({'x': IrNumberValue(radiusValue)});
+        }
+      }
+    }
+    return IrListValue(corners);
+  }
+
+  double _extractRadiusValue(Expression expr) {
+    if (expr is MethodInvocation &&
+        expr.target is SimpleIdentifier &&
+        (expr.target as SimpleIdentifier).name == 'Radius' &&
+        expr.methodName.name == 'circular') {
+      return _toDouble(expr.argumentList.arguments.first);
+    }
+    throw UnsupportedExpressionError(
+      'Expected Radius.circular(), got ${expr.runtimeType}',
+      offset: expr.offset,
+    );
+  }
+
+  IrMapValue _convertImageProvider(MethodInvocation expr) {
+    final args = expr.argumentList.arguments;
+    String? source;
+    double scale = 1.0;
+    for (final arg in args) {
+      if (arg is SimpleStringLiteral) {
+        source = arg.value;
+      } else if (arg is NamedExpression && arg.name.label.name == 'scale') {
+        scale = _toDouble(arg.expression);
+      }
+    }
+    if (source == null) {
+      throw UnsupportedExpressionError(
+        'ImageProvider requires a string argument',
+        offset: expr.offset,
+      );
+    }
+    return IrMapValue({
+      'source': IrStringValue(source),
+      'scale': IrNumberValue(scale),
+    });
+  }
+
+  IrMapValue _convertGridDelegate(MethodInvocation expr) {
+    final entries = <String, IrValue>{};
+    for (final arg in expr.argumentList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        entries[name] = convert(arg.expression);
+      }
+    }
+    return IrMapValue(entries);
   }
 
   /// Extracts a double value from a numeric expression.

@@ -275,6 +275,13 @@ void main() {
       expect((result as IrEnumValue).value, equals('cover'));
     });
 
+    test('converts ImageRepeat.repeat', () {
+      final expr = parseExpression('ImageRepeat.repeat');
+      final result = converter.convert(expr);
+      expect(result, isA<IrEnumValue>());
+      expect((result as IrEnumValue).value, equals('repeat'));
+    });
+
     test('converts all known enum prefixes', () {
       final knownEnums = {
         'VerticalDirection.up': 'up',
@@ -298,6 +305,181 @@ void main() {
           reason: 'Failed for ${entry.key}',
         );
       }
+    });
+  });
+
+  group('BorderRadius', () {
+    test('converts BorderRadius.circular(8) to single-element radius list', () {
+      final expr = parseExpression('BorderRadius.circular(8)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(8.0));
+    });
+
+    test('converts BorderRadius.circular with double', () {
+      final expr = parseExpression('BorderRadius.circular(12.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(12.0));
+    });
+
+    test('converts BorderRadius.only with all corners', () {
+      final expr = parseExpression(
+        'BorderRadius.only('
+        '  topLeft: Radius.circular(4),'
+        '  topRight: Radius.circular(8),'
+        '  bottomLeft: Radius.circular(12),'
+        '  bottomRight: Radius.circular(16),'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(4));
+      expect((list.values[0] as IrMapValue).entries['x'], isA<IrNumberValue>());
+    });
+
+    test('converts BorderRadius.zero', () {
+      final expr = parseExpression('BorderRadius.zero');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(0.0));
+    });
+  });
+
+  group('Duration', () {
+    test('converts Duration(milliseconds: 300) to int', () {
+      final expr = parseExpression('Duration(milliseconds: 300)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, equals(300));
+    });
+
+    test('converts Duration(milliseconds: 0)', () {
+      final expr = parseExpression('Duration(milliseconds: 0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, equals(0));
+    });
+  });
+
+  group('Curves', () {
+    test('converts Curves.easeIn to string', () {
+      final expr = parseExpression('Curves.easeIn');
+      final result = converter.convert(expr);
+      expect(result, isA<IrStringValue>());
+      expect((result as IrStringValue).value, equals('easeIn'));
+    });
+
+    test('converts Curves.linear to string', () {
+      final expr = parseExpression('Curves.linear');
+      final result = converter.convert(expr);
+      expect(result, isA<IrStringValue>());
+      expect((result as IrStringValue).value, equals('linear'));
+    });
+
+    test('converts Curves.bounceOut to string', () {
+      final expr = parseExpression('Curves.bounceOut');
+      final result = converter.convert(expr);
+      expect(result, isA<IrStringValue>());
+      expect((result as IrStringValue).value, equals('bounceOut'));
+    });
+  });
+
+  group('ImageProvider', () {
+    test('converts NetworkImage to map with source', () {
+      final expr = parseExpression("NetworkImage('https://example.com/img.png')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['source'] as IrStringValue).value,
+          equals('https://example.com/img.png'));
+      expect((map.entries['scale'] as IrNumberValue).value, equals(1.0));
+    });
+
+    test('converts AssetImage to map with source', () {
+      final expr = parseExpression("AssetImage('assets/logo.png')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['source'] as IrStringValue).value,
+          equals('assets/logo.png'));
+      expect((map.entries['scale'] as IrNumberValue).value, equals(1.0));
+    });
+
+    test('converts NetworkImage with scale', () {
+      final expr = parseExpression(
+          "NetworkImage('https://example.com/img.png', scale: 2.0)");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['scale'] as IrNumberValue).value, equals(2.0));
+    });
+  });
+
+  group('SliverGridDelegate', () {
+    test('converts SliverGridDelegateWithFixedCrossAxisCount', () {
+      final expr = parseExpression(
+        'SliverGridDelegateWithFixedCrossAxisCount('
+        '  crossAxisCount: 2,'
+        '  mainAxisSpacing: 4.0,'
+        '  crossAxisSpacing: 4.0,'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['crossAxisCount'] as IrIntValue).value, equals(2));
+      expect((map.entries['mainAxisSpacing'] as IrNumberValue).value, equals(4.0));
+      expect((map.entries['crossAxisSpacing'] as IrNumberValue).value, equals(4.0));
+    });
+
+    test('converts SliverGridDelegateWithMaxCrossAxisExtent', () {
+      final expr = parseExpression(
+        'SliverGridDelegateWithMaxCrossAxisExtent('
+        '  maxCrossAxisExtent: 200.0,'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['maxCrossAxisExtent'] as IrNumberValue).value, equals(200.0));
+    });
+  });
+
+  group('RfwIcon', () {
+    test('converts RfwIcon.home to iconData map', () {
+      final expr = parseExpression('RfwIcon.home');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries['icon'], isA<IrIntValue>());
+      expect(map.entries['fontFamily'], isA<IrStringValue>());
+      expect((map.entries['fontFamily'] as IrStringValue).value,
+          equals('MaterialIcons'));
+    });
+
+    test('converts RfwIcon.search to iconData map', () {
+      final expr = parseExpression('RfwIcon.search');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries['icon'], isA<IrIntValue>());
+    });
+
+    test('throws for unknown RfwIcon', () {
+      final expr = parseExpression('RfwIcon.nonExistentIcon');
+      expect(() => converter.convert(expr),
+          throwsA(isA<UnsupportedExpressionError>()));
     });
   });
 

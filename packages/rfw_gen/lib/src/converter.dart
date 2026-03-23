@@ -53,6 +53,7 @@ class RfwConverter {
   /// to emit the rfwtxt output.
   String convertFromAst(FunctionDeclaration function) {
     final widgetName = _extractWidgetName(function);
+    final stateDecl = _extractStateDecl(function);
 
     final visitor = WidgetAstVisitor(
       registry: registry,
@@ -66,23 +67,60 @@ class RfwConverter {
       widgetName: widgetName,
       root: irTree,
       imports: imports,
+      stateDecl: stateDecl,
     );
+  }
+
+  /// Extracts the state declaration map from the `@RfwWidget` annotation,
+  /// if a `state` named argument is present.
+  Map<String, IrValue>? _extractStateDecl(FunctionDeclaration function) {
+    for (final annotation in function.metadata) {
+      if (annotation.name.name == 'RfwWidget') {
+        final arguments = annotation.arguments;
+        if (arguments == null) continue;
+        for (final arg in arguments.arguments) {
+          if (arg is NamedExpression && arg.name.label.name == 'state') {
+            if (arg.expression is SetOrMapLiteral) {
+              final map = arg.expression as SetOrMapLiteral;
+              final entries = <String, IrValue>{};
+              final exprConverter = ExpressionConverter();
+              for (final entry in map.elements) {
+                if (entry is MapLiteralEntry) {
+                  final key = (entry.key as SimpleStringLiteral).value;
+                  entries[key] = exprConverter.convert(entry.value);
+                }
+              }
+              return entries;
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 
   /// Recursively collects the set of rfwtxt import libraries required by
   /// the widget tree rooted at [node].
-  Set<String> _collectImports(IrWidgetNode node) {
+  Set<String> _collectImports(IrValue node) {
     final imports = <String>{};
-    final mapping = registry.supportedWidgets[node.name];
-    if (mapping != null) imports.add(mapping.import);
-
-    for (final value in node.properties.values) {
-      if (value is IrWidgetNode) {
+    if (node is IrWidgetNode) {
+      final mapping = registry.supportedWidgets[node.name];
+      if (mapping != null) imports.add(mapping.import);
+      for (final value in node.properties.values) {
         imports.addAll(_collectImports(value));
-      } else if (value is IrListValue) {
-        for (final item in value.values) {
-          if (item is IrWidgetNode) imports.addAll(_collectImports(item));
-        }
+      }
+    } else if (node is IrListValue) {
+      for (final item in node.values) {
+        imports.addAll(_collectImports(item));
+      }
+    } else if (node is IrForLoop) {
+      imports.addAll(_collectImports(node.body));
+    } else if (node is IrSwitchExpr) {
+      for (final caseValue in node.cases.values) {
+        imports.addAll(_collectImports(caseValue));
+      }
+      if (node.defaultCase != null) {
+        imports.addAll(_collectImports(node.defaultCase!));
       }
     }
     return imports;

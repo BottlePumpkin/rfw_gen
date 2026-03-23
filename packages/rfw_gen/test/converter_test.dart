@@ -161,6 +161,43 @@ widget greeting = Text(
       expect(rfwtxt, contains('import core.widgets;'));
       expect(rfwtxt, isNot(contains('import material;')));
     });
+
+    test('collects imports from widgets inside IrForLoop body', () {
+      const source = """
+@RfwWidget('test')
+Widget test() {
+  return Column(
+    children: [
+      RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => ElevatedButton(
+          child: Text('hello'),
+        ),
+      ),
+    ],
+  );
+}
+""";
+      final converter = RfwConverter(registry: WidgetRegistry.core());
+      final result = converter.convertFromSource(source);
+      expect(result, contains('import core.widgets;'));
+      expect(result, contains('import material;'));
+    });
+  });
+
+  group('State declaration', () {
+    test('extracts state from @RfwWidget annotation', () {
+      const source = """
+@RfwWidget('toggle', state: {'down': false})
+Widget toggle() {
+  return SizedBox();
+}
+""";
+      final converter = RfwConverter(registry: WidgetRegistry.core());
+      final result = converter.convertFromSource(source);
+      expect(result, contains('widget toggle { down: false } = SizedBox('));
+    });
   });
 
   group('Widget name extraction', () {

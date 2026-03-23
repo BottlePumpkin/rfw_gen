@@ -1,0 +1,8 @@
+name: rfw_gen
+packages:
+  - packages/*
+  - example
+
+command:
+  bootstrap:
+    usePubspecOverrides: true

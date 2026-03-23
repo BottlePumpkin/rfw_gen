@@ -1,0 +1,10 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+pubspec.lock
+build/
+*.iml
+
+# IntelliJ / IDE
+.idea/
+melos_*.iml

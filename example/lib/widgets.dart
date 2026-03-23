@@ -236,3 +236,151 @@ Widget buildEmptyState() {
     ),
   );
 }
+
+// ─── 스크롤 리스트 ───
+
+@RfwWidget('scrollableList')
+Widget buildScrollableList() {
+  return ListView(
+    padding: EdgeInsets.all(16),
+    children: [
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(width: 8),
+            Text('Item 1'),
+          ],
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(width: 8),
+            Text('Item 2'),
+          ],
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(width: 8),
+            Text('Item 3'),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+// ─── 오버레이 레이아웃 ───
+
+@RfwWidget('overlayLayout')
+Widget buildOverlayLayout() {
+  return Stack(
+    children: [
+      Container(
+        color: Color(0xFFE0E0E0),
+        width: 300.0,
+        height: 200.0,
+      ),
+      Positioned(
+        top: 10.0,
+        start: 10.0,
+        child: Opacity(
+          opacity: 0.9,
+          child: Container(
+            color: Color(0xFF42A5F5),
+            width: 120.0,
+            height: 80.0,
+            child: Center(
+              child: Text('Overlay'),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// ─── 반응형 Wrap ───
+
+@RfwWidget('responsiveWrap')
+Widget buildResponsiveWrap() {
+  return SafeArea(
+    child: Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: [
+        Container(
+          color: Color(0xFF42A5F5),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text('Flutter'),
+        ),
+        Container(
+          color: Color(0xFF66BB6A),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text('Dart'),
+        ),
+        Container(
+          color: Color(0xFFFF7043),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text('RFW'),
+        ),
+      ],
+    ),
+  );
+}
+
+// ─── 애니메이션 카드 ───
+
+@RfwWidget('animatedCard')
+Widget buildAnimatedCard() {
+  return Opacity(
+    opacity: 0.95,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        color: Color(0xFFF5F5F5),
+        padding: EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Animated Card'),
+            SizedBox(height: 8),
+            Text('With ClipRRect'),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+// ─── Expanded 레이아웃 ───
+
+@RfwWidget('expandedLayout')
+Widget buildExpandedLayout() {
+  return Column(
+    children: [
+      Expanded(
+        flex: 2,
+        child: Container(
+          color: Color(0xFF42A5F5),
+          child: Center(
+            child: Text('Top (flex: 2)'),
+          ),
+        ),
+      ),
+      Expanded(
+        child: Container(
+          color: Color(0xFF66BB6A),
+          child: Center(
+            child: Text('Bottom (flex: 1)'),
+          ),
+        ),
+      ),
+    ],
+  );
+}

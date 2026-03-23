@@ -63,6 +63,10 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
       const LibraryName(<String>['core', 'widgets']),
       createCoreWidgets(),
     );
+    _runtime.update(
+      const LibraryName(<String>['material']),
+      createMaterialWidgets(),
+    );
     _loadWidget();
   }
 

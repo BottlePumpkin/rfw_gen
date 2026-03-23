@@ -177,6 +177,41 @@ void main() {
     });
   });
 
+  group('IrSetStateValue', () {
+    test('stores field and value', () {
+      final v = IrSetStateValue('pressed', IrBoolValue(true));
+      expect(v.field, equals('pressed'));
+      expect(v.value, isA<IrBoolValue>());
+    });
+  });
+
+  group('IrSetStateFromArgValue', () {
+    test('stores field and argName', () {
+      final v = IrSetStateFromArgValue('sliderValue', 'value');
+      expect(v.field, equals('sliderValue'));
+      expect(v.argName, equals('value'));
+    });
+
+    test('defaults argName to value', () {
+      final v = IrSetStateFromArgValue('amount');
+      expect(v.argName, equals('value'));
+    });
+  });
+
+  group('IrEventValue', () {
+    test('stores name and empty args', () {
+      final v = IrEventValue('button.click');
+      expect(v.name, equals('button.click'));
+      expect(v.args, isEmpty);
+    });
+
+    test('stores name and args', () {
+      final v = IrEventValue('cart.add', {'itemId': IrIntValue(42)});
+      expect(v.name, equals('cart.add'));
+      expect(v.args, hasLength(1));
+    });
+  });
+
   group('IrValue sealed hierarchy', () {
     test('each subtype is an IrValue', () {
       final values = <IrValue>[
@@ -188,6 +223,9 @@ void main() {
         IrListValue([]),
         IrMapValue({}),
         IrWidgetNode(name: 'W'),
+        IrSetStateValue('f', IrBoolValue(true)),
+        IrSetStateFromArgValue('f'),
+        IrEventValue('e'),
       ];
       for (final v in values) {
         expect(v, isA<IrValue>());

@@ -483,6 +483,91 @@ void main() {
     });
   });
 
+  group('Handler conversion', () {
+    test('converts RfwHandler.setState to IrSetStateValue', () {
+      final expr = parseExpression("RfwHandler.setState('pressed', true)");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrSetStateValue>());
+      final v = result as IrSetStateValue;
+      expect(v.field, equals('pressed'));
+      expect(v.value, isA<IrBoolValue>());
+      expect((v.value as IrBoolValue).value, isTrue);
+    });
+
+    test('converts RfwHandler.setState with int value', () {
+      final expr = parseExpression("RfwHandler.setState('count', 0)");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrSetStateValue>());
+      final v = result as IrSetStateValue;
+      expect(v.field, equals('count'));
+      expect(v.value, isA<IrIntValue>());
+    });
+
+    test('converts RfwHandler.setStateFromArg', () {
+      final expr = parseExpression("RfwHandler.setStateFromArg('sliderValue')");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrSetStateFromArgValue>());
+      final v = result as IrSetStateFromArgValue;
+      expect(v.field, equals('sliderValue'));
+      expect(v.argName, equals('value'));
+    });
+
+    test('converts RfwHandler.setStateFromArg with custom arg name', () {
+      final expr =
+          parseExpression("RfwHandler.setStateFromArg('amount', 'newValue')");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrSetStateFromArgValue>());
+      final v = result as IrSetStateFromArgValue;
+      expect(v.argName, equals('newValue'));
+    });
+
+    test('converts RfwHandler.event without args', () {
+      final expr = parseExpression("RfwHandler.event('button.click')");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+      final v = result as IrEventValue;
+      expect(v.name, equals('button.click'));
+      expect(v.args, isEmpty);
+    });
+
+    test('converts RfwHandler.event with args map', () {
+      final expr =
+          parseExpression("RfwHandler.event('cart.add', {'itemId': 42})");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+      final v = result as IrEventValue;
+      expect(v.name, equals('cart.add'));
+      expect(v.args['itemId'], isA<IrIntValue>());
+    });
+
+    test('converts RfwSetState direct constructor', () {
+      final expr = parseExpression("RfwSetState('active', false)");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrSetStateValue>());
+    });
+
+    test('converts RfwSetStateFromArg direct constructor', () {
+      final expr = parseExpression("RfwSetStateFromArg('amount')");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrSetStateFromArgValue>());
+      final v = result as IrSetStateFromArgValue;
+      expect(v.field, equals('amount'));
+      expect(v.argName, equals('value'));
+    });
+
+    test('converts RfwEvent direct constructor', () {
+      final expr = parseExpression("RfwEvent('nav.back')");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+    });
+
+    test('throws for non-handler expression', () {
+      final expr = parseExpression("Color(0xFF000000)");
+      expect(() => converter.convertHandler(expr),
+          throwsA(isA<UnsupportedExpressionError>()));
+    });
+  });
+
   group('Unsupported expressions', () {
     test('throws for variable reference', () {
       final expr = parseExpression('myVariable');

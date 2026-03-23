@@ -6,6 +6,7 @@ import 'package:rfw/formats.dart';
 
 import 'ast_visitor.dart';
 import 'expression_converter.dart';
+import 'ir.dart';
 import 'rfwtxt_emitter.dart';
 import 'widget_registry.dart';
 
@@ -59,12 +60,32 @@ class RfwConverter {
     );
     final irTree = visitor.extractWidgetTree(function);
 
+    final imports = _collectImports(irTree);
     final emitter = RfwtxtEmitter();
     return emitter.emit(
       widgetName: widgetName,
       root: irTree,
-      imports: {'core.widgets'},
+      imports: imports,
     );
+  }
+
+  /// Recursively collects the set of rfwtxt import libraries required by
+  /// the widget tree rooted at [node].
+  Set<String> _collectImports(IrWidgetNode node) {
+    final imports = <String>{};
+    final mapping = registry.supportedWidgets[node.name];
+    if (mapping != null) imports.add(mapping.import);
+
+    for (final value in node.properties.values) {
+      if (value is IrWidgetNode) {
+        imports.addAll(_collectImports(value));
+      } else if (value is IrListValue) {
+        for (final item in value.values) {
+          if (item is IrWidgetNode) imports.addAll(_collectImports(item));
+        }
+      }
+    }
+    return imports;
   }
 
   /// Converts an rfwtxt string to an RFW binary blob.

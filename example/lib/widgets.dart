@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+// ignore_for_file: argument_type_not_assignable
+import 'package:flutter/material.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 
 // ─── 기본: 인사 카드 ───
@@ -288,7 +289,7 @@ Widget buildOverlayLayout() {
       ),
       Positioned(
         top: 10.0,
-        start: 10.0,
+        left: 10.0,
         child: Opacity(
           opacity: 0.9,
           child: Container(
@@ -382,5 +383,45 @@ Widget buildExpandedLayout() {
         ),
       ),
     ],
+  );
+}
+
+// ─── 인터랙티브 버튼 ───
+
+@RfwWidget('interactiveButton')
+Widget buildInteractiveButton() {
+  return ElevatedButton(
+    onPressed: RfwHandler.event('button.click'),
+    child: Text('Click Me'),
+  );
+}
+
+// ─── 토글 카드 ───
+
+@RfwWidget('toggleCard')
+Widget buildToggleCard() {
+  return GestureDetector(
+    onTap: RfwHandler.setState('selected', true),
+    child: Card(
+      color: Color(0xFF42A5F5),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Text('Tap to select'),
+      ),
+    ),
+  );
+}
+
+// ─── 스캐폴드 페이지 ───
+
+@RfwWidget('scaffoldPage')
+Widget buildScaffoldPage() {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('My Page'),
+    ),
+    body: Center(
+      child: Text('Hello Material'),
+    ),
   );
 }

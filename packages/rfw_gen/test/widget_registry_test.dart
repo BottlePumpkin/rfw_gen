@@ -3,16 +3,17 @@ import 'package:test/test.dart';
 
 void main() {
   group('ChildType', () {
-    test('has four values', () {
-      expect(ChildType.values, hasLength(4));
+    test('has five values', () {
+      expect(ChildType.values, hasLength(5));
     });
 
-    test('contains none, child, optionalChild, childList', () {
+    test('contains none, child, optionalChild, childList, namedSlots', () {
       expect(ChildType.values, containsAll([
         ChildType.none,
         ChildType.child,
         ChildType.optionalChild,
         ChildType.childList,
+        ChildType.namedSlots,
       ]));
     });
   });
@@ -82,8 +83,8 @@ void main() {
       registry = WidgetRegistry.core();
     });
 
-    test('contains exactly 38 widgets', () {
-      expect(registry.supportedWidgets, hasLength(38));
+    test('contains exactly 56 widgets', () {
+      expect(registry.supportedWidgets, hasLength(56));
     });
 
     test('supports Text, Column, Row, Container, SizedBox, Center', () {
@@ -97,7 +98,7 @@ void main() {
 
     test('returns false for unknown widget', () {
       expect(registry.isSupported('UnknownWidget'), isFalse);
-      expect(registry.isSupported('Scaffold'), isFalse);
+      expect(registry.isSupported('CupertinoButton'), isFalse);
       expect(registry.isSupported(''), isFalse);
     });
 
@@ -589,6 +590,20 @@ void main() {
       });
     });
 
+    group('Interaction widgets', () {
+      test('GestureDetector is registered', () {
+        expect(registry.isSupported('GestureDetector'), isTrue);
+      });
+
+      test('GestureDetector has handler params', () {
+        final w = registry.supportedWidgets['GestureDetector']!;
+        expect(w.handlerParams, contains('onTap'));
+        expect(w.handlerParams, contains('onLongPress'));
+        expect(w.handlerParams, contains('onDoubleTap'));
+        expect(w.childType, equals(ChildType.optionalChild));
+      });
+    });
+
     group('Other widgets', () {
       test('supports AnimationDefaults and SafeArea', () {
         expect(registry.isSupported('AnimationDefaults'), isTrue);
@@ -610,6 +625,70 @@ void main() {
         expect(w.params.containsKey('right'), isTrue);
         expect(w.params.containsKey('bottom'), isTrue);
         expect(w.params['minimum']!.transformer, equals('edgeInsets'));
+      });
+    });
+
+    group('Material widgets', () {
+      test('supports all 17 material widgets', () {
+        for (final name in [
+          'Scaffold', 'AppBar', 'ListTile', 'Card', 'Material',
+          'ElevatedButton', 'TextButton', 'OutlinedButton',
+          'FloatingActionButton', 'InkWell', 'Divider', 'VerticalDivider',
+          'CircularProgressIndicator', 'LinearProgressIndicator',
+          'Drawer', 'OverflowBar', 'Slider',
+        ]) {
+          expect(registry.isSupported(name), isTrue, reason: '$name not found');
+        }
+      });
+
+      test('Scaffold has namedSlots', () {
+        final w = registry.supportedWidgets['Scaffold']!;
+        expect(w.childType, equals(ChildType.namedSlots));
+        expect(w.namedChildSlots.containsKey('appBar'), isTrue);
+        expect(w.namedChildSlots.containsKey('body'), isTrue);
+        expect(w.import, equals('material'));
+      });
+
+      test('AppBar has namedSlots with list slot', () {
+        final w = registry.supportedWidgets['AppBar']!;
+        expect(w.childType, equals(ChildType.namedSlots));
+        expect(w.namedChildSlots['actions'], isTrue);
+        expect(w.namedChildSlots['title'], isFalse);
+      });
+
+      test('ListTile has namedSlots and handlers', () {
+        final w = registry.supportedWidgets['ListTile']!;
+        expect(w.childType, equals(ChildType.namedSlots));
+        expect(w.handlerParams, contains('onTap'));
+        expect(w.namedChildSlots.containsKey('title'), isTrue);
+      });
+
+      test('ElevatedButton has child and handler params', () {
+        final w = registry.supportedWidgets['ElevatedButton']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.handlerParams, contains('onPressed'));
+        expect(w.handlerParams, contains('onLongPress'));
+        expect(w.import, equals('material'));
+      });
+
+      test('Slider has handlers including onChanged', () {
+        final w = registry.supportedWidgets['Slider']!;
+        expect(w.childType, equals(ChildType.none));
+        expect(w.handlerParams, contains('onChanged'));
+        expect(w.params.containsKey('min'), isTrue);
+        expect(w.params.containsKey('max'), isTrue);
+      });
+
+      test('InkWell has optionalChild and handlers', () {
+        final w = registry.supportedWidgets['InkWell']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.handlerParams, contains('onTap'));
+      });
+
+      test('all material widgets use material import', () {
+        for (final name in ['Scaffold', 'AppBar', 'Card', 'ElevatedButton', 'Divider']) {
+          expect(registry.supportedWidgets[name]!.import, equals('material'));
+        }
       });
     });
   });

@@ -1,4 +1,5 @@
 import core.widgets;
+import material;
 
 widget greeting = Column(
   mainAxisAlignment: "center",
@@ -298,5 +299,195 @@ widget emptyState = Center(
         text: "Try adding something new"
       )
     ]
+  )
+);
+
+widget scrollableList = ListView(
+  padding: [16.0],
+  children: [
+    Padding(
+      padding: [0.0, 8.0, 0.0, 8.0],
+      child: Row(
+        children: [
+          SizedBox(
+            width: 0x00000008
+          ),
+          Text(
+            text: "Item 1"
+          )
+        ]
+      )
+    ),
+    Padding(
+      padding: [0.0, 8.0, 0.0, 8.0],
+      child: Row(
+        children: [
+          SizedBox(
+            width: 0x00000008
+          ),
+          Text(
+            text: "Item 2"
+          )
+        ]
+      )
+    ),
+    Padding(
+      padding: [0.0, 8.0, 0.0, 8.0],
+      child: Row(
+        children: [
+          SizedBox(
+            width: 0x00000008
+          ),
+          Text(
+            text: "Item 3"
+          )
+        ]
+      )
+    )
+  ]
+);
+
+widget overlayLayout = Stack(
+  children: [
+    Container(
+      color: 0xFFE0E0E0,
+      width: 300.0,
+      height: 200.0
+    ),
+    Positioned(
+      top: 10.0,
+      left: 10.0,
+      child: Opacity(
+        opacity: 0.9,
+        child: Container(
+          color: 0xFF42A5F5,
+          width: 120.0,
+          height: 80.0,
+          child: Center(
+            child: Text(
+              text: "Overlay"
+            )
+          )
+        )
+      )
+    )
+  ]
+);
+
+widget responsiveWrap = SafeArea(
+  child: Wrap(
+    spacing: 8.0,
+    runSpacing: 8.0,
+    children: [
+      Container(
+        color: 0xFF42A5F5,
+        padding: [12.0, 6.0, 12.0, 6.0],
+        child: Text(
+          text: "Flutter"
+        )
+      ),
+      Container(
+        color: 0xFF66BB6A,
+        padding: [12.0, 6.0, 12.0, 6.0],
+        child: Text(
+          text: "Dart"
+        )
+      ),
+      Container(
+        color: 0xFFFF7043,
+        padding: [12.0, 6.0, 12.0, 6.0],
+        child: Text(
+          text: "RFW"
+        )
+      )
+    ]
+  )
+);
+
+widget animatedCard = Opacity(
+  opacity: 0.95,
+  child: ClipRRect(
+    borderRadius: [
+      {
+        x: 16.0
+      }
+    ],
+    child: Container(
+      color: 0xFFF5F5F5,
+      padding: [24.0],
+      child: Column(
+        mainAxisSize: "min",
+        children: [
+          Text(
+            text: "Animated Card"
+          ),
+          SizedBox(
+            height: 0x00000008
+          ),
+          Text(
+            text: "With ClipRRect"
+          )
+        ]
+      )
+    )
+  )
+);
+
+widget expandedLayout = Column(
+  children: [
+    Expanded(
+      flex: 0x00000002,
+      child: Container(
+        color: 0xFF42A5F5,
+        child: Center(
+          child: Text(
+            text: "Top (flex: 2)"
+          )
+        )
+      )
+    ),
+    Expanded(
+      child: Container(
+        color: 0xFF66BB6A,
+        child: Center(
+          child: Text(
+            text: "Bottom (flex: 1)"
+          )
+        )
+      )
+    )
+  ]
+);
+
+widget interactiveButton = ElevatedButton(
+  onPressed: event "button.click" {},
+  child: Text(
+    text: "Click Me"
+  )
+);
+
+widget toggleCard = GestureDetector(
+  onTap: set state.selected = true,
+  child: Card(
+    color: 0xFF42A5F5,
+    child: Padding(
+      padding: [16.0],
+      child: Text(
+        text: "Tap to select"
+      )
+    )
+  )
+);
+
+widget scaffoldPage = Scaffold(
+  appBar: AppBar(
+    title: Text(
+      text: "My Page"
+    )
+  ),
+  body: Center(
+    child: Text(
+      text: "Hello Material"
+    )
   )
 );

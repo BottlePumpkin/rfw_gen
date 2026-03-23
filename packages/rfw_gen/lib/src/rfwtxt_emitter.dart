@@ -71,6 +71,11 @@ class RfwtxtEmitter {
       IrListValue v => _emitList(v, indent: indent),
       IrMapValue v => _emitMap(v, indent: indent),
       IrWidgetNode v => _emitWidget(v, indent: indent),
+      IrSetStateValue v =>
+          'set state.${v.field} = ${_emitValue(v.value, indent: indent)}',
+      IrSetStateFromArgValue v =>
+          'set state.${v.field} = args.${v.argName}',
+      IrEventValue v => _emitEvent(v, indent: indent),
     };
   }
 
@@ -145,6 +150,23 @@ class RfwtxtEmitter {
       buffer.writeln();
     }
     buffer.write('${_indentStr(indent)}}');
+    return buffer.toString();
+  }
+
+  /// Emits an event handler value.
+  String _emitEvent(IrEventValue event, {required int indent}) {
+    if (event.args.isEmpty) {
+      return 'event "${event.name}" {}';
+    }
+    final buffer = StringBuffer();
+    buffer.write('event "${event.name}" { ');
+    final entries = event.args.entries.toList();
+    for (var i = 0; i < entries.length; i++) {
+      buffer.write(
+          '${entries[i].key}: ${_emitValue(entries[i].value, indent: indent)}');
+      if (i < entries.length - 1) buffer.write(', ');
+    }
+    buffer.write(' }');
     return buffer.toString();
   }
 

@@ -99,7 +99,7 @@ Widget buildToolbar() {
     test('throws on unsupported widget', () {
       const input = '''
 Widget buildBad() {
-  return Scaffold(body: Text('hello'));
+  return CupertinoButton(child: Text('hello'));
 }
 ''';
       expect(
@@ -151,6 +151,15 @@ widget greeting = Text(
       final blob = converter.toBlob(rfwtxt);
       expect(blob, isA<Uint8List>());
       expect(blob.isNotEmpty, isTrue);
+    });
+  });
+
+  group('Import collection', () {
+    test('core-only widget produces core.widgets import', () {
+      const input = "Widget build() { return Text('Hello'); }";
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, isNot(contains('import material;')));
     });
   });
 

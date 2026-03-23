@@ -104,7 +104,8 @@ class WidgetAstVisitor {
     return IrWidgetNode(name: widgetName, properties: properties);
   }
 
-  /// Processes a named argument, handling child parameters and regular params.
+  /// Processes a named argument, handling handler params, named child slots,
+  /// child parameters, and regular params.
   void _processNamedArgument(
     NamedExpression arg,
     WidgetMapping mapping,
@@ -113,7 +114,32 @@ class WidgetAstVisitor {
     final paramName = arg.name.label.name;
     final expression = arg.expression;
 
-    // Check if this is the child/children parameter.
+    // 1. Handler params — use convertHandler instead of convert.
+    if (mapping.handlerParams.contains(paramName)) {
+      try {
+        properties[paramName] = expressionConverter.convertHandler(expression);
+      } on UnsupportedExpressionError {
+        // Silently skip unsupported handler expressions.
+      }
+      return;
+    }
+
+    // 2. Named child slots — convert widgets in named slots.
+    if (mapping.childType == ChildType.namedSlots &&
+        mapping.namedChildSlots.containsKey(paramName)) {
+      final isList = mapping.namedChildSlots[paramName]!;
+      if (isList && expression is ListLiteral) {
+        final children = expression.elements
+            .map((e) => _convertWidget(e as Expression))
+            .toList();
+        properties[paramName] = IrListValue(children);
+      } else if (!isList) {
+        properties[paramName] = _convertWidget(expression);
+      }
+      return;
+    }
+
+    // 3. Regular child/children parameter.
     if (mapping.childParam != null && paramName == mapping.childParam) {
       switch (mapping.childType) {
         case ChildType.child:
@@ -135,7 +161,7 @@ class WidgetAstVisitor {
       return;
     }
 
-    // Check if this is a known parameter in the mapping.
+    // 4. Known params in the mapping.
     if (mapping.params.containsKey(paramName)) {
       try {
         final value = expressionConverter.convert(expression);
@@ -147,7 +173,7 @@ class WidgetAstVisitor {
       return;
     }
 
-    // Unknown parameter — try ExpressionConverter, silently skip if unsupported.
+    // 5. Unknown parameter — try ExpressionConverter, silently skip if unsupported.
     try {
       final value = expressionConverter.convert(expression);
       properties[paramName] = value;

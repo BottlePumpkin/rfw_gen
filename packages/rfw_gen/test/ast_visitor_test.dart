@@ -170,6 +170,213 @@ Widget build() {
       expect((last.properties['text'] as IrStringValue).value, 'Last');
     });
 
+    // -----------------------------------------------------------------
+    // Handler params and named child slots
+    // -----------------------------------------------------------------
+
+    test('extracts handler setState from GestureDetector', () {
+      registry.register(
+        'GestureDetector',
+        const WidgetMapping(
+          rfwName: 'core.GestureDetector',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          handlerParams: {'onTap', 'onTapDown', 'onTapUp', 'onLongPress'},
+          params: {},
+        ),
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return GestureDetector(
+    onTap: RfwHandler.setState('pressed', true),
+    child: Text('Tap'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'GestureDetector');
+      final onTap = node.properties['onTap'] as IrSetStateValue;
+      expect(onTap.field, 'pressed');
+      expect((onTap.value as IrBoolValue).value, true);
+
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+    });
+
+    test('extracts handler event from GestureDetector', () {
+      registry.register(
+        'GestureDetector',
+        const WidgetMapping(
+          rfwName: 'core.GestureDetector',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          handlerParams: {'onTap', 'onTapDown', 'onTapUp', 'onLongPress'},
+          params: {},
+        ),
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return GestureDetector(
+    onLongPress: RfwHandler.event('item.delete'),
+    child: Text('Hold'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'GestureDetector');
+      final onLongPress = node.properties['onLongPress'] as IrEventValue;
+      expect(onLongPress.name, 'item.delete');
+
+      final child = node.properties['child'] as IrWidgetNode;
+      expect(child.name, 'Text');
+    });
+
+    test('extracts Scaffold namedSlots', () {
+      registry.register(
+        'Scaffold',
+        const WidgetMapping(
+          rfwName: 'material.Scaffold',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'appBar': false,
+            'body': false,
+            'floatingActionButton': false,
+            'drawer': false,
+            'bottomNavigationBar': false,
+          },
+          params: {
+            'backgroundColor':
+                ParamMapping('backgroundColor', transformer: 'color'),
+          },
+        ),
+      );
+      registry.register(
+        'AppBar',
+        const WidgetMapping(
+          rfwName: 'material.AppBar',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'leading': false,
+            'title': false,
+            'actions': true,
+          },
+          params: {},
+        ),
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return Scaffold(
+    appBar: AppBar(title: Text('Title')),
+    body: Center(child: Text('Body')),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'Scaffold');
+      final appBar = node.properties['appBar'] as IrWidgetNode;
+      expect(appBar.name, 'AppBar');
+      final body = node.properties['body'] as IrWidgetNode;
+      expect(body.name, 'Center');
+    });
+
+    test('extracts AppBar with actions list slot', () {
+      registry.register(
+        'AppBar',
+        const WidgetMapping(
+          rfwName: 'material.AppBar',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'leading': false,
+            'title': false,
+            'actions': true,
+          },
+          params: {},
+        ),
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return AppBar(
+    title: Text('Title'),
+    actions: [Text('A1'), Text('A2')],
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'AppBar');
+      final title = node.properties['title'] as IrWidgetNode;
+      expect(title.name, 'Text');
+      expect((title.properties['text'] as IrStringValue).value, 'Title');
+
+      final actions = node.properties['actions'] as IrListValue;
+      expect(actions.values, hasLength(2));
+      expect((actions.values[0] as IrWidgetNode).name, 'Text');
+      expect((actions.values[1] as IrWidgetNode).name, 'Text');
+    });
+
+    test('extracts ListTile with multiple slots and handler', () {
+      registry.register(
+        'ListTile',
+        const WidgetMapping(
+          rfwName: 'material.ListTile',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'leading': false,
+            'title': false,
+            'subtitle': false,
+            'trailing': false,
+          },
+          handlerParams: {'onTap', 'onLongPress'},
+          params: {
+            'dense': ParamMapping.direct('dense'),
+            'enabled': ParamMapping.direct('enabled'),
+            'selected': ParamMapping.direct('selected'),
+          },
+        ),
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return ListTile(
+    title: Text('Item'),
+    subtitle: Text('Desc'),
+    onTap: RfwHandler.event('item.select'),
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'ListTile');
+      final title = node.properties['title'] as IrWidgetNode;
+      expect(title.name, 'Text');
+      expect((title.properties['text'] as IrStringValue).value, 'Item');
+
+      final subtitle = node.properties['subtitle'] as IrWidgetNode;
+      expect(subtitle.name, 'Text');
+      expect((subtitle.properties['text'] as IrStringValue).value, 'Desc');
+
+      final onTap = node.properties['onTap'] as IrEventValue;
+      expect(onTap.name, 'item.select');
+    });
+
     test('throws on unsupported widget', () {
       final fn = parseFunction('''
 Widget build() {

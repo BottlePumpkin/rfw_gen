@@ -1,4 +1,5 @@
 export 'src/annotations.dart';
+export 'src/rfw_helpers.dart';
 export 'src/ast_visitor.dart';
 export 'src/converter.dart';
 export 'src/errors.dart';

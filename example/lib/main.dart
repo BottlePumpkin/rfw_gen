@@ -2,73 +2,80 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rfw/rfw.dart';
 
+import 'data/mock_data.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(const RfwGenExampleApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RfwGenExampleApp extends StatelessWidget {
+  const RfwGenExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'rfw_gen Example',
       theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF2196F3),
+        colorSchemeSeed: Colors.blue,
         useMaterial3: true,
       ),
-      home: const RfwDemoPage(),
+      home: const HomePage(),
     );
   }
 }
 
-class RfwDemoPage extends StatefulWidget {
-  const RfwDemoPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<RfwDemoPage> createState() => _RfwDemoPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _RfwDemoPageState extends State<RfwDemoPage> {
+class _HomePageState extends State<HomePage> {
+  int _tabIndex = 0;
+
   final Runtime _runtime = Runtime();
   final DynamicContent _data = DynamicContent();
-  bool _loaded = false;
+  bool _isLoaded = false;
   String? _error;
 
-  // 생성된 위젯 목록
-  static const _widgets = [
-    'greeting',
-    'profileCard',
-    'statsDashboard',
-    'listItem',
-    'banner',
-    'gridLayout',
-    'emptyState',
-    'scrollableList',
-    'overlayLayout',
-    'responsiveWrap',
-    'animatedCard',
-    'expandedLayout',
-    'interactiveButton',
-    'toggleCard',
-    'scaffoldPage',
-    'customWidgetDemo',
-    // 동적 기능 예제
-    'dynamicGreeting',
-    'dynamicList',
-    'conditionalStatus',
-    'toggleButton',
-    'userProfile',
-    'productList',
-    'notificationList',
-    'tabSelector',
-    'searchResults',
-    'settingsToggle',
-    'chatMessages',
-    'counter',
-  ];
+  // Catalog state
+  String _selectedCategory = 'Layout';
+  String? _selectedWidget;
 
-  String _currentWidget = 'greeting';
+  static const _catalogLibrary = LibraryName(<String>['catalog']);
+  static const _shopLibrary = LibraryName(<String>['shop']);
+
+  static const Map<String, List<String>> _catalogWidgets = {
+    'Layout': [
+      'columnDemo', 'rowDemo', 'wrapDemo', 'stackDemo',
+      'expandedDemo', 'sizedBoxDemo', 'alignDemo',
+      'aspectRatioDemo', 'intrinsicDemo',
+    ],
+    'Scrolling': [
+      'listViewDemo', 'gridViewDemo', 'scrollViewDemo', 'listBodyDemo',
+    ],
+    'Styling & Visual': [
+      'containerDemo', 'paddingOpacityDemo', 'clipRRectDemo',
+      'defaultTextStyleDemo', 'directionalityDemo',
+      'iconDemo', 'iconThemeDemo', 'imageDemo',
+      'textDemo', 'coloredBoxDemo',
+    ],
+    'Transform': [
+      'rotationDemo', 'scaleDemo', 'fittedBoxDemo',
+    ],
+    'Interaction': [
+      'gestureDetectorDemo', 'inkWellDemo',
+    ],
+    'Material': [
+      'scaffoldDemo', 'materialDemo', 'cardDemo', 'buttonDemo',
+      'listTileDemo', 'sliderDemo', 'drawerDemo', 'dividerDemo',
+      'progressDemo', 'overflowBarDemo',
+    ],
+    'Other': [
+      'animationDefaultsDemo', 'safeAreaDemo', 'argsPatternDemo',
+    ],
+  };
 
   @override
   void initState() {
@@ -81,161 +88,205 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
       const LibraryName(<String>['material']),
       createMaterialWidgets(),
     );
-    _runtime.update(
-      const LibraryName(<String>['custom', 'widgets']),
-      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-        'CustomText': (BuildContext context, DataSource source) {
-          final text = source.v<String>(['text']) ?? '';
-          final fontType = source.v<String>(['fontType']) ?? 'body';
-          final color = Color(source.v<int>(['color']) ?? 0xFF000000);
-          final style = switch (fontType) {
-            'heading' => TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color),
-            'button' => TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: color),
-            'caption' => TextStyle(fontSize: 12, color: color),
-            _ => TextStyle(fontSize: 14, color: color),
-          };
-          return Text(text, style: style);
-        },
-        'CustomBounceTapper': (BuildContext context, DataSource source) {
-          return GestureDetector(
-            onTap: source.voidHandler(['onTap']),
-            child: source.optionalChild(['child']),
-          );
-        },
-        'NullConditionalWidget': (BuildContext context, DataSource source) {
-          final child = source.optionalChild(['child']);
-          final nullChild = source.optionalChild(['nullChild']);
-          // In a real app, this would check a data binding for null.
-          // For demo, always show the child.
-          return child ?? nullChild ?? const SizedBox.shrink();
-        },
-      }),
-    );
-    // 동적 위젯용 샘플 데이터
-    _data.update('user', <String, Object>{
-      'name': 'Alice',
-      'role': 'Developer',
-      'bio': 'Flutter enthusiast building amazing apps.',
-    });
-    _data.update('items', <Object>[
-      <String, Object>{'icon': 'A', 'name': 'Alpha Item', 'description': 'First item in the list'},
-      <String, Object>{'icon': 'B', 'name': 'Beta Item', 'description': 'Second item in the list'},
-      <String, Object>{'icon': 'C', 'name': 'Gamma Item', 'description': 'Third item in the list'},
-    ]);
-    _data.update('order', <String, Object>{'status': 'shipped'});
-    _data.update('profile', <String, Object>{
-      'initials': 'AK',
-      'displayName': 'Alice Kim',
-      'department': 'Engineering',
-      'title': 'Senior Developer',
-      'isVerified': true,
-      'joinDate': '2024-01-15',
-    });
-    _data.update('products', <Object>[
-      <String, Object>{'id': '1', 'name': 'Widget Pro', 'price': '\$29.99', 'inStock': true},
-      <String, Object>{'id': '2', 'name': 'Widget Lite', 'price': '\$9.99', 'inStock': false},
-      <String, Object>{'id': '3', 'name': 'Widget Max', 'price': '\$49.99', 'inStock': true},
-    ]);
-    _data.update('notifications', <Object>[
-      <String, Object>{'id': '1', 'sender': 'System', 'message': 'Update available', 'time': '2m ago'},
-      <String, Object>{'id': '2', 'sender': 'Bob', 'message': 'PR approved', 'time': '1h ago'},
-    ]);
-    _data.update('search', <String, Object>{
-      'query': 'flutter',
-      'hasResults': true,
-      'results': <Object>[
-        <String, Object>{'title': 'Flutter Widgets', 'snippet': 'Build beautiful native apps...'},
-        <String, Object>{'title': 'RFW Guide', 'snippet': 'Remote Flutter Widgets overview...'},
-      ],
-    });
-    _data.update('chat', <String, Object>{
-      'messages': <Object>[
-        <String, Object>{'isMine': false, 'sender': 'Bob', 'text': 'Hey, how is it going?'},
-        <String, Object>{'isMine': true, 'sender': 'Me', 'text': 'Great! Working on RFW.'},
-        <String, Object>{'isMine': false, 'sender': 'Bob', 'text': 'Cool, show me a demo!'},
-      ],
-    });
-    _loadWidget();
+    MockData.setupCatalog(_data);
+    MockData.setupShop(_data);
+    _loadRfwBinaries();
   }
 
-  Future<void> _loadWidget() async {
+  Future<void> _loadRfwBinaries() async {
     try {
-      final ByteData byteData = await rootBundle.load('assets/widgets.rfw');
-      final blob = byteData.buffer.asUint8List();
-
+      final catalogBytes = await rootBundle.load('assets/catalog_widgets.rfw');
+      final shopBytes = await rootBundle.load('assets/shop_widgets.rfw');
       _runtime.update(
-        const LibraryName(<String>['app']),
-        decodeLibraryBlob(blob),
+        _catalogLibrary,
+        decodeLibraryBlob(catalogBytes.buffer.asUint8List()),
       );
-      setState(() => _loaded = true);
+      _runtime.update(
+        _shopLibrary,
+        decodeLibraryBlob(shopBytes.buffer.asUint8List()),
+      );
+      setState(() => _isLoaded = true);
     } catch (e) {
       setState(() => _error = e.toString());
     }
   }
 
-  @override
-  void dispose() {
-    _runtime.dispose();
-    super.dispose();
+  void _handleCatalogEvent(String name, DynamicMap args) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Event: $name ${args.isNotEmpty ? args : ""}'),
+        duration: const Duration(seconds: 1),
+      ),
+    );
+  }
+
+  void _handleShopEvent(String name, DynamicMap args) {
+    if (!mounted) return;
+    switch (name) {
+      case 'navigate':
+        final page = args['page'] as String;
+        if (page == 'shopHome') {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => _ShopPage(
+                runtime: _runtime,
+                data: _data,
+                library: _shopLibrary,
+                widgetName: page,
+                onEvent: _handleShopEvent,
+              ),
+            ),
+          );
+        }
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Shop: $name ${args.isNotEmpty ? args : ""}'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_error != null) {
+      return Scaffold(body: Center(child: Text('Error: $_error')));
+    }
+    if (!_isLoaded) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('rfw_gen Example'),
+      body: _tabIndex == 0 ? _buildCatalogTab() : _buildShopTab(),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tabIndex,
+        onDestinationSelected: (i) => setState(() {
+          _tabIndex = i;
+          _selectedWidget = null;
+        }),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.widgets), label: 'Catalog'),
+          NavigationDestination(icon: Icon(Icons.shopping_bag), label: 'Shop'),
+        ],
       ),
-      body: Column(
-        children: [
-          // 위젯 선택 바
-          SizedBox(
-            height: 48,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: _widgets.length,
-              itemBuilder: (context, index) {
-                final name = _widgets[index];
-                final isSelected = name == _currentWidget;
+    );
+  }
+
+  Widget _buildCatalogTab() {
+    return Column(
+      children: [
+        AppBar(
+          title: Text(_selectedWidget ?? 'Widget Catalog'),
+          leading: _selectedWidget != null
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => setState(() => _selectedWidget = null),
+                )
+              : null,
+        ),
+        if (_selectedWidget == null) ...[
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              children: _catalogWidgets.keys.map((cat) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
-                    selected: isSelected,
-                    label: Text(name),
-                    onSelected: (_) => setState(() => _currentWidget = name),
+                    label: Text(cat),
+                    selected: _selectedCategory == cat,
+                    onSelected: (_) => setState(() => _selectedCategory = cat),
                   ),
+                );
+              }).toList(),
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _catalogWidgets[_selectedCategory]!.length,
+              itemBuilder: (context, i) {
+                final name = _catalogWidgets[_selectedCategory]![i];
+                return ListTile(
+                  title: Text(name),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => setState(() => _selectedWidget = name),
                 );
               },
             ),
           ),
-          const Divider(height: 1),
-          // RFW 위젯 렌더링
+        ] else
           Expanded(
-            child: Center(
-              child: _error != null
-                  ? Text('Error: $_error',
-                      style: const TextStyle(color: Colors.red))
-                  : !_loaded
-                      ? const CircularProgressIndicator()
-                      : RemoteWidget(
-                          runtime: _runtime,
-                          data: _data,
-                          widget: FullyQualifiedWidgetName(
-                            const LibraryName(<String>['app']),
-                            _currentWidget,
-                          ),
-                          onEvent: (String name, DynamicMap args) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Event: $name $args'),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                        ),
+            child: RemoteWidget(
+              runtime: _runtime,
+              data: _data,
+              widget: FullyQualifiedWidgetName(_catalogLibrary, _selectedWidget!),
+              onEvent: _handleCatalogEvent,
             ),
           ),
-        ],
+      ],
+    );
+  }
+
+  Widget _buildShopTab() {
+    return RemoteWidget(
+      runtime: _runtime,
+      data: _data,
+      widget: FullyQualifiedWidgetName(_shopLibrary, 'shopHome'),
+      onEvent: _handleShopEvent,
+    );
+  }
+}
+
+class _ShopPage extends StatelessWidget {
+  const _ShopPage({
+    required this.runtime,
+    required this.data,
+    required this.library,
+    required this.widgetName,
+    required this.onEvent,
+  });
+
+  final Runtime runtime;
+  final DynamicContent data;
+  final LibraryName library;
+  final String widgetName;
+  final void Function(String name, DynamicMap args) onEvent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widgetName)),
+      body: RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: FullyQualifiedWidgetName(library, widgetName),
+        onEvent: (name, args) {
+          if (name == 'navigate') {
+            final page = args['page'] as String;
+            if (page == 'shopHome') {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            } else {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => _ShopPage(
+                    runtime: runtime,
+                    data: data,
+                    library: library,
+                    widgetName: page,
+                    onEvent: onEvent,
+                  ),
+                ),
+              );
+            }
+          } else {
+            onEvent(name, args);
+          }
+        },
       ),
     );
   }

@@ -107,6 +107,68 @@ class WidgetRegistry {
     _widgets[name] = mapping;
   }
 
+  /// Registers custom widgets from a YAML config map.
+  ///
+  /// Each entry maps a widget name to its configuration:
+  /// ```yaml
+  /// MystiqueText:
+  ///   import: mystique.widgets
+  ///   child_type: optionalChild   # optional, default: none
+  ///   child_param: child          # optional, auto-derived from child_type
+  ///   handlers: [onTap]           # optional, default: []
+  /// ```
+  void registerFromConfig(Map<String, dynamic> widgetsConfig) {
+    for (final entry in widgetsConfig.entries) {
+      final name = entry.key;
+      final config = entry.value is Map
+          ? Map<String, dynamic>.from(entry.value as Map)
+          : <String, dynamic>{};
+
+      final importLib = config['import'] as String?;
+      if (importLib == null) {
+        throw ArgumentError(
+          'Widget "$name" in rfw_gen.yaml is missing required "import" field',
+        );
+      }
+
+      final childType = _parseChildType(config['child_type'] as String?);
+      final handlers = (config['handlers'] as List?)
+              ?.cast<String>()
+              .toSet() ??
+          const <String>{};
+
+      final childParam = config['child_param'] as String? ??
+          (childType == ChildType.child ||
+                  childType == ChildType.optionalChild
+              ? 'child'
+              : childType == ChildType.childList
+                  ? 'children'
+                  : null);
+
+      register(
+        name,
+        WidgetMapping(
+          rfwName: name,
+          import: importLib,
+          childType: childType,
+          childParam: childParam,
+          params: const {},
+          handlerParams: handlers,
+        ),
+      );
+    }
+  }
+
+  static ChildType _parseChildType(String? value) => switch (value) {
+        'child' => ChildType.child,
+        'optionalChild' => ChildType.optionalChild,
+        'childList' => ChildType.childList,
+        'namedSlots' => throw ArgumentError(
+            'namedSlots is not supported for custom widgets in rfw_gen.yaml',
+          ),
+        _ => ChildType.none,
+      };
+
   /// Returns a registry pre-populated with the core widget mappings.
   factory WidgetRegistry.core() {
     return WidgetRegistry._fromMap({

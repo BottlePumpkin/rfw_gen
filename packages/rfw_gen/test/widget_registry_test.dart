@@ -1,5 +1,6 @@
 import 'package:rfw_gen/rfw_gen.dart';
 import 'package:test/test.dart';
+import 'package:yaml/yaml.dart';
 
 void main() {
   group('ChildType', () {
@@ -746,6 +747,143 @@ void main() {
     test('isSupported returns false on empty registry', () {
       final registry = WidgetRegistry();
       expect(registry.isSupported('Text'), isFalse);
+    });
+  });
+
+  group('registerFromConfig', () {
+    test('registers widget with import only', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'MystiqueText': {'import': 'mystique.widgets'},
+      });
+
+      expect(registry.isSupported('MystiqueText'), isTrue);
+      final mapping = registry.supportedWidgets['MystiqueText']!;
+      expect(mapping.import, 'mystique.widgets');
+      expect(mapping.childType, ChildType.none);
+      expect(mapping.childParam, isNull);
+      expect(mapping.handlerParams, isEmpty);
+      expect(mapping.params, isEmpty);
+    });
+
+    test('registers widget with child_type and auto-derived child_param', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'Wrapper': {'import': 'custom.widgets', 'child_type': 'optionalChild'},
+      });
+      final mapping = registry.supportedWidgets['Wrapper']!;
+      expect(mapping.childType, ChildType.optionalChild);
+      expect(mapping.childParam, 'child');
+    });
+
+    test('registers widget with childList and auto-derived children param', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'CustomColumn': {'import': 'custom.widgets', 'child_type': 'childList'},
+      });
+      final mapping = registry.supportedWidgets['CustomColumn']!;
+      expect(mapping.childType, ChildType.childList);
+      expect(mapping.childParam, 'children');
+    });
+
+    test('registers widget with explicit child_param override', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'Special': {
+          'import': 'custom.widgets',
+          'child_type': 'optionalChild',
+          'child_param': 'content',
+        },
+      });
+      final mapping = registry.supportedWidgets['Special']!;
+      expect(mapping.childParam, 'content');
+    });
+
+    test('registers widget with handlers', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'Tapper': {
+          'import': 'custom.widgets',
+          'child_type': 'optionalChild',
+          'handlers': ['onTap', 'onLongPress'],
+        },
+      });
+      final mapping = registry.supportedWidgets['Tapper']!;
+      expect(mapping.handlerParams, {'onTap', 'onLongPress'});
+    });
+
+    test('throws when import is missing', () {
+      final registry = WidgetRegistry();
+      expect(
+        () => registry.registerFromConfig({'Bad': {'child_type': 'none'}}),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('missing required "import"'),
+        )),
+      );
+    });
+
+    test('throws when namedSlots is used', () {
+      final registry = WidgetRegistry();
+      expect(
+        () => registry.registerFromConfig({
+          'Bad': {'import': 'x', 'child_type': 'namedSlots'},
+        }),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('namedSlots is not supported'),
+        )),
+      );
+    });
+
+    test('handles null config value (YAML key with no value)', () {
+      final registry = WidgetRegistry();
+      expect(
+        () => registry.registerFromConfig({'MystiqueText': null}),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('missing required "import"'),
+        )),
+      );
+    });
+
+    test('registers multiple widgets at once', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'A': {'import': 'lib.a'},
+        'B': {'import': 'lib.b', 'child_type': 'child'},
+        'C': {'import': 'lib.c', 'handlers': ['onTap']},
+      });
+      expect(registry.isSupported('A'), isTrue);
+      expect(registry.isSupported('B'), isTrue);
+      expect(registry.isSupported('C'), isTrue);
+      expect(registry.supportedWidgets['B']!.childType, ChildType.child);
+      expect(registry.supportedWidgets['B']!.childParam, 'child');
+      expect(registry.supportedWidgets['C']!.handlerParams, {'onTap'});
+    });
+
+    test('works with YamlMap from loadYaml (round-trip)', () {
+      final registry = WidgetRegistry();
+      final yamlStr = '''
+MystiqueText:
+  import: mystique.widgets
+Tapper:
+  import: custom.widgets
+  child_type: optionalChild
+  handlers:
+    - onTap
+''';
+      final parsed = loadYaml(yamlStr) as Map;
+      registry.registerFromConfig(Map<String, dynamic>.from(parsed));
+
+      expect(registry.isSupported('MystiqueText'), isTrue);
+      expect(registry.supportedWidgets['MystiqueText']!.import, 'mystique.widgets');
+      expect(registry.isSupported('Tapper'), isTrue);
+      expect(registry.supportedWidgets['Tapper']!.handlerParams, {'onTap'});
+      expect(registry.supportedWidgets['Tapper']!.childParam, 'child');
     });
   });
 }

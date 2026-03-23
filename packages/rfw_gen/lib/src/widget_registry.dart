@@ -115,6 +115,7 @@ class WidgetRegistry {
       ..._stylingWidgets(),
       ..._scrollingWidgets(),
       ..._transformWidgets(),
+      ..._interactionWidgets(),
       ..._otherWidgets(),
     });
   }
@@ -577,6 +578,30 @@ class WidgetRegistry {
             'alignment': ParamMapping('alignment', transformer: 'alignment'),
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+      };
+
+  // ---------------------------------------------------------------------------
+  // Interaction widgets
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _interactionWidgets() => const {
+        'GestureDetector': WidgetMapping(
+          rfwName: 'core.GestureDetector',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'behavior': ParamMapping('behavior', transformer: 'enum'),
+          },
+          handlerParams: {
+            'onTap',
+            'onTapDown',
+            'onTapUp',
+            'onTapCancel',
+            'onDoubleTap',
+            'onLongPress',
           },
         ),
       };

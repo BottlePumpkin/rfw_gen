@@ -35,6 +35,7 @@ class ExpressionConverter {
     'WrapAlignment',
     'WrapCrossAlignment',
     'ImageRepeat',
+    'HitTestBehavior',
   };
 
   static const _knownGridDelegates = <String>{

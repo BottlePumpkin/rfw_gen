@@ -83,8 +83,8 @@ void main() {
       registry = WidgetRegistry.core();
     });
 
-    test('contains exactly 38 widgets', () {
-      expect(registry.supportedWidgets, hasLength(38));
+    test('contains exactly 39 widgets', () {
+      expect(registry.supportedWidgets, hasLength(39));
     });
 
     test('supports Text, Column, Row, Container, SizedBox, Center', () {
@@ -587,6 +587,20 @@ void main() {
         expect(w.params.containsKey('scale'), isTrue);
         expect(w.params['alignment']!.transformer, equals('alignment'));
         expect(w.params.containsKey('duration'), isTrue);
+      });
+    });
+
+    group('Interaction widgets', () {
+      test('GestureDetector is registered', () {
+        expect(registry.isSupported('GestureDetector'), isTrue);
+      });
+
+      test('GestureDetector has handler params', () {
+        final w = registry.supportedWidgets['GestureDetector']!;
+        expect(w.handlerParams, contains('onTap'));
+        expect(w.handlerParams, contains('onLongPress'));
+        expect(w.handlerParams, contains('onDoubleTap'));
+        expect(w.childType, equals(ChildType.optionalChild));
       });
     });
 

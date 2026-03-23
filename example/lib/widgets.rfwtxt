@@ -468,7 +468,7 @@ widget interactiveButton = ElevatedButton(
 );
 
 widget toggleCard = GestureDetector(
-  onTap: set state.selected = true,
+  onTap: event "card.toggle" { action: "select" },
   child: Card(
     color: 0xFF42A5F5,
     child: Padding(

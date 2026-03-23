@@ -401,7 +401,7 @@ Widget buildInteractiveButton() {
 @RfwWidget('toggleCard')
 Widget buildToggleCard() {
   return GestureDetector(
-    onTap: RfwHandler.setState('selected', true),
+    onTap: RfwHandler.event('card.toggle', {'action': 'select'}),
     child: Card(
       color: Color(0xFF42A5F5),
       child: Padding(

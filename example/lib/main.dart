@@ -167,6 +167,14 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
                             const LibraryName(<String>['app']),
                             _currentWidget,
                           ),
+                          onEvent: (String name, DynamicMap args) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Event: $name $args'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          },
                         ),
             ),
           ),

@@ -70,8 +70,8 @@ class WidgetMapping {
 /// Registry that maps Flutter widget names to their [WidgetMapping]s.
 ///
 /// Use [WidgetRegistry.core] to obtain a registry pre-populated with the
-/// five built-in widget mappings (Text, Column, Row, Container, SizedBox).
-/// Additional mappings can be added at any time with [register].
+/// core widget mappings. Additional mappings can be added at any time with
+/// [register].
 class WidgetRegistry {
   final Map<String, WidgetMapping> _widgets;
 
@@ -94,88 +94,271 @@ class WidgetRegistry {
     _widgets[name] = mapping;
   }
 
-  /// Returns a registry pre-populated with the five core widget mappings.
+  /// Returns a registry pre-populated with the core widget mappings.
   factory WidgetRegistry.core() {
     return WidgetRegistry._fromMap({
-      'Text': const WidgetMapping(
-        rfwName: 'core.Text',
-        import: 'core.widgets',
-        positionalParam: 'text',
-        childType: ChildType.none,
-        params: {
-          'style': ParamMapping('style', transformer: 'textStyle'),
-          'textAlign': ParamMapping('textAlign', transformer: 'enum'),
-          'maxLines': ParamMapping.direct('maxLines'),
-          'overflow': ParamMapping('overflow', transformer: 'enum'),
-          'softWrap': ParamMapping.direct('softWrap'),
-        },
-      ),
-      'Column': const WidgetMapping(
-        rfwName: 'core.Column',
-        import: 'core.widgets',
-        childType: ChildType.childList,
-        childParam: 'children',
-        params: {
-          'mainAxisAlignment':
-              ParamMapping('mainAxisAlignment', transformer: 'enum'),
-          'mainAxisSize': ParamMapping('mainAxisSize', transformer: 'enum'),
-          'crossAxisAlignment':
-              ParamMapping('crossAxisAlignment', transformer: 'enum'),
-          'verticalDirection':
-              ParamMapping('verticalDirection', transformer: 'enum'),
-        },
-      ),
-      'Row': const WidgetMapping(
-        rfwName: 'core.Row',
-        import: 'core.widgets',
-        childType: ChildType.childList,
-        childParam: 'children',
-        params: {
-          'mainAxisAlignment':
-              ParamMapping('mainAxisAlignment', transformer: 'enum'),
-          'mainAxisSize': ParamMapping('mainAxisSize', transformer: 'enum'),
-          'crossAxisAlignment':
-              ParamMapping('crossAxisAlignment', transformer: 'enum'),
-          'verticalDirection':
-              ParamMapping('verticalDirection', transformer: 'enum'),
-        },
-      ),
-      'Container': const WidgetMapping(
-        rfwName: 'core.Container',
-        import: 'core.widgets',
-        childType: ChildType.optionalChild,
-        childParam: 'child',
-        params: {
-          'color': ParamMapping('color', transformer: 'color'),
-          'padding': ParamMapping('padding', transformer: 'edgeInsets'),
-          'margin': ParamMapping('margin', transformer: 'edgeInsets'),
-          'width': ParamMapping.direct('width'),
-          'height': ParamMapping.direct('height'),
-          'alignment': ParamMapping('alignment', transformer: 'alignment'),
-          'decoration':
-              ParamMapping('decoration', transformer: 'boxDecoration'),
-        },
-      ),
-      'SizedBox': const WidgetMapping(
-        rfwName: 'core.SizedBox',
-        import: 'core.widgets',
-        childType: ChildType.optionalChild,
-        childParam: 'child',
-        params: {
-          'width': ParamMapping.direct('width'),
-          'height': ParamMapping.direct('height'),
-        },
-      ),
-      'Center': const WidgetMapping(
-        rfwName: 'core.Center',
-        import: 'core.widgets',
-        childType: ChildType.optionalChild,
-        childParam: 'child',
-        params: {
-          'widthFactor': ParamMapping.direct('widthFactor'),
-          'heightFactor': ParamMapping.direct('heightFactor'),
-        },
-      ),
+      ..._textWidgets(),
+      ..._layoutWidgets(),
+      ..._stylingWidgets(),
+      ..._scrollingWidgets(),
+      ..._transformWidgets(),
+      ..._otherWidgets(),
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // Text widgets
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _textWidgets() => const {
+        'Text': WidgetMapping(
+          rfwName: 'core.Text',
+          import: 'core.widgets',
+          positionalParam: 'text',
+          childType: ChildType.none,
+          params: {
+            'style': ParamMapping('style', transformer: 'textStyle'),
+            'textAlign': ParamMapping('textAlign', transformer: 'enum'),
+            'maxLines': ParamMapping.direct('maxLines'),
+            'overflow': ParamMapping('overflow', transformer: 'enum'),
+            'softWrap': ParamMapping.direct('softWrap'),
+          },
+        ),
+      };
+
+  // ---------------------------------------------------------------------------
+  // Layout widgets
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _layoutWidgets() => const {
+        'Column': WidgetMapping(
+          rfwName: 'core.Column',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'mainAxisAlignment':
+                ParamMapping('mainAxisAlignment', transformer: 'enum'),
+            'mainAxisSize': ParamMapping('mainAxisSize', transformer: 'enum'),
+            'crossAxisAlignment':
+                ParamMapping('crossAxisAlignment', transformer: 'enum'),
+            'verticalDirection':
+                ParamMapping('verticalDirection', transformer: 'enum'),
+          },
+        ),
+        'Row': WidgetMapping(
+          rfwName: 'core.Row',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'mainAxisAlignment':
+                ParamMapping('mainAxisAlignment', transformer: 'enum'),
+            'mainAxisSize': ParamMapping('mainAxisSize', transformer: 'enum'),
+            'crossAxisAlignment':
+                ParamMapping('crossAxisAlignment', transformer: 'enum'),
+            'verticalDirection':
+                ParamMapping('verticalDirection', transformer: 'enum'),
+          },
+        ),
+        'Center': WidgetMapping(
+          rfwName: 'core.Center',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'widthFactor': ParamMapping.direct('widthFactor'),
+            'heightFactor': ParamMapping.direct('heightFactor'),
+          },
+        ),
+        'Align': WidgetMapping(
+          rfwName: 'core.Align',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'widthFactor': ParamMapping.direct('widthFactor'),
+            'heightFactor': ParamMapping.direct('heightFactor'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+        ),
+        'AspectRatio': WidgetMapping(
+          rfwName: 'core.AspectRatio',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'aspectRatio': ParamMapping.direct('aspectRatio'),
+          },
+        ),
+        'Expanded': WidgetMapping(
+          rfwName: 'core.Expanded',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'flex': ParamMapping.direct('flex'),
+          },
+        ),
+        'Flexible': WidgetMapping(
+          rfwName: 'core.Flexible',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'flex': ParamMapping.direct('flex'),
+            'fit': ParamMapping('fit', transformer: 'enum'),
+          },
+        ),
+        'FittedBox': WidgetMapping(
+          rfwName: 'core.FittedBox',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'fit': ParamMapping('fit', transformer: 'enum'),
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+        'FractionallySizedBox': WidgetMapping(
+          rfwName: 'core.FractionallySizedBox',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'widthFactor': ParamMapping.direct('widthFactor'),
+            'heightFactor': ParamMapping.direct('heightFactor'),
+          },
+        ),
+        'IntrinsicHeight': WidgetMapping(
+          rfwName: 'core.IntrinsicHeight',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {},
+        ),
+        'IntrinsicWidth': WidgetMapping(
+          rfwName: 'core.IntrinsicWidth',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+          },
+        ),
+        'SizedBoxExpand': WidgetMapping(
+          rfwName: 'core.SizedBoxExpand',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {},
+        ),
+        'SizedBoxShrink': WidgetMapping(
+          rfwName: 'core.SizedBoxShrink',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {},
+        ),
+        'Spacer': WidgetMapping(
+          rfwName: 'core.Spacer',
+          import: 'core.widgets',
+          childType: ChildType.none,
+          params: {
+            'flex': ParamMapping.direct('flex'),
+          },
+        ),
+        'Stack': WidgetMapping(
+          rfwName: 'core.Stack',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'textDirection':
+                ParamMapping('textDirection', transformer: 'enum'),
+            'fit': ParamMapping('fit', transformer: 'enum'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+        'Wrap': WidgetMapping(
+          rfwName: 'core.Wrap',
+          import: 'core.widgets',
+          childType: ChildType.childList,
+          childParam: 'children',
+          params: {
+            'direction': ParamMapping('direction', transformer: 'enum'),
+            'alignment': ParamMapping('alignment', transformer: 'enum'),
+            'spacing': ParamMapping.direct('spacing'),
+            'runAlignment': ParamMapping('runAlignment', transformer: 'enum'),
+            'runSpacing': ParamMapping.direct('runSpacing'),
+            'crossAxisAlignment':
+                ParamMapping('crossAxisAlignment', transformer: 'enum'),
+            'textDirection':
+                ParamMapping('textDirection', transformer: 'enum'),
+            'verticalDirection':
+                ParamMapping('verticalDirection', transformer: 'enum'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+          },
+        ),
+      };
+
+  // ---------------------------------------------------------------------------
+  // Styling widgets
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _stylingWidgets() => const {
+        'Container': WidgetMapping(
+          rfwName: 'core.Container',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'color': ParamMapping('color', transformer: 'color'),
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'margin': ParamMapping('margin', transformer: 'edgeInsets'),
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'decoration':
+                ParamMapping('decoration', transformer: 'boxDecoration'),
+          },
+        ),
+        'SizedBox': WidgetMapping(
+          rfwName: 'core.SizedBox',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+          },
+        ),
+      };
+
+  // ---------------------------------------------------------------------------
+  // Scrolling widgets (Task 6)
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _scrollingWidgets() =>
+      const <String, WidgetMapping>{};
+
+  // ---------------------------------------------------------------------------
+  // Transform widgets (Task 7)
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _transformWidgets() =>
+      const <String, WidgetMapping>{};
+
+  // ---------------------------------------------------------------------------
+  // Other widgets (Task 7)
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _otherWidgets() =>
+      const <String, WidgetMapping>{};
 }

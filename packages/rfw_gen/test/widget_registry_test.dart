@@ -82,16 +82,17 @@ void main() {
       registry = WidgetRegistry.core();
     });
 
-    test('contains exactly 5 widgets', () {
-      expect(registry.supportedWidgets, hasLength(5));
+    test('contains exactly 19 widgets', () {
+      expect(registry.supportedWidgets, hasLength(19));
     });
 
-    test('supports Text, Column, Row, Container, SizedBox', () {
+    test('supports Text, Column, Row, Container, SizedBox, Center', () {
       expect(registry.isSupported('Text'), isTrue);
       expect(registry.isSupported('Column'), isTrue);
       expect(registry.isSupported('Row'), isTrue);
       expect(registry.isSupported('Container'), isTrue);
       expect(registry.isSupported('SizedBox'), isTrue);
+      expect(registry.isSupported('Center'), isTrue);
     });
 
     test('returns false for unknown widget', () {
@@ -323,6 +324,113 @@ void main() {
 
       test('import is core.widgets', () {
         expect(sizedBox.import, equals('core.widgets'));
+      });
+    });
+
+    group('Layout widgets', () {
+      test('supports all layout widgets', () {
+        for (final name in [
+          'Align', 'AspectRatio', 'Expanded', 'Flexible', 'FittedBox',
+          'FractionallySizedBox', 'IntrinsicHeight', 'IntrinsicWidth',
+          'SizedBoxExpand', 'SizedBoxShrink', 'Spacer', 'Stack', 'Wrap',
+        ]) {
+          expect(registry.isSupported(name), isTrue, reason: '$name not found');
+        }
+      });
+
+      test('Expanded has child type and flex param', () {
+        final w = registry.supportedWidgets['Expanded']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.childParam, equals('child'));
+        expect(w.params.containsKey('flex'), isTrue);
+      });
+
+      test('Flexible has child type, flex and fit params', () {
+        final w = registry.supportedWidgets['Flexible']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params.containsKey('flex'), isTrue);
+        expect(w.params.containsKey('fit'), isTrue);
+        expect(w.params['fit']!.transformer, equals('enum'));
+      });
+
+      test('Stack has childList and alignment params', () {
+        final w = registry.supportedWidgets['Stack']!;
+        expect(w.childType, equals(ChildType.childList));
+        expect(w.childParam, equals('children'));
+        expect(w.params.containsKey('alignment'), isTrue);
+        expect(w.params['alignment']!.transformer, equals('alignment'));
+        expect(w.params.containsKey('fit'), isTrue);
+        expect(w.params.containsKey('clipBehavior'), isTrue);
+      });
+
+      test('Wrap has childList and spacing params', () {
+        final w = registry.supportedWidgets['Wrap']!;
+        expect(w.childType, equals(ChildType.childList));
+        expect(w.childParam, equals('children'));
+        expect(w.params.containsKey('spacing'), isTrue);
+        expect(w.params.containsKey('runSpacing'), isTrue);
+        expect(w.params.containsKey('direction'), isTrue);
+        expect(w.params['direction']!.transformer, equals('enum'));
+      });
+
+      test('Align has duration and curve params', () {
+        final w = registry.supportedWidgets['Align']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('duration'), isTrue);
+        expect(w.params.containsKey('curve'), isTrue);
+      });
+
+      test('Spacer has none childType', () {
+        final w = registry.supportedWidgets['Spacer']!;
+        expect(w.childType, equals(ChildType.none));
+        expect(w.params.containsKey('flex'), isTrue);
+      });
+
+      test('SizedBoxExpand has no params', () {
+        final w = registry.supportedWidgets['SizedBoxExpand']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params, isEmpty);
+      });
+
+      test('SizedBoxShrink has no params', () {
+        final w = registry.supportedWidgets['SizedBoxShrink']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params, isEmpty);
+      });
+
+      test('IntrinsicHeight has no params', () {
+        final w = registry.supportedWidgets['IntrinsicHeight']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params, isEmpty);
+      });
+
+      test('AspectRatio has aspectRatio param', () {
+        final w = registry.supportedWidgets['AspectRatio']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('aspectRatio'), isTrue);
+      });
+
+      test('FittedBox has fit and alignment params', () {
+        final w = registry.supportedWidgets['FittedBox']!;
+        expect(w.childType, equals(ChildType.optionalChild));
+        expect(w.params.containsKey('fit'), isTrue);
+        expect(w.params['fit']!.transformer, equals('enum'));
+        expect(w.params.containsKey('alignment'), isTrue);
+        expect(w.params.containsKey('clipBehavior'), isTrue);
+      });
+
+      test('FractionallySizedBox has alignment and factors', () {
+        final w = registry.supportedWidgets['FractionallySizedBox']!;
+        expect(w.childType, equals(ChildType.child));
+        expect(w.params.containsKey('alignment'), isTrue);
+        expect(w.params.containsKey('widthFactor'), isTrue);
+        expect(w.params.containsKey('heightFactor'), isTrue);
+      });
+
+      test('IntrinsicWidth has width and height params', () {
+        final w = registry.supportedWidgets['IntrinsicWidth']!;
+        expect(w.params.containsKey('width'), isTrue);
+        expect(w.params.containsKey('height'), isTrue);
       });
     });
   });

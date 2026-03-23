@@ -662,6 +662,56 @@ void main() {
     });
   });
 
+  group('event handler dynamic payload', () {
+    test('event with ArgsRef in payload', () {
+      final expr = parseExpression(
+          "RfwHandler.event('tap', {'id': ArgsRef('item.id'), 'label': 'click'})");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+      final event = result as IrEventValue;
+      expect(event.name, equals('tap'));
+      expect(event.args['id'], isA<IrArgsRef>());
+      expect((event.args['id'] as IrArgsRef).path, equals('item.id'));
+      expect(event.args['label'], isA<IrStringValue>());
+      expect((event.args['label'] as IrStringValue).value, equals('click'));
+    });
+
+    test('event with DataRef in payload', () {
+      final expr = parseExpression(
+          "RfwHandler.event('view', {'userId': DataRef('user.id')})");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+      final event = result as IrEventValue;
+      expect(event.args['userId'], isA<IrDataRef>());
+      expect((event.args['userId'] as IrDataRef).path, equals('user.id'));
+    });
+
+    test('event with nested map containing DataRef', () {
+      final expr = parseExpression(
+          "RfwHandler.event('tap', {'action': {'url': DataRef('item.url')}, 'count': 1})");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+      final event = result as IrEventValue;
+      expect(event.args['action'], isA<IrMapValue>());
+      final innerMap = event.args['action'] as IrMapValue;
+      expect(innerMap.entries['url'], isA<IrDataRef>());
+      expect((innerMap.entries['url'] as IrDataRef).path, equals('item.url'));
+      expect(event.args['count'], isA<IrIntValue>());
+      expect((event.args['count'] as IrIntValue).value, equals(1));
+    });
+
+    test('event with mixed dynamic refs in payload', () {
+      final expr = parseExpression(
+          "RfwHandler.event('submit', {'itemId': ArgsRef('id'), 'userId': DataRef('user.id'), 'active': StateRef('isActive')})");
+      final result = converter.convertHandler(expr);
+      expect(result, isA<IrEventValue>());
+      final event = result as IrEventValue;
+      expect(event.args['itemId'], isA<IrArgsRef>());
+      expect(event.args['userId'], isA<IrDataRef>());
+      expect(event.args['active'], isA<IrStateRef>());
+    });
+  });
+
   group('Unsupported expressions', () {
     test('throws for variable reference', () {
       final expr = parseExpression('myVariable');

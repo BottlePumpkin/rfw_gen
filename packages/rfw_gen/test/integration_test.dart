@@ -317,6 +317,144 @@ Widget build() {
     });
   });
 
+  group('dynamic features integration', () {
+    late RfwConverter converter;
+
+    setUp(() {
+      converter = RfwConverter(registry: WidgetRegistry.core());
+    });
+
+    test('DataRef produces parseable rfwtxt', () {
+      const source = '''
+Widget buildTest() {
+  return Text(DataRef('user.name'));
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('data.user.name'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('ArgsRef produces parseable rfwtxt', () {
+      const source = '''
+Widget buildCard() {
+  return Text(ArgsRef('item.title'));
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('args.item.title'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('RfwFor with LoopVar produces parseable rfwtxt', () {
+      const source = '''
+Widget buildList() {
+  return Column(
+    children: [
+      RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => Text(item['name']),
+      ),
+    ],
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('...for item in data.items:'));
+      expect(rfwtxt, contains('item.name'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('RfwSwitch with widget cases produces parseable rfwtxt', () {
+      const source = '''
+Widget buildToggle() {
+  return Column(
+    children: [
+      RfwSwitch(
+        value: StateRef('active'),
+        cases: {
+          true: Text('Active'),
+          false: Text('Inactive'),
+        },
+      ),
+    ],
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('switch state.active'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('RfwConcat produces parseable rfwtxt', () {
+      const source = '''
+Widget buildGreeting() {
+  return Text(RfwConcat(['Hello, ', DataRef('name'), '!']));
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('"Hello, "'));
+      expect(rfwtxt, contains('data.name'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('state declaration produces parseable rfwtxt', () {
+      const source = '''
+@RfwWidget('toggle', state: {'down': false})
+Widget buildToggle() {
+  return GestureDetector(
+    onTapDown: RfwHandler.setState('down', true),
+    onTapUp: RfwHandler.setState('down', false),
+    child: Text('Tap'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('widget toggle { down: false }'));
+      expect(rfwtxt, contains('set state.down = true'));
+      expect(rfwtxt, contains('set state.down = false'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('event with dynamic payload produces parseable rfwtxt', () {
+      const source = '''
+Widget buildItem() {
+  return ElevatedButton(
+    onPressed: RfwHandler.event('shop.purchase', {'productId': ArgsRef('product.id'), 'quantity': 1}),
+    child: Text('Buy'),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('event "shop.purchase"'));
+      expect(rfwtxt, contains('args.product.id'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('complex: RfwFor + DataRef inside Column produces parseable rfwtxt', () {
+      const source = '''
+Widget buildFeed() {
+  return Column(
+    children: [
+      Text(DataRef('header')),
+      RfwFor(
+        items: DataRef('feed.items'),
+        itemName: 'entry',
+        builder: (entry) => Text(entry['title']),
+      ),
+    ],
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(source);
+      expect(rfwtxt, contains('data.header'));
+      expect(rfwtxt, contains('...for entry in data.feed.items:'));
+      expect(rfwtxt, contains('entry.title'));
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+  });
+
   group('custom widget support', () {
     late RfwConverter converter;
 

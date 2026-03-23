@@ -48,9 +48,12 @@ class RfwtxtEmitter {
 
     buffer.writeln();
     final propIndent = indent + 1;
-    for (final entry in node.properties.entries) {
+    final entries = node.properties.entries.toList();
+    for (var i = 0; i < entries.length; i++) {
+      final entry = entries[i];
       buffer.write('${_indentStr(propIndent)}${entry.key}: ');
       buffer.write(_emitValue(entry.value, indent: propIndent));
+      if (i < entries.length - 1) buffer.write(',');
       buffer.writeln();
     }
     buffer.write('${_indentStr(indent)})');
@@ -114,9 +117,10 @@ class RfwtxtEmitter {
     final buffer = StringBuffer();
     buffer.writeln('[');
     final itemIndent = indent + 1;
-    for (final v in list.values) {
+    for (var i = 0; i < list.values.length; i++) {
       buffer.write(_indentStr(itemIndent));
-      buffer.write(_emitValue(v, indent: itemIndent));
+      buffer.write(_emitValue(list.values[i], indent: itemIndent));
+      if (i < list.values.length - 1) buffer.write(',');
       buffer.writeln();
     }
     buffer.write('${_indentStr(indent)}]');
@@ -132,9 +136,12 @@ class RfwtxtEmitter {
     final buffer = StringBuffer();
     buffer.writeln('{');
     final entryIndent = indent + 1;
-    for (final entry in map.entries.entries) {
+    final mapEntries = map.entries.entries.toList();
+    for (var i = 0; i < mapEntries.length; i++) {
+      final entry = mapEntries[i];
       buffer.write('${_indentStr(entryIndent)}${entry.key}: ');
       buffer.write(_emitValue(entry.value, indent: entryIndent));
+      if (i < mapEntries.length - 1) buffer.write(',');
       buffer.writeln();
     }
     buffer.write('${_indentStr(indent)}}');

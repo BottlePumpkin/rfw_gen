@@ -441,6 +441,54 @@ void main() {
       expect(output, contains('scale: 1.0'));
     });
 
+    // Handler emission tests
+    group('Handler emission', () {
+      test('emits set state with bool value', () {
+        final node = IrWidgetNode(name: 'GestureDetector', properties: {
+          'onTap': IrSetStateValue('pressed', IrBoolValue(true)),
+        });
+        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        expect(output, contains('onTap: set state.pressed = true'));
+      });
+
+      test('emits set state from arg', () {
+        final node = IrWidgetNode(name: 'Slider', properties: {
+          'onChanged': IrSetStateFromArgValue('sliderValue'),
+        });
+        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        expect(output, contains('onChanged: set state.sliderValue = args.value'));
+      });
+
+      test('emits event without args', () {
+        final node = IrWidgetNode(name: 'ElevatedButton', properties: {
+          'onPressed': IrEventValue('button.click'),
+        });
+        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        expect(output, contains('onPressed: event "button.click"'));
+      });
+
+      test('emits event with args', () {
+        final node = IrWidgetNode(name: 'GestureDetector', properties: {
+          'onTap': IrEventValue('cart.add', {
+            'itemId': IrIntValue(42),
+            'quantity': IrIntValue(1),
+          }),
+        });
+        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        expect(output, contains('event "cart.add"'));
+        expect(output, contains('itemId:'));
+        expect(output, contains('quantity:'));
+      });
+
+      test('emits set state with int value', () {
+        final node = IrWidgetNode(name: 'Widget', properties: {
+          'onTap': IrSetStateValue('count', IrIntValue(0)),
+        });
+        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        expect(output, contains('set state.count ='));
+      });
+    });
+
     // Indentation check
     test('widget properties are indented with 2 spaces', () {
       final root = IrWidgetNode(

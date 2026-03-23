@@ -1,4 +1,4 @@
-// ignore_for_file: argument_type_not_assignable, undefined_function, undefined_class, undefined_named_parameter
+// ignore_for_file: argument_type_not_assignable, undefined_function, undefined_class, undefined_named_parameter, not_enough_positional_arguments
 import 'package:flutter/material.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 
@@ -189,6 +189,385 @@ Widget buildIntrinsicDemo() {
             Container(height: 30, width: 80, color: const Color(0xFFE91E63)),
             Container(height: 30, width: 120, color: const Color(0xFF9C27B0)),
           ],
+        ),
+      ),
+    ],
+  );
+}
+
+// ============================================================
+// Scrolling Category
+// ============================================================
+
+@RfwWidget('listViewDemo')
+Widget buildListViewDemo() {
+  return ListView(
+    padding: const EdgeInsets.all(8),
+    children: [
+      Container(height: 50, color: const Color(0xFF2196F3), margin: const EdgeInsets.only(bottom: 4)),
+      Container(height: 50, color: const Color(0xFF4CAF50), margin: const EdgeInsets.only(bottom: 4)),
+      Container(height: 50, color: const Color(0xFFFF9800), margin: const EdgeInsets.only(bottom: 4)),
+      Container(height: 50, color: const Color(0xFFE91E63)),
+    ],
+  );
+}
+
+@RfwWidget('gridViewDemo')
+Widget buildGridViewDemo() {
+  return GridView(
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    shrinkWrap: true,
+    children: [
+      Container(color: const Color(0xFF2196F3), margin: const EdgeInsets.all(4)),
+      Container(color: const Color(0xFF4CAF50), margin: const EdgeInsets.all(4)),
+      Container(color: const Color(0xFFFF9800), margin: const EdgeInsets.all(4)),
+      Container(color: const Color(0xFFE91E63), margin: const EdgeInsets.all(4)),
+    ],
+  );
+}
+
+@RfwWidget('scrollViewDemo')
+Widget buildScrollViewDemo() {
+  return SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Container(height: 100, color: const Color(0xFF2196F3)),
+        SizedBox(height: 8),
+        Container(height: 100, color: const Color(0xFF4CAF50)),
+        SizedBox(height: 8),
+        Container(height: 100, color: const Color(0xFFFF9800)),
+      ],
+    ),
+  );
+}
+
+@RfwWidget('listBodyDemo')
+Widget buildListBodyDemo() {
+  return SingleChildScrollView(
+    child: ListBody(
+      children: [
+        Container(height: 40, color: const Color(0xFF2196F3), margin: const EdgeInsets.only(bottom: 4)),
+        Container(height: 40, color: const Color(0xFF4CAF50), margin: const EdgeInsets.only(bottom: 4)),
+        Container(height: 40, color: const Color(0xFFFF9800)),
+      ],
+    ),
+  );
+}
+
+// ============================================================
+// Styling & Visual Category
+// ============================================================
+
+@RfwWidget('containerDemo')
+Widget buildContainerDemo() {
+  return Container(
+    width: 200,
+    height: 200,
+    padding: const EdgeInsets.all(16),
+    margin: const EdgeInsets.all(8),
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment(-1.0, -1.0),
+        end: Alignment(1.0, 1.0),
+        colors: [Color(0xFF2196F3), Color(0xFF9C27B0)],
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+      boxShadow: [BoxShadow(color: Color(0x40000000), blurRadius: 8, offset: Offset(0, 4))],
+    ),
+    child: Center(
+      child: Text('Container', style: const TextStyle(color: Color(0xFFFFFFFF), fontSize: 18.0)),
+    ),
+  );
+}
+
+@RfwWidget('paddingOpacityDemo')
+Widget buildPaddingOpacityDemo() {
+  return Column(
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(24),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: Container(width: 100, height: 50, color: const Color(0xFF2196F3)),
+      ),
+      Opacity(
+        opacity: 0.5,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        child: Container(width: 100, height: 50, color: const Color(0xFFFF9800)),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('clipRRectDemo')
+Widget buildClipRRectDemo() {
+  return ClipRRect(
+    borderRadius: const BorderRadius.all(Radius.circular(20)),
+    child: Container(
+      width: 150,
+      height: 100,
+      color: const Color(0xFF4CAF50),
+      child: Center(
+        child: Text('Clipped', style: const TextStyle(color: Color(0xFFFFFFFF))),
+      ),
+    ),
+  );
+}
+
+@RfwWidget('defaultTextStyleDemo')
+Widget buildDefaultTextStyleDemo() {
+  return DefaultTextStyle(
+    style: const TextStyle(fontSize: 20.0, color: Color(0xFF1565C0), fontWeight: FontWeight.bold),
+    duration: const Duration(milliseconds: 400),
+    child: Column(
+      children: [
+        Text('Inherited Style'),
+        Text('Same Style Here'),
+      ],
+    ),
+  );
+}
+
+@RfwWidget('directionalityDemo')
+Widget buildDirectionalityDemo() {
+  return Column(
+    children: [
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          children: [
+            Text('LTR → '),
+            Text('Left to Right'),
+          ],
+        ),
+      ),
+      Directionality(
+        textDirection: TextDirection.rtl,
+        child: Row(
+          children: [
+            Text('RTL ← '),
+            Text('Right to Left'),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('iconDemo')
+Widget buildIconDemo() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      Icon(icon: RfwIcon.home, size: 32.0, color: const Color(0xFF2196F3)),
+      Icon(icon: RfwIcon.favorite, size: 32.0, color: const Color(0xFFE91E63)),
+      Icon(icon: RfwIcon.star, size: 32.0, color: const Color(0xFFFF9800)),
+    ],
+  );
+}
+
+@RfwWidget('iconThemeDemo')
+Widget buildIconThemeDemo() {
+  return IconTheme(
+    data: const IconThemeData(color: Color(0xFF9C27B0), size: 40.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Icon(icon: RfwIcon.star),
+        Icon(icon: RfwIcon.favorite),
+        Icon(icon: RfwIcon.bookmark),
+      ],
+    ),
+  );
+}
+
+@RfwWidget('imageDemo')
+Widget buildImageDemo() {
+  return Image(
+    image: const NetworkImage('https://picsum.photos/seed/rfw/300/200'),
+    width: 300,
+    height: 200,
+    fit: BoxFit.cover,
+  );
+}
+
+@RfwWidget('textDemo')
+Widget buildTextDemo() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('Regular Text', style: const TextStyle(fontSize: 16.0)),
+      Text('Bold Text', style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+      Text('Italic Colored', style: const TextStyle(fontSize: 16.0, fontStyle: FontStyle.italic, color: Color(0xFFE91E63))),
+      Text('Overflow ellipsis for very long text that should be truncated', maxLines: 1, overflow: TextOverflow.ellipsis),
+    ],
+  );
+}
+
+@RfwWidget('coloredBoxDemo')
+Widget buildColoredBoxDemo() {
+  return Column(
+    children: [
+      ColoredBox(
+        color: const Color(0xFF2196F3),
+        child: SizedBox(width: 100, height: 50),
+      ),
+      SizedBox(height: 8),
+      Placeholder(
+        color: const Color(0xFFFF5722),
+        strokeWidth: 2.0,
+        placeholderWidth: 100,
+        placeholderHeight: 50,
+      ),
+    ],
+  );
+}
+
+// ============================================================
+// Transform Category
+// ============================================================
+
+@RfwWidget('rotationDemo')
+Widget buildRotationDemo() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      Rotation(
+        turns: 0.125,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        child: Container(width: 60, height: 60, color: const Color(0xFF2196F3)),
+      ),
+      Rotation(
+        turns: 0.25,
+        child: Container(width: 60, height: 60, color: const Color(0xFF4CAF50)),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('scaleDemo')
+Widget buildScaleDemo() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      Scale(
+        scale: 1.5,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+        child: Container(width: 40, height: 40, color: const Color(0xFFE91E63)),
+      ),
+      Scale(
+        scale: 0.5,
+        child: Container(width: 80, height: 80, color: const Color(0xFF9C27B0)),
+      ),
+    ],
+  );
+}
+
+@RfwWidget('fittedBoxDemo')
+Widget buildFittedBoxDemo() {
+  return SizedBox(
+    width: 200,
+    height: 100,
+    child: FittedBox(
+      fit: BoxFit.contain,
+      child: Text('FittedBox', style: const TextStyle(fontSize: 60.0)),
+    ),
+  );
+}
+
+// ============================================================
+// Interaction Category
+// ============================================================
+
+@RfwWidget('gestureDetectorDemo', state: {'tapped': false, 'longPressed': false})
+Widget buildGestureDetectorDemo() {
+  return GestureDetector(
+    onTap: RfwHandler.setState('tapped', true),
+    onLongPress: RfwHandler.setState('longPressed', true),
+    onDoubleTap: RfwHandler.event('gesture.doubleTap', {}),
+    child: Container(
+      width: 200,
+      height: 80,
+      color: RfwSwitchValue<int>(
+        value: StateRef('tapped'),
+        cases: {true: 0xFF4CAF50, false: 0xFF2196F3},
+      ),
+      child: Center(
+        child: Text('Tap / Long Press / Double Tap', style: const TextStyle(color: Color(0xFFFFFFFF))),
+      ),
+    ),
+  );
+}
+
+@RfwWidget('inkWellDemo', state: {'pressed': false})
+Widget buildInkWellDemo() {
+  return InkWell(
+    onTap: RfwHandler.setState('pressed', true),
+    onLongPress: RfwHandler.event('inkwell.longPress', {}),
+    splashColor: const Color(0x402196F3),
+    child: Container(
+      padding: const EdgeInsets.all(16),
+      child: Text('InkWell with Ripple', style: const TextStyle(fontSize: 16.0)),
+    ),
+  );
+}
+
+// ============================================================
+// Other Category
+// ============================================================
+
+@RfwWidget('animationDefaultsDemo')
+Widget buildAnimationDefaultsDemo() {
+  return AnimationDefaults(
+    duration: const Duration(milliseconds: 600),
+    curve: Curves.fastOutSlowIn,
+    child: Column(
+      children: [
+        Opacity(
+          opacity: 0.5,
+          child: Container(width: 120, height: 40, color: const Color(0xFF2196F3)),
+        ),
+        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Container(width: 120, height: 40, color: const Color(0xFF4CAF50)),
+        ),
+      ],
+    ),
+  );
+}
+
+@RfwWidget('safeAreaDemo')
+Widget buildSafeAreaDemo() {
+  return SafeArea(
+    child: Container(
+      color: const Color(0xFFE8EAF6),
+      child: Center(
+        child: Text('Inside SafeArea', style: const TextStyle(fontSize: 16.0)),
+      ),
+    ),
+  );
+}
+
+@RfwWidget('argsPatternDemo')
+Widget buildArgsPatternDemo() {
+  return Column(
+    children: [
+      // data.list.0 index access
+      Text(DataRef('catalog.sampleItems.0.name')),
+      SizedBox(height: 8),
+      // RfwSwitch with default case
+      Container(
+        width: 100,
+        height: 40,
+        color: RfwSwitchValue<int>(
+          value: DataRef('catalog.sampleItems.0.name'),
+          cases: {'Apple': 0xFFFF0000, 'Banana': 0xFFFFEB3B},
+          defaultCase: 0xFF9E9E9E,
         ),
       ),
     ],

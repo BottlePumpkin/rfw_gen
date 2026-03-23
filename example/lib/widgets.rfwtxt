@@ -1,4 +1,5 @@
 import core.widgets;
+import custom.widgets;
 import material;
 
 widget greeting = Column(
@@ -490,4 +491,43 @@ widget scaffoldPage = Scaffold(
       text: "Hello Material"
     )
   )
+);
+
+widget customWidgetDemo = Column(
+  children: [
+    CustomText(
+      text: "Hello Custom Widget",
+      fontType: "heading",
+      color: 0xFF4169FF
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    CustomBounceTapper(
+      onTap: event "custom.tap" { action: "greet" },
+      child: Container(
+        padding: [16.0],
+        color: 0xFF4CAF50,
+        child: CustomText(
+          text: "Tap Me",
+          fontType: "button",
+          color: 0xFFFFFFFF
+        )
+      )
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    NullConditionalWidget(
+      child: CustomText(
+        text: "Visible Content",
+        fontType: "body"
+      ),
+      nullChild: CustomText(
+        text: "Fallback (null)",
+        fontType: "caption",
+        color: 0xFF999999
+      )
+    )
+  ]
 );

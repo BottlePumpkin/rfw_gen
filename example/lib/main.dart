@@ -52,6 +52,7 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
     'interactiveButton',
     'toggleCard',
     'scaffoldPage',
+    'customWidgetDemo',
   ];
 
   String _currentWidget = 'greeting';
@@ -66,6 +67,36 @@ class _RfwDemoPageState extends State<RfwDemoPage> {
     _runtime.update(
       const LibraryName(<String>['material']),
       createMaterialWidgets(),
+    );
+    _runtime.update(
+      const LibraryName(<String>['custom', 'widgets']),
+      LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+        'CustomText': (BuildContext context, DataSource source) {
+          final text = source.v<String>(['text']) ?? '';
+          final fontType = source.v<String>(['fontType']) ?? 'body';
+          final color = Color(source.v<int>(['color']) ?? 0xFF000000);
+          final style = switch (fontType) {
+            'heading' => TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color),
+            'button' => TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: color),
+            'caption' => TextStyle(fontSize: 12, color: color),
+            _ => TextStyle(fontSize: 14, color: color),
+          };
+          return Text(text, style: style);
+        },
+        'CustomBounceTapper': (BuildContext context, DataSource source) {
+          return GestureDetector(
+            onTap: source.voidHandler(['onTap']),
+            child: source.optionalChild(['child']),
+          );
+        },
+        'NullConditionalWidget': (BuildContext context, DataSource source) {
+          final child = source.optionalChild(['child']);
+          final nullChild = source.optionalChild(['nullChild']);
+          // In a real app, this would check a data binding for null.
+          // For demo, always show the child.
+          return child ?? nullChild ?? const SizedBox.shrink();
+        },
+      }),
     );
     _loadWidget();
   }

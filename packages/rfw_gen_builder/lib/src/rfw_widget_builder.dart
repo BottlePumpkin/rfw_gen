@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
@@ -34,8 +35,17 @@ class RfwWidgetBuilder implements Builder {
     // Build registry: core + custom widgets from rfw_gen.yaml.
     final registry = WidgetRegistry.core();
     final configId = AssetId(buildStep.inputId.package, 'rfw_gen.yaml');
+    String? yamlStr;
     if (await buildStep.canRead(configId)) {
-      final yamlStr = await buildStep.readAsString(configId);
+      yamlStr = await buildStep.readAsString(configId);
+    } else {
+      // Fallback: read from filesystem for root-level files not in build graph.
+      final file = File('rfw_gen.yaml');
+      if (file.existsSync()) {
+        yamlStr = file.readAsStringSync();
+      }
+    }
+    if (yamlStr != null) {
       final yaml = loadYaml(yamlStr);
       if (yaml is Map) {
         final widgets = yaml['widgets'];

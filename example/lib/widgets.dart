@@ -425,3 +425,28 @@ Widget buildScaffoldPage() {
     ),
   );
 }
+
+// ─── 커스텀 위젯 데모 ───
+
+@RfwWidget('customWidgetDemo')
+Widget buildCustomWidgetDemo() {
+  return Column(
+    children: [
+      CustomText(text: 'Hello Custom Widget', fontType: 'heading', color: 0xFF4169FF),
+      SizedBox(height: 16.0),
+      CustomBounceTapper(
+        onTap: RfwHandler.event('custom.tap', {'action': 'greet'}),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          color: Color(0xFF4CAF50),
+          child: CustomText(text: 'Tap Me', fontType: 'button', color: 0xFFFFFFFF),
+        ),
+      ),
+      SizedBox(height: 16.0),
+      NullConditionalWidget(
+        child: CustomText(text: 'Visible Content', fontType: 'body'),
+        nullChild: CustomText(text: 'Fallback (null)', fontType: 'caption', color: 0xFF999999),
+      ),
+    ],
+  );
+}

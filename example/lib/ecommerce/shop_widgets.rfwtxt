@@ -1,0 +1,377 @@
+import core.widgets;
+import material;
+
+widget shopHome = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        height: 0x000000A0,
+        child: Column(
+          crossAxisAlignment: "start",
+          mainAxisAlignment: "center",
+          children: [
+            Text(
+              text: data.banners.items.0.title
+            ),
+            SizedBox(
+              height: 0x00000004
+            ),
+            Text(
+              text: data.banners.items.0.subtitle
+            )
+          ]
+        )
+      ),
+      Padding(
+        child: Text(
+          text: "카테고리"
+        )
+      ),
+      Padding(
+        child: Row(
+          mainAxisAlignment: "spaceAround",
+          children: [
+            ...for cat in data.categories.items:
+              GestureDetector(
+                onTap: event "navigate" { page: "productList" },
+                child: Column(
+                  children: [
+                    Icon(
+                      iconData: cat.icon,
+                      size: 32.0
+                    ),
+                    SizedBox(
+                      height: 0x00000004
+                    ),
+                    Text(
+                      text: cat.name
+                    )
+                  ]
+                )
+              )
+          ]
+        )
+      ),
+      Padding(
+        child: Text(
+          text: "추천 상품"
+        )
+      ),
+      SizedBox(
+        height: 0x000000B4,
+        child: ListView(
+          scrollDirection: "horizontal",
+          children: [
+            ...for product in data.recommended.items:
+              GestureDetector(
+                onTap: event "navigate" { page: "productDetail" },
+                child: Container(
+                  width: 0x0000008C,
+                  child: Column(
+                    crossAxisAlignment: "start",
+                    children: [
+                      ClipRRect(
+                        child: Image(
+                          width: 0x0000008C,
+                          height: 0x00000064,
+                          fit: "cover"
+                        )
+                      ),
+                      SizedBox(
+                        height: 0x00000008
+                      ),
+                      Text(
+                        text: product.name
+                      ),
+                      Text(
+                        text: [product.price, "원"]
+                      )
+                    ]
+                  )
+                )
+              )
+          ]
+        )
+      )
+    ]
+  )
+);
+
+widget productList = Column(
+  children: [
+    Container(
+      child: Text(
+        text: "상품 목록"
+      )
+    ),
+    Expanded(
+      child: ListView(
+        children: [
+          ...for item in data.products.items:
+            GestureDetector(
+              onTap: event "navigate" { page: "productDetail" },
+              child: Card(
+                child: Padding(
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        child: Image(
+                          width: 0x00000050,
+                          height: 0x00000050,
+                          fit: "cover"
+                        )
+                      ),
+                      SizedBox(
+                        width: 0x0000000C
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: "start",
+                          children: [
+                            Text(
+                              text: item.name
+                            ),
+                            SizedBox(
+                              height: 0x00000004
+                            ),
+                            Text(
+                              text: [item.price, "원"]
+                            ),
+                            SizedBox(
+                              height: 0x00000004
+                            ),
+                            Container(
+                              color: switch item.inStock {
+                                true: 0xFF4CAF50,
+                                false: 0xFFFF5722,
+                              },
+                              child: Text(
+                                text: switch item.inStock {
+                                  true: "재고 있음",
+                                  false: "품절",
+                                }
+                              )
+                            )
+                          ]
+                        )
+                      )
+                    ]
+                  )
+                )
+              )
+            )
+        ]
+      )
+    )
+  ]
+);
+
+widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Image(
+        width: 0x00000190,
+        height: 0x0000012C,
+        fit: "cover"
+      ),
+      Padding(
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: data.product.name
+            ),
+            SizedBox(
+              height: 0x00000008
+            ),
+            Text(
+              text: [data.product.price, "원"]
+            ),
+            SizedBox(
+              height: 0x00000010
+            ),
+            Container(
+              color: switch data.product.inStock {
+                true: 0xFF4CAF50,
+                false: 0xFFFF5722,
+              },
+              child: Text(
+                text: switch data.product.inStock {
+                  true: "재고 있음",
+                  false: "품절",
+                }
+              )
+            ),
+            SizedBox(
+              height: 0x00000010
+            ),
+            Text(
+              text: data.product.description
+            ),
+            SizedBox(
+              height: 0x00000018
+            ),
+            Row(
+              mainAxisAlignment: "center",
+              children: [
+                ElevatedButton(
+                  onPressed: event "quantity.decrease" {},
+                  child: Text(
+                    text: "-"
+                  )
+                ),
+                Padding(
+                  child: Text(
+                    text: state.quantity
+                  )
+                ),
+                ElevatedButton(
+                  onPressed: event "quantity.increase" {},
+                  child: Text(
+                    text: "+"
+                  )
+                )
+              ]
+            ),
+            SizedBox(
+              height: 0x00000018
+            ),
+            ElevatedButton(
+              onPressed: event "addToCart" { id: data.product.id },
+              child: Text(
+                text: "장바구니에 담기"
+              )
+            )
+          ]
+        )
+      )
+    ]
+  )
+);
+
+widget cart = Column(
+  children: [
+    Container(
+      child: Text(
+        text: "장바구니"
+      )
+    ),
+    Expanded(
+      child: ListView(
+        children: [
+          ...for cartItem in data.cart.items:
+            Card(
+              child: ListTile(
+                title: Text(
+                  text: cartItem.name
+                ),
+                subtitle: Text(
+                  text: [cartItem.price, "원 × ", cartItem.quantity]
+                ),
+                trailing: Row(
+                  mainAxisSize: "min",
+                  children: [
+                    GestureDetector(
+                      onTap: event "cart.decrease" { id: cartItem.id },
+                      child: Icon(
+                        iconData: {
+                          icon: 0x0000E4F7,
+                          fontFamily: "MaterialIcons"
+                        }
+                      )
+                    ),
+                    Padding(
+                      child: Text(
+                        text: cartItem.quantity
+                      )
+                    ),
+                    GestureDetector(
+                      onTap: event "cart.increase" { id: cartItem.id },
+                      child: Icon(
+                        iconData: {
+                          icon: 0x0000E047,
+                          fontFamily: "MaterialIcons"
+                        }
+                      )
+                    )
+                  ]
+                )
+              )
+            )
+        ]
+      )
+    ),
+    Container(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: "spaceBetween",
+            children: [
+              Text(
+                text: "총 금액"
+              ),
+              Text(
+                text: [data.cart.totalPrice, "원"]
+              )
+            ]
+          ),
+          SizedBox(
+            height: 0x0000000C
+          ),
+          ElevatedButton(
+            onPressed: event "checkout" {},
+            child: Text(
+              text: ["주문하기 (", data.cart.itemCount, "개)"]
+            )
+          )
+        ]
+      )
+    )
+  ]
+);
+
+widget orderComplete = Center(
+  child: Padding(
+    child: Column(
+      mainAxisAlignment: "center",
+      children: [
+        Icon(
+          iconData: {
+            icon: 0x0000E156,
+            fontFamily: "MaterialIcons"
+          },
+          size: 80.0
+        ),
+        SizedBox(
+          height: 0x00000018
+        ),
+        Text(
+          text: "주문이 완료되었습니다!"
+        ),
+        SizedBox(
+          height: 0x0000000C
+        ),
+        Text(
+          text: ["주문번호: ", data.order.orderNumber]
+        ),
+        SizedBox(
+          height: 0x00000008
+        ),
+        Text(
+          text: ["총 ", data.order.itemCount, "개 상품 / ", data.order.totalPrice, "원"]
+        ),
+        SizedBox(
+          height: 0x00000020
+        ),
+        ElevatedButton(
+          onPressed: event "navigate" { page: "shopHome" },
+          child: Text(
+            text: "홈으로 돌아가기"
+          )
+        )
+      ]
+    )
+  )
+);

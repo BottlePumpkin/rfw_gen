@@ -1,0 +1,869 @@
+import core.widgets;
+import material;
+
+widget columnDemo = Column(
+  mainAxisAlignment: "spaceEvenly",
+  mainAxisSize: "max",
+  children: [
+    Container(
+      width: 0x0000003C,
+      height: 0x0000003C
+    ),
+    Container(
+      width: 0x0000003C,
+      height: 0x0000003C
+    ),
+    Container(
+      width: 0x0000003C,
+      height: 0x0000003C
+    )
+  ]
+);
+
+widget rowDemo = Row(
+  crossAxisAlignment: "center",
+  mainAxisAlignment: "spaceAround",
+  children: [
+    Container(
+      width: 0x00000032,
+      height: 0x00000050
+    ),
+    Container(
+      width: 0x00000032,
+      height: 0x0000003C
+    ),
+    Container(
+      width: 0x00000032,
+      height: 0x00000028
+    )
+  ]
+);
+
+widget wrapDemo = Wrap(
+  spacing: 8.0,
+  runSpacing: 8.0,
+  children: [
+    Container(
+      child: Text(
+        text: "Flutter"
+      )
+    ),
+    Container(
+      child: Text(
+        text: "RFW"
+      )
+    ),
+    Container(
+      child: Text(
+        text: "Dart"
+      )
+    ),
+    Container(
+      child: Text(
+        text: "Widget"
+      )
+    ),
+    Container(
+      child: Text(
+        text: "Remote"
+      )
+    )
+  ]
+);
+
+widget stackDemo = Stack(
+  children: [
+    Container(
+      width: 0x000000C8,
+      height: 0x000000C8
+    ),
+    Container(
+      width: 0x00000096,
+      height: 0x00000096
+    ),
+    Positioned(
+      top: 10.0,
+      end: 10.0,
+      child: Container(
+        width: 0x00000028,
+        height: 0x00000028
+      )
+    )
+  ]
+);
+
+widget expandedDemo = Row(
+  children: [
+    Expanded(
+      flex: 0x00000002,
+      child: Container(
+        height: 0x0000003C
+      )
+    ),
+    Expanded(
+      flex: 0x00000001,
+      child: Container(
+        height: 0x0000003C
+      )
+    ),
+    Flexible(
+      flex: 0x00000001,
+      fit: "loose",
+      child: Container(
+        width: 0x0000001E,
+        height: 0x0000003C
+      )
+    )
+  ]
+);
+
+widget sizedBoxDemo = Column(
+  children: [
+    SizedBox(
+      width: 0x00000064,
+      height: 0x00000032,
+      child: ColoredBox(
+      )
+    ),
+    Spacer(
+      flex: 0x00000001
+    ),
+    SizedBoxExpand(
+      child: ColoredBox(
+      )
+    ),
+    SizedBoxShrink(
+    )
+  ]
+);
+
+widget alignDemo = SizedBox(
+  width: 0x000000C8,
+  height: 0x000000C8,
+  child: Stack(
+    children: [
+      Container(
+      ),
+      Align(
+        child: Container(
+          width: 0x00000028,
+          height: 0x00000028
+        )
+      ),
+      Center(
+        child: Text(
+          text: "Center"
+        )
+      ),
+      Align(
+        child: Container(
+          width: 0x00000028,
+          height: 0x00000028
+        )
+      )
+    ]
+  )
+);
+
+widget aspectRatioDemo = Column(
+  children: [
+    AspectRatio(
+      aspectRatio: 1.78,
+      child: Container(
+      )
+    ),
+    SizedBox(
+      height: 0x00000008
+    ),
+    FractionallySizedBox(
+      widthFactor: 0.7,
+      child: Container(
+        height: 0x00000028
+      )
+    )
+  ]
+);
+
+widget intrinsicDemo = Column(
+  children: [
+    IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: "stretch",
+        children: [
+          Container(
+            width: 0x00000032
+          ),
+          Column(
+            children: [
+              Container(
+                width: 0x00000064,
+                height: 0x0000001E
+              ),
+              Container(
+                width: 0x00000064,
+                height: 0x0000003C
+              )
+            ]
+          )
+        ]
+      )
+    ),
+    SizedBox(
+      height: 0x00000008
+    ),
+    IntrinsicWidth(
+      child: Column(
+        crossAxisAlignment: "stretch",
+        children: [
+          Container(
+            height: 0x0000001E,
+            width: 0x00000050
+          ),
+          Container(
+            height: 0x0000001E,
+            width: 0x00000078
+          )
+        ]
+      )
+    )
+  ]
+);
+
+widget listViewDemo = ListView(
+  children: [
+    Container(
+      height: 0x00000032
+    ),
+    Container(
+      height: 0x00000032
+    ),
+    Container(
+      height: 0x00000032
+    ),
+    Container(
+      height: 0x00000032
+    )
+  ]
+);
+
+widget gridViewDemo = GridView(
+  shrinkWrap: true,
+  children: [
+    Container(
+    ),
+    Container(
+    ),
+    Container(
+    ),
+    Container(
+    )
+  ]
+);
+
+widget scrollViewDemo = SingleChildScrollView(
+  child: Column(
+    children: [
+      Container(
+        height: 0x00000064
+      ),
+      SizedBox(
+        height: 0x00000008
+      ),
+      Container(
+        height: 0x00000064
+      ),
+      SizedBox(
+        height: 0x00000008
+      ),
+      Container(
+        height: 0x00000064
+      )
+    ]
+  )
+);
+
+widget listBodyDemo = SingleChildScrollView(
+  child: ListBody(
+    children: [
+      Container(
+        height: 0x00000028
+      ),
+      Container(
+        height: 0x00000028
+      ),
+      Container(
+        height: 0x00000028
+      )
+    ]
+  )
+);
+
+widget containerDemo = Container(
+  width: 0x000000C8,
+  height: 0x000000C8,
+  child: Center(
+    child: Text(
+      text: "Container"
+    )
+  )
+);
+
+widget paddingOpacityDemo = Column(
+  children: [
+    Padding(
+      curve: "easeInOut",
+      child: Container(
+        width: 0x00000064,
+        height: 0x00000032
+      )
+    ),
+    Opacity(
+      opacity: 0.5,
+      curve: "easeOut",
+      child: Container(
+        width: 0x00000064,
+        height: 0x00000032
+      )
+    )
+  ]
+);
+
+widget clipRRectDemo = ClipRRect(
+  child: Container(
+    width: 0x00000096,
+    height: 0x00000064,
+    child: Center(
+      child: Text(
+        text: "Clipped"
+      )
+    )
+  )
+);
+
+widget defaultTextStyleDemo = DefaultTextStyle(
+  child: Column(
+    children: [
+      Text(
+        text: "Inherited Style"
+      ),
+      Text(
+        text: "Same Style Here"
+      )
+    ]
+  )
+);
+
+widget directionalityDemo = Column(
+  children: [
+    Directionality(
+      textDirection: "ltr",
+      child: Row(
+        children: [
+          Text(
+            text: "LTR → "
+          ),
+          Text(
+            text: "Left to Right"
+          )
+        ]
+      )
+    ),
+    Directionality(
+      textDirection: "rtl",
+      child: Row(
+        children: [
+          Text(
+            text: "RTL ← "
+          ),
+          Text(
+            text: "Right to Left"
+          )
+        ]
+      )
+    )
+  ]
+);
+
+widget iconDemo = Row(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    Icon(
+      iconData: {
+        icon: 0x0000E318,
+        fontFamily: "MaterialIcons"
+      },
+      size: 32.0
+    ),
+    Icon(
+      iconData: {
+        icon: 0x0000E25B,
+        fontFamily: "MaterialIcons"
+      },
+      size: 32.0
+    ),
+    Icon(
+      iconData: {
+        icon: 0x0000E5F9,
+        fontFamily: "MaterialIcons"
+      },
+      size: 32.0
+    )
+  ]
+);
+
+widget iconThemeDemo = IconTheme(
+  child: Row(
+    mainAxisAlignment: "spaceEvenly",
+    children: [
+      Icon(
+        iconData: {
+          icon: 0x0000E5F9,
+          fontFamily: "MaterialIcons"
+        }
+      ),
+      Icon(
+        iconData: {
+          icon: 0x0000E25B,
+          fontFamily: "MaterialIcons"
+        }
+      ),
+      Icon(
+        iconData: {
+          icon: 0x0000E12E,
+          fontFamily: "MaterialIcons"
+        }
+      )
+    ]
+  )
+);
+
+widget imageDemo = Image(
+  width: 0x0000012C,
+  height: 0x000000C8,
+  fit: "cover"
+);
+
+widget textDemo = Column(
+  crossAxisAlignment: "start",
+  children: [
+    Text(
+      text: "Regular Text"
+    ),
+    Text(
+      text: "Bold Text"
+    ),
+    Text(
+      text: "Italic Colored"
+    ),
+    Text(
+      text: "Overflow ellipsis for very long text that should be truncated",
+      maxLines: 0x00000001,
+      overflow: "ellipsis"
+    )
+  ]
+);
+
+widget coloredBoxDemo = Column(
+  children: [
+    ColoredBox(
+      child: SizedBox(
+        width: 0x00000064,
+        height: 0x00000032
+      )
+    ),
+    SizedBox(
+      height: 0x00000008
+    ),
+    Placeholder(
+      strokeWidth: 2.0,
+      placeholderWidth: 0x00000064,
+      placeholderHeight: 0x00000032
+    )
+  ]
+);
+
+widget rotationDemo = Row(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    Rotation(
+      turns: 0.125,
+      curve: "easeInOut",
+      child: Container(
+        width: 0x0000003C,
+        height: 0x0000003C
+      )
+    ),
+    Rotation(
+      turns: 0.25,
+      child: Container(
+        width: 0x0000003C,
+        height: 0x0000003C
+      )
+    )
+  ]
+);
+
+widget scaleDemo = Row(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    Scale(
+      scale: 1.5,
+      curve: "easeOut",
+      child: Container(
+        width: 0x00000028,
+        height: 0x00000028
+      )
+    ),
+    Scale(
+      scale: 0.5,
+      child: Container(
+        width: 0x00000050,
+        height: 0x00000050
+      )
+    )
+  ]
+);
+
+widget fittedBoxDemo = SizedBox(
+  width: 0x000000C8,
+  height: 0x00000064,
+  child: FittedBox(
+    fit: "contain",
+    child: Text(
+      text: "FittedBox"
+    )
+  )
+);
+
+widget gestureDetectorDemo { tapped: false, longPressed: false } = GestureDetector(
+  onTap: set state.tapped = true,
+  onLongPress: set state.longPressed = true,
+  onDoubleTap: event "gesture.doubleTap" {},
+  child: Container(
+    width: 0x000000C8,
+    height: 0x00000050,
+    color: switch state.tapped {
+      true: 0xFF4CAF50,
+      false: 0xFF2196F3,
+    },
+    child: Center(
+      child: Text(
+        text: "Tap / Long Press / Double Tap"
+      )
+    )
+  )
+);
+
+widget inkWellDemo { pressed: false } = InkWell(
+  onTap: set state.pressed = true,
+  onLongPress: event "inkwell.longPress" {},
+  child: Container(
+    child: Text(
+      text: "InkWell with Ripple"
+    )
+  )
+);
+
+widget animationDefaultsDemo = AnimationDefaults(
+  curve: "fastOutSlowIn",
+  child: Column(
+    children: [
+      Opacity(
+        opacity: 0.5,
+        child: Container(
+          width: 0x00000078,
+          height: 0x00000028
+        )
+      ),
+      SizedBox(
+        height: 0x00000008
+      ),
+      Padding(
+        child: Container(
+          width: 0x00000078,
+          height: 0x00000028
+        )
+      )
+    ]
+  )
+);
+
+widget safeAreaDemo = SafeArea(
+  child: Container(
+    child: Center(
+      child: Text(
+        text: "Inside SafeArea"
+      )
+    )
+  )
+);
+
+widget argsPatternDemo = Column(
+  children: [
+    Text(
+      text: data.catalog.sampleItems.0.name
+    ),
+    SizedBox(
+      height: 0x00000008
+    ),
+    Container(
+      width: 0x00000064,
+      height: 0x00000028,
+      color: switch data.catalog.sampleItems.0.name {
+        "Apple": 0xFFFF0000,
+        "Banana": 0xFFFFEB3B,
+        default: 0xFF9E9E9E,
+      }
+    )
+  ]
+);
+
+widget scaffoldDemo = Scaffold(
+  appBar: AppBar(
+    title: Text(
+      text: "Scaffold Demo"
+    )
+  ),
+  body: Center(
+    child: Text(
+      text: "Scaffold Body"
+    )
+  ),
+  floatingActionButton: FloatingActionButton(
+    onPressed: event "fab.pressed" {},
+    child: Icon(
+      iconData: {
+        icon: 0x0000E047,
+        fontFamily: "MaterialIcons"
+      }
+    )
+  )
+);
+
+widget materialDemo = Material(
+  elevation: 4.0,
+  child: Padding(
+    child: Text(
+      text: "Material Surface"
+    )
+  )
+);
+
+widget cardDemo = Column(
+  children: [
+    Card(
+      elevation: 4.0,
+      child: Padding(
+        child: Text(
+          text: "Rounded Card"
+        )
+      )
+    )
+  ]
+);
+
+widget buttonDemo = Column(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    ElevatedButton(
+      onPressed: event "button.elevated" {},
+      child: Text(
+        text: "Elevated"
+      )
+    ),
+    SizedBox(
+      height: 0x00000008
+    ),
+    TextButton(
+      onPressed: event "button.text" {},
+      child: Text(
+        text: "Text Button"
+      )
+    ),
+    SizedBox(
+      height: 0x00000008
+    ),
+    OutlinedButton(
+      onPressed: event "button.outlined" {},
+      child: Text(
+        text: "Outlined"
+      )
+    )
+  ]
+);
+
+widget listTileDemo = Column(
+  children: [
+    ListTile(
+      leading: Icon(
+        iconData: {
+          icon: 0x0000E22A,
+          fontFamily: "MaterialIcons"
+        },
+        size: 40.0
+      ),
+      title: Text(
+        text: "List Tile Title"
+      ),
+      subtitle: Text(
+        text: "Subtitle text here"
+      ),
+      trailing: Icon(
+        iconData: {
+          icon: 0x0000E15E,
+          fontFamily: "MaterialIcons"
+        }
+      ),
+      onTap: event "listTile.tap" {}
+    ),
+    Divider(
+    ),
+    ListTile(
+      leading: Icon(
+        iconData: {
+          icon: 0x0000E57F,
+          fontFamily: "MaterialIcons"
+        },
+        size: 40.0
+      ),
+      title: Text(
+        text: "Settings"
+      ),
+      onTap: event "listTile.settings" {}
+    )
+  ]
+);
+
+widget sliderDemo { value: 50.0 } = Column(
+  children: [
+    Slider(
+      min: 0.0,
+      max: 100.0,
+      value: state.value,
+      onChanged: set state.value = args.value,
+      onChangeStart: event "slider.start" {},
+      onChangeEnd: event "slider.end" {}
+    ),
+    Text(
+      text: ["Value: ", state.value]
+    )
+  ]
+);
+
+widget drawerDemo = Scaffold(
+  appBar: AppBar(
+    title: Text(
+      text: "Drawer Demo"
+    )
+  ),
+  drawer: Drawer(
+    child: ListView(
+      children: [
+        ListTile(
+          leading: Icon(
+            iconData: {
+              icon: 0x0000E318,
+              fontFamily: "MaterialIcons"
+            }
+          ),
+          title: Text(
+            text: "Home"
+          ),
+          onTap: event "drawer.home" {}
+        ),
+        ListTile(
+          leading: Icon(
+            iconData: {
+              icon: 0x0000E57F,
+              fontFamily: "MaterialIcons"
+            }
+          ),
+          title: Text(
+            text: "Settings"
+          ),
+          onTap: event "drawer.settings" {}
+        )
+      ]
+    )
+  ),
+  body: Center(
+    child: Text(
+      text: "Swipe or tap menu to open drawer"
+    )
+  )
+);
+
+widget dividerDemo = Column(
+  children: [
+    Text(
+      text: "Above Divider"
+    ),
+    Divider(
+      thickness: 2.0
+    ),
+    Text(
+      text: "Below Divider"
+    ),
+    SizedBox(
+      height: 0x00000010
+    ),
+    Row(
+      mainAxisAlignment: "center",
+      children: [
+        Text(
+          text: "Left"
+        ),
+        SizedBox(
+          height: 0x00000028,
+          child: VerticalDivider(
+            thickness: 2.0
+          )
+        ),
+        Text(
+          text: "Right"
+        )
+      ]
+    )
+  ]
+);
+
+widget progressDemo = Column(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    CircularProgressIndicator(
+      value: 0.7,
+      strokeWidth: 6.0
+    ),
+    SizedBox(
+      height: 0x00000010
+    ),
+    LinearProgressIndicator(
+      value: 0.4
+    )
+  ]
+);
+
+widget overflowBarDemo = OverflowBar(
+  spacing: 8.0,
+  overflowSpacing: 4.0,
+  children: [
+    ElevatedButton(
+      onPressed: event "overflow.1" {},
+      child: Text(
+        text: "Action 1"
+      )
+    ),
+    OutlinedButton(
+      onPressed: event "overflow.2" {},
+      child: Text(
+        text: "Action 2"
+      )
+    ),
+    TextButton(
+      onPressed: event "overflow.3" {},
+      child: Text(
+        text: "Action 3"
+      )
+    )
+  ]
+);

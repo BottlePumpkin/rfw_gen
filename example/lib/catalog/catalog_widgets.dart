@@ -113,7 +113,7 @@ Widget buildSizedBoxDemo() {
         height: 50,
         child: ColoredBox(color: const Color(0xFF2196F3)),
       ),
-      const Spacer(flex: 1),
+      Spacer(flex: 1),
       SizedBoxExpand(
         child: ColoredBox(color: const Color(0xFFE8EAF6)),
       ),

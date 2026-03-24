@@ -3,7 +3,17 @@ description: Monorepo workspace for rfw_gen packages.
 publish_to: none
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
+
+workspace:
+  - packages/rfw_gen
+  - packages/rfw_gen_builder
+  - packages/rfw_gen_mcp
 
 dev_dependencies:
   melos: ^7.0.0
+
+melos:
+  command:
+    bootstrap:
+      usePubspecOverrides: true

@@ -3,7 +3,7 @@ description: Example app demonstrating rfw_gen code generation.
 publish_to: none
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
 
 dependencies:
   flutter:

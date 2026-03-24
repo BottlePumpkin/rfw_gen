@@ -854,6 +854,7 @@ class WidgetRegistry {
             'color': ParamMapping('color', transformer: 'color'),
             'elevation': ParamMapping.direct('elevation'),
             'margin': ParamMapping('margin', transformer: 'edgeInsets'),
+            'shape': ParamMapping('shape', transformer: 'shapeBorder'),
           },
         ),
         'Material': WidgetMapping(

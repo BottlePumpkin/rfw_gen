@@ -686,6 +686,12 @@ void main() {
         expect(w.handlerParams, contains('onTap'));
       });
 
+      test('Card has shape param with shapeBorder transformer', () {
+        final w = registry.supportedWidgets['Card']!;
+        expect(w.params.containsKey('shape'), isTrue);
+        expect(w.params['shape']!.transformer, equals('shapeBorder'));
+      });
+
       test('all material widgets use material import', () {
         for (final name in ['Scaffold', 'AppBar', 'Card', 'ElevatedButton', 'Divider']) {
           expect(registry.supportedWidgets[name]!.import, equals('material'));

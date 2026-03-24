@@ -1243,4 +1243,40 @@ void main() {
       );
     });
   });
+
+  group('Default cases and prefix operators', () {
+    test('TextStyle converts unknown property via generic convert', () {
+      final expr = parseExpression(
+        'TextStyle(fontSize: 24.0, backgroundColor: Color(0xFFFF0000))',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('fontSize'), isTrue);
+      expect(map.containsKey('backgroundColor'), isTrue);
+    });
+
+    test('IconThemeData converts unknown property via generic convert', () {
+      final expr = parseExpression(
+        'IconThemeData(color: Color(0xFF000000), fill: 1.0)',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('color'), isTrue);
+      expect(map.containsKey('fill'), isTrue);
+    });
+
+    test('converts prefix ! on BooleanLiteral', () {
+      final expr = parseExpression('!true');
+      final result = converter.convert(expr);
+      expect(result, isA<IrBoolValue>());
+      expect((result as IrBoolValue).value, isFalse);
+    });
+
+    test('converts prefix !false to true', () {
+      final expr = parseExpression('!false');
+      final result = converter.convert(expr);
+      expect(result, isA<IrBoolValue>());
+      expect((result as IrBoolValue).value, isTrue);
+    });
+  });
 }

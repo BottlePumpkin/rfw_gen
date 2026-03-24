@@ -81,6 +81,12 @@ class ExpressionConverter {
         return IrIntValue(-operand.value!);
       }
     }
+    if (expr.operator.lexeme == '!') {
+      final operand = expr.operand;
+      if (operand is BooleanLiteral) {
+        return IrBoolValue(!operand.value);
+      }
+    }
     throw UnsupportedExpressionError(
       'Unsupported prefix expression: ${expr.operator.lexeme}',
       offset: expr.offset,
@@ -703,6 +709,8 @@ class ExpressionConverter {
               'ellipsis': 'ellipsis',
               'visible': 'visible',
             });
+          default:
+            entries[name] = convert(arg.expression);
         }
       }
     }
@@ -798,6 +806,8 @@ class ExpressionConverter {
           case 'size':
           case 'opacity':
             entries[name] = IrNumberValue(_toDouble(arg.expression));
+          default:
+            entries[name] = convert(arg.expression);
         }
       }
     }

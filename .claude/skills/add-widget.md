@@ -13,5 +13,8 @@
 3. 필요시 expression_converter.dart에 타입 변환 로직 추가
 4. packages/rfw_gen/test/에 유닛 테스트 추가
 5. packages/rfw_gen/test/integration_test.dart에 통합 테스트 추가
-6. `dart test` 실행 확인
-7. 커밋
+6. example/lib/catalog/catalog_widgets.dart에 @RfwWidget 데모 함수 추가
+7. example/test/golden_catalog_{category}_test.dart에 골든 테스트 추가
+8. `dart test` 실행 확인
+9. `cd example && flutter test --tags golden --update-goldens`로 골든 생성
+10. 커밋

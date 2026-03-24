@@ -1,3 +1,7 @@
+## 0.2.1
+
+- No changes to rfw_gen (version bump to match rfw_gen_builder)
+
 ## 0.2.0
 
 - Add `column` field to `RfwGenIssue` for precise error location reporting

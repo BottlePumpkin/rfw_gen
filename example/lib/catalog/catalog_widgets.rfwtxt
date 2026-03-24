@@ -133,21 +133,21 @@ widget stackDemo = Stack(
 widget expandedDemo = Row(
   children: [
     Expanded(
-      flex: 0x00000002,
+      flex: 2,
       child: Container(
         height: 60.0,
         color: 0xFF2196F3
       )
     ),
     Expanded(
-      flex: 0x00000001,
+      flex: 1,
       child: Container(
         height: 60.0,
         color: 0xFF4CAF50
       )
     ),
     Flexible(
-      flex: 0x00000001,
+      flex: 1,
       fit: "loose",
       child: Container(
         width: 30.0,
@@ -322,7 +322,7 @@ widget listViewDemo = ListView(
 
 widget gridViewDemo = GridView(
   gridDelegate: {
-    crossAxisCount: 0x00000002
+    crossAxisCount: 2
   },
   shrinkWrap: true,
   children: [
@@ -442,7 +442,7 @@ widget paddingOpacityDemo = Column(
   children: [
     Padding(
       padding: [24.0],
-      duration: 0x0000012C,
+      duration: 300,
       curve: "easeInOut",
       child: Container(
         width: 100.0,
@@ -452,7 +452,7 @@ widget paddingOpacityDemo = Column(
     ),
     Opacity(
       opacity: 0.5,
-      duration: 0x0000012C,
+      duration: 300,
       curve: "easeOut",
       child: Container(
         width: 100.0,
@@ -490,7 +490,7 @@ widget defaultTextStyleDemo = DefaultTextStyle(
     color: 0xFF1565C0,
     fontWeight: "bold"
   },
-  duration: 0x00000190,
+  duration: 400,
   child: Column(
     children: [
       Text(
@@ -538,22 +538,28 @@ widget iconDemo = Row(
   mainAxisAlignment: "spaceEvenly",
   children: [
     Icon(
+      icon: {
+        icon: 58136,
+        fontFamily: "MaterialIcons"
+      },
       size: 32.0,
-      color: 0xFF2196F3,
-      icon: 0x0000E318,
-      fontFamily: "MaterialIcons"
+      color: 0xFF2196F3
     ),
     Icon(
+      icon: {
+        icon: 57947,
+        fontFamily: "MaterialIcons"
+      },
       size: 32.0,
-      color: 0xFFE91E63,
-      icon: 0x0000E25B,
-      fontFamily: "MaterialIcons"
+      color: 0xFFE91E63
     ),
     Icon(
+      icon: {
+        icon: 58873,
+        fontFamily: "MaterialIcons"
+      },
       size: 32.0,
-      color: 0xFFFF9800,
-      icon: 0x0000E5F9,
-      fontFamily: "MaterialIcons"
+      color: 0xFFFF9800
     )
   ]
 );
@@ -567,16 +573,22 @@ widget iconThemeDemo = IconTheme(
     mainAxisAlignment: "spaceEvenly",
     children: [
       Icon(
-        icon: 0x0000E5F9,
-        fontFamily: "MaterialIcons"
+        icon: {
+          icon: 58873,
+          fontFamily: "MaterialIcons"
+        }
       ),
       Icon(
-        icon: 0x0000E25B,
-        fontFamily: "MaterialIcons"
+        icon: {
+          icon: 57947,
+          fontFamily: "MaterialIcons"
+        }
       ),
       Icon(
-        icon: 0x0000E12E,
-        fontFamily: "MaterialIcons"
+        icon: {
+          icon: 57646,
+          fontFamily: "MaterialIcons"
+        }
       )
     ]
   )
@@ -616,7 +628,7 @@ widget textDemo = Column(
     ),
     Text(
       text: "Overflow ellipsis for very long text that should be truncated",
-      maxLines: 0x00000001,
+      maxLines: 1,
       overflow: "ellipsis"
     )
   ]
@@ -688,7 +700,7 @@ widget rotationDemo = Row(
   children: [
     Rotation(
       turns: 0.125,
-      duration: 0x000001F4,
+      duration: 500,
       curve: "easeInOut",
       child: Container(
         width: 60.0,
@@ -712,7 +724,7 @@ widget scaleDemo = Row(
   children: [
     Scale(
       scale: 1.5,
-      duration: 0x00000190,
+      duration: 400,
       curve: "easeOut",
       child: Container(
         width: 40.0,
@@ -783,7 +795,7 @@ widget inkWellDemo { pressed: false } = InkWell(
 );
 
 widget animationDefaultsDemo = AnimationDefaults(
-  duration: 0x00000258,
+  duration: 600,
   curve: "fastOutSlowIn",
   child: Column(
     children: [
@@ -862,8 +874,10 @@ widget scaffoldDemo = Scaffold(
   floatingActionButton: FloatingActionButton(
     onPressed: event "fab.pressed" {},
     child: Icon(
-      icon: 0x0000E047,
-      fontFamily: "MaterialIcons"
+      icon: {
+        icon: 57415,
+        fontFamily: "MaterialIcons"
+      }
     )
   )
 );
@@ -934,10 +948,12 @@ widget listTileDemo = Column(
   children: [
     ListTile(
       leading: Icon(
+        icon: {
+          icon: 57898,
+          fontFamily: "MaterialIcons"
+        },
         size: 40.0,
-        color: 0xFF2196F3,
-        icon: 0x0000E22A,
-        fontFamily: "MaterialIcons"
+        color: 0xFF2196F3
       ),
       title: Text(
         text: "List Tile Title"
@@ -946,8 +962,10 @@ widget listTileDemo = Column(
         text: "Subtitle text here"
       ),
       trailing: Icon(
-        icon: 0x0000E15E,
-        fontFamily: "MaterialIcons"
+        icon: {
+          icon: 57694,
+          fontFamily: "MaterialIcons"
+        }
       ),
       onTap: event "listTile.tap" {}
     ),
@@ -955,10 +973,12 @@ widget listTileDemo = Column(
     ),
     ListTile(
       leading: Icon(
+        icon: {
+          icon: 58751,
+          fontFamily: "MaterialIcons"
+        },
         size: 40.0,
-        color: 0xFF757575,
-        icon: 0x0000E57F,
-        fontFamily: "MaterialIcons"
+        color: 0xFF757575
       ),
       title: Text(
         text: "Settings"
@@ -995,8 +1015,10 @@ widget drawerDemo = Scaffold(
       children: [
         ListTile(
           leading: Icon(
-            icon: 0x0000E318,
-            fontFamily: "MaterialIcons"
+            icon: {
+              icon: 58136,
+              fontFamily: "MaterialIcons"
+            }
           ),
           title: Text(
             text: "Home"
@@ -1005,8 +1027,10 @@ widget drawerDemo = Scaffold(
         ),
         ListTile(
           leading: Icon(
-            icon: 0x0000E57F,
-            fontFamily: "MaterialIcons"
+            icon: {
+              icon: 58751,
+              fontFamily: "MaterialIcons"
+            }
           ),
           title: Text(
             text: "Settings"
@@ -1074,6 +1098,36 @@ widget progressDemo = Column(
       value: 0.4,
       color: 0xFF4CAF50,
       backgroundColor: 0xFFE0E0E0
+    )
+  ]
+);
+
+widget visualDensityDemo = Column(
+  children: [
+    ListTile(
+      title: Text(
+        text: "Compact Density"
+      ),
+      visualDensity: "compact"
+    ),
+    Divider(
+    ),
+    ListTile(
+      title: Text(
+        text: "Comfortable Density"
+      ),
+      visualDensity: "comfortable"
+    ),
+    Divider(
+    ),
+    ListTile(
+      title: Text(
+        text: "Custom Density"
+      ),
+      visualDensity: {
+        horizontal: -4.0,
+        vertical: -4.0
+      }
     )
   ]
 );

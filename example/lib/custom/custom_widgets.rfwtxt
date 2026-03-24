@@ -1,0 +1,374 @@
+import core.widgets;
+import custom.widgets;
+import material;
+
+widget customTextDemo = Column(
+  children: [
+    CustomText(
+      text: "Heading Style",
+      fontType: "heading",
+      color: 0xFF1565C0
+    ),
+    SizedBox(
+      height: 8.0
+    ),
+    CustomText(
+      text: "Body Style",
+      fontType: "body",
+      color: 0xFF424242
+    ),
+    SizedBox(
+      height: 8.0
+    ),
+    CustomText(
+      text: "Caption with maxLines",
+      fontType: "caption",
+      color: 0xFF757575,
+      maxLines: 1
+    )
+  ]
+);
+
+widget customBounceTapperDemo = CustomBounceTapper(
+  onTap: event "bounce.tap" { source: "demo" },
+  child: Container(
+    padding: [16.0],
+    color: 0xFF2196F3,
+    child: Text(
+      text: "Tap me (bounce)",
+      style: {
+        color: 0xFFFFFFFF
+      }
+    )
+  )
+);
+
+widget nullConditionalDemo = Column(
+  children: [
+    NullConditionalWidget(
+      child: CustomText(
+        text: "Visible content",
+        fontType: "heading",
+        color: 0xFF4CAF50
+      ),
+      nullChild: CustomText(
+        text: "Fallback content",
+        fontType: "body",
+        color: 0xFFFF5722
+      )
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    NullConditionalWidget(
+      nullChild: Container(
+        padding: [12.0],
+        color: 0xFFFFF3E0,
+        child: Text(
+          text: "This is the fallback"
+        )
+      )
+    )
+  ]
+);
+
+widget customButtonDemo = Column(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    CustomButton(
+      onPressed: event "button.press" { id: "primary" },
+      onLongPress: event "button.longPress" { id: "primary" },
+      child: Text(
+        text: "Primary Button"
+      )
+    ),
+    SizedBox(
+      height: 12.0
+    ),
+    CustomButton(
+      onPressed: event "button.press" { id: "secondary" },
+      child: Text(
+        text: "Secondary Button"
+      )
+    )
+  ]
+);
+
+widget customBadgeDemo = Row(
+  mainAxisAlignment: "spaceEvenly",
+  children: [
+    CustomBadge(
+      label: "NEW",
+      count: 5,
+      backgroundColor: 0xFFE91E63
+    ),
+    CustomBadge(
+      label: "HOT",
+      count: 12,
+      backgroundColor: 0xFFFF9800
+    ),
+    CustomBadge(
+      label: "SALE",
+      count: 0,
+      backgroundColor: 0xFF4CAF50
+    )
+  ]
+);
+
+widget customProgressBarDemo = Column(
+  children: [
+    CustomProgressBar(
+      value: 0.3,
+      color: 0xFF2196F3,
+      shape: "rounded"
+    ),
+    SizedBox(
+      height: 12.0
+    ),
+    CustomProgressBar(
+      value: 0.7,
+      color: 0xFF4CAF50,
+      shape: "square"
+    ),
+    SizedBox(
+      height: 12.0
+    ),
+    CustomProgressBar(
+      value: 1.0,
+      color: 0xFFFF9800,
+      shape: "rounded",
+      height: 8.0
+    )
+  ]
+);
+
+widget customColumnDemo = CustomColumn(
+  spacing: 8.0,
+  dividerColor: 0xFFE0E0E0,
+  children: [
+    Container(
+      height: 40.0,
+      color: 0xFF2196F3
+    ),
+    Container(
+      height: 40.0,
+      color: 0xFF4CAF50
+    ),
+    Container(
+      height: 40.0,
+      color: 0xFFFF9800
+    )
+  ]
+);
+
+widget skeletonContainerDemo = Column(
+  children: [
+    SkeletonContainer(
+      isLoading: true,
+      child: Text(
+        text: "This content is loading..."
+      )
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    SkeletonContainer(
+      isLoading: false,
+      child: Text(
+        text: "This content is loaded!"
+      )
+    )
+  ]
+);
+
+widget compareWidgetDemo = Column(
+  children: [
+    CompareWidget(
+      child: CustomText(
+        text: "Checking condition...",
+        fontType: "body",
+        color: 0xFF757575
+      ),
+      trueChild: Container(
+        padding: [12.0],
+        color: 0xFFE8F5E9,
+        child: Text(
+          text: "Condition is TRUE",
+          style: {
+            color: 0xFF4CAF50
+          }
+        )
+      ),
+      falseChild: Container(
+        padding: [12.0],
+        color: 0xFFFFEBEE,
+        child: Text(
+          text: "Condition is FALSE",
+          style: {
+            color: 0xFFFF5722
+          }
+        )
+      )
+    )
+  ]
+);
+
+widget pvContainerDemo = PvContainer(
+  onPv: event "pv.track" { screen: "demo", section: "custom" },
+  child: Container(
+    padding: [16.0],
+    color: 0xFFE3F2FD,
+    child: Column(
+      children: [
+        Text(
+          text: "PV Tracking Container",
+          style: {
+            fontSize: 16.0,
+            fontWeight: "bold"
+          }
+        ),
+        SizedBox(
+          height: 4.0
+        ),
+        Text(
+          text: "onPv event fires on view",
+          style: {
+            fontSize: 12.0,
+            color: 0xFF757575
+          }
+        )
+      ]
+    )
+  )
+);
+
+widget customCardDemo = Column(
+  children: [
+    CustomCard(
+      onTap: event "card.tap" { id: "card1" },
+      elevation: 4.0,
+      borderRadius: 12.0,
+      child: Padding(
+        padding: [16.0],
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "Custom Card 1",
+              style: {
+                fontSize: 18.0,
+                fontWeight: "bold"
+              }
+            ),
+            SizedBox(
+              height: 4.0
+            ),
+            Text(
+              text: "Tappable card with elevation",
+              style: {
+                color: 0xFF757575
+              }
+            )
+          ]
+        )
+      )
+    ),
+    SizedBox(
+      height: 12.0
+    ),
+    CustomCard(
+      onTap: event "card.tap" { id: "card2" },
+      elevation: 2.0,
+      borderRadius: 8.0,
+      child: Padding(
+        padding: [16.0],
+        child: Text(
+          text: "Custom Card 2"
+        )
+      )
+    )
+  ]
+);
+
+widget customTileDemo = Column(
+  children: [
+    CustomTile(
+      leading: Icon(
+        size: 40.0,
+        color: 0xFF2196F3,
+        icon: 57898,
+        fontFamily: "MaterialIcons"
+      ),
+      title: CustomText(
+        text: "Custom Tile Title",
+        fontType: "heading",
+        color: 0xFF212121
+      ),
+      subtitle: Text(
+        text: "Subtitle with named slots"
+      ),
+      trailing: Icon(
+        icon: 57694,
+        fontFamily: "MaterialIcons"
+      ),
+      onTap: event "tile.tap" { id: "tile1" }
+    ),
+    Divider(
+    ),
+    CustomTile(
+      leading: Icon(
+        size: 40.0,
+        color: 0xFF757575,
+        icon: 58751,
+        fontFamily: "MaterialIcons"
+      ),
+      title: Text(
+        text: "Minimal Tile"
+      ),
+      onTap: event "tile.tap" { id: "tile2" }
+    )
+  ]
+);
+
+widget customAppBarDemo = Column(
+  children: [
+    CustomAppBar(
+      title: Text(
+        text: "Custom App Bar",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFFFFFFFF
+        }
+      ),
+      actions: [
+        GestureDetector(
+          onTap: event "appbar.search" {},
+          child: Icon(
+            color: 0xFFFFFFFF,
+            icon: 58727,
+            fontFamily: "MaterialIcons"
+          )
+        ),
+        GestureDetector(
+          onTap: event "appbar.more" {},
+          child: Icon(
+            color: 0xFFFFFFFF,
+            icon: 58337,
+            fontFamily: "MaterialIcons"
+          )
+        )
+      ]
+    ),
+    SizedBox(
+      height: 16.0
+    ),
+    CustomAppBar(
+      title: CustomText(
+        text: "Styled Title",
+        fontType: "heading",
+        color: 0xFFFFFFFF
+      )
+    )
+  ]
+);

@@ -50,6 +50,14 @@ class _HomePageState extends State<HomePage> {
 
   static const _catalogLibrary = LibraryName(<String>['catalog']);
   static const _shopLibrary = LibraryName(<String>['shop']);
+  static const _customLibrary = LibraryName(<String>['customdemo']);
+
+  static const _customWidgetNames = <String>{
+    'customTextDemo', 'customBounceTapperDemo', 'nullConditionalDemo',
+    'customButtonDemo', 'customBadgeDemo', 'customProgressBarDemo',
+    'customColumnDemo', 'skeletonContainerDemo', 'compareWidgetDemo',
+    'pvContainerDemo', 'customCardDemo', 'customTileDemo', 'customAppBarDemo',
+  };
 
   static const Map<String, List<String>> _catalogWidgets = {
     'Layout': [
@@ -246,6 +254,11 @@ class _HomePageState extends State<HomePage> {
         _shopLibrary,
         decodeLibraryBlob(shopBytes.buffer.asUint8List()),
       );
+      final customBytes = await rootBundle.load('assets/custom_widgets.rfw');
+      _runtime.update(
+        _customLibrary,
+        decodeLibraryBlob(customBytes.buffer.asUint8List()),
+      );
       setState(() => _isLoaded = true);
     } catch (e) {
       setState(() => _error = e.toString());
@@ -365,7 +378,12 @@ class _HomePageState extends State<HomePage> {
             child: RemoteWidget(
               runtime: _runtime,
               data: _data,
-              widget: FullyQualifiedWidgetName(_catalogLibrary, _selectedWidget!),
+              widget: FullyQualifiedWidgetName(
+                _customWidgetNames.contains(_selectedWidget!)
+                    ? _customLibrary
+                    : _catalogLibrary,
+                _selectedWidget!,
+              ),
               onEvent: _handleCatalogEvent,
             ),
           ),

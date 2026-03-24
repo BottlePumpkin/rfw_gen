@@ -69,10 +69,9 @@ widget shopHome = SingleChildScrollView(
                 child: Column(
                   children: [
                     Icon(
+                      icon: cat.icon,
                       size: 32.0,
-                      color: 0xFF2196F3,
-                      icon: cat.icon.icon,
-                      fontFamily: cat.icon.fontFamily
+                      color: 0xFF2196F3
                     ),
                     SizedBox(
                       height: 4.0
@@ -255,7 +254,7 @@ widget productList = Column(
   ]
 );
 
-widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
+widget productDetail { quantity: 1 } = SingleChildScrollView(
   child: Column(
     crossAxisAlignment: "start",
     children: [
@@ -398,9 +397,11 @@ widget cart = Column(
                     GestureDetector(
                       onTap: event "cart.decrease" { id: cartItem.id },
                       child: Icon(
-                        color: 0xFF757575,
-                        icon: 0x0000E4F7,
-                        fontFamily: "MaterialIcons"
+                        icon: {
+                          icon: 58615,
+                          fontFamily: "MaterialIcons"
+                        },
+                        color: 0xFF757575
                       )
                     ),
                     Padding(
@@ -416,9 +417,11 @@ widget cart = Column(
                     GestureDetector(
                       onTap: event "cart.increase" { id: cartItem.id },
                       child: Icon(
-                        color: 0xFF2196F3,
-                        icon: 0x0000E047,
-                        fontFamily: "MaterialIcons"
+                        icon: {
+                          icon: 57415,
+                          fontFamily: "MaterialIcons"
+                        },
+                        color: 0xFF2196F3
                       )
                     )
                   ]
@@ -475,10 +478,12 @@ widget orderComplete = Center(
       mainAxisAlignment: "center",
       children: [
         Icon(
+          icon: {
+            icon: 57686,
+            fontFamily: "MaterialIcons"
+          },
           size: 80.0,
-          color: 0xFF4CAF50,
-          icon: 0x0000E156,
-          fontFamily: "MaterialIcons"
+          color: 0xFF4CAF50
         ),
         SizedBox(
           height: 24.0

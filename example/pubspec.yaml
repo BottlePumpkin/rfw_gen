@@ -18,6 +18,7 @@ flutter:
   assets:
     - assets/catalog_widgets.rfw
     - assets/shop_widgets.rfw
+    - assets/custom_widgets.rfw
 
 dev_dependencies:
   build_runner: ^2.4.0

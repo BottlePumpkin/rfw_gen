@@ -112,6 +112,12 @@ class ExpressionConverter {
       return _convertSwitchValue(expr);
     }
 
+    // Color.fromARGB / Color.fromRGBO — parses as MethodInvocation with target 'Color'
+    if (target is SimpleIdentifier && target.name == 'Color') {
+      if (methodName == 'fromARGB') return _convertColorFromARGB(expr.argumentList);
+      if (methodName == 'fromRGBO') return _convertColorFromRGBO(expr.argumentList);
+    }
+
     // Color(0xFFxxxxxx) — parses as MethodInvocation with no target
     if (target == null && methodName == 'Color') {
       return _convertColor(expr);
@@ -180,6 +186,11 @@ class ExpressionConverter {
     // RadialGradient(...) — parses as MethodInvocation with no target
     if (target == null && methodName == 'RadialGradient') {
       return _convertRadialGradient(expr.argumentList);
+    }
+
+    // SweepGradient(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'SweepGradient') {
+      return _convertSweepGradient(expr.argumentList);
     }
 
     // BoxShadow(...) — parses as MethodInvocation with no target
@@ -252,6 +263,7 @@ class ExpressionConverter {
       'IconThemeData' => _convertIconThemeData(argList),
       'LinearGradient' => _convertLinearGradient(argList),
       'RadialGradient' => _convertRadialGradient(argList),
+      'SweepGradient' => _convertSweepGradient(argList),
       'BoxShadow' => _convertBoxShadow(argList),
       'Offset' => _convertOffset(argList),
       _ when _knownGridDelegates.contains(className) =>
@@ -287,6 +299,37 @@ class ExpressionConverter {
     }
     throw UnsupportedExpressionError(
       'Color constructor expects a single integer argument',
+      offset: argList.offset,
+    );
+  }
+
+  IrIntValue _convertColorFromARGB(ArgumentList argList) {
+    final args = argList.arguments;
+    if (args.length == 4) {
+      final a = (args[0] as IntegerLiteral).value!;
+      final r = (args[1] as IntegerLiteral).value!;
+      final g = (args[2] as IntegerLiteral).value!;
+      final b = (args[3] as IntegerLiteral).value!;
+      return IrIntValue((a << 24) | (r << 16) | (g << 8) | b);
+    }
+    throw UnsupportedExpressionError(
+      'Color.fromARGB requires 4 integer arguments',
+      offset: argList.offset,
+    );
+  }
+
+  IrIntValue _convertColorFromRGBO(ArgumentList argList) {
+    final args = argList.arguments;
+    if (args.length == 4) {
+      final r = (args[0] as IntegerLiteral).value!;
+      final g = (args[1] as IntegerLiteral).value!;
+      final b = (args[2] as IntegerLiteral).value!;
+      final opacity = _toDouble(args[3]);
+      final a = (opacity * 255).round();
+      return IrIntValue((a << 24) | (r << 16) | (g << 8) | b);
+    }
+    throw UnsupportedExpressionError(
+      'Color.fromRGBO requires 3 integers and 1 double',
       offset: argList.offset,
     );
   }
@@ -520,16 +563,30 @@ class ExpressionConverter {
   }
 
   IrIntValue _convertDurationFromArgs(ArgumentList argList) {
+    int totalMs = 0;
+    bool foundDurationArg = false;
     for (final arg in argList.arguments) {
-      if (arg is NamedExpression && arg.name.label.name == 'milliseconds') {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
         final value = arg.expression;
         if (value is IntegerLiteral) {
-          return IrIntValue(value.value!);
+          switch (name) {
+            case 'milliseconds':
+              totalMs += value.value!;
+              foundDurationArg = true;
+            case 'seconds':
+              totalMs += value.value! * 1000;
+              foundDurationArg = true;
+            case 'minutes':
+              totalMs += value.value! * 60000;
+              foundDurationArg = true;
+          }
         }
       }
     }
+    if (foundDurationArg) return IrIntValue(totalMs);
     throw UnsupportedExpressionError(
-      'Duration requires a milliseconds named argument',
+      'Duration requires milliseconds, seconds, or minutes',
       offset: argList.offset,
     );
   }
@@ -865,6 +922,34 @@ class ExpressionConverter {
           case 'center':
             entries[name] = convert(arg.expression);
           case 'radius':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+          case 'colors':
+          case 'stops':
+            if (arg.expression is ListLiteral) {
+              final list = arg.expression as ListLiteral;
+              entries[name] = IrListValue(
+                list.elements.map((e) => convert(e as Expression)).toList(),
+              );
+            } else {
+              entries[name] = convert(arg.expression);
+            }
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `SweepGradient(center: ..., startAngle: ..., endAngle: ..., colors: [...])`.
+  IrMapValue _convertSweepGradient(ArgumentList argList) {
+    final entries = <String, IrValue>{'type': IrStringValue('sweep')};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'center':
+            entries[name] = convert(arg.expression);
+          case 'startAngle':
+          case 'endAngle':
             entries[name] = IrNumberValue(_toDouble(arg.expression));
           case 'colors':
           case 'stops':

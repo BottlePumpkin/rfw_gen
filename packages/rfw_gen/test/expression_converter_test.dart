@@ -444,6 +444,19 @@ void main() {
       expect(result, isA<IrIntValue>());
       expect((result as IrIntValue).value, equals(0));
     });
+
+    test('Duration(seconds: 1) converts to 1000ms', () {
+      final expr = parseExpression('Duration(seconds: 1)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, 1000);
+    });
+
+    test('Duration(minutes: 1) converts to 60000ms', () {
+      final expr = parseExpression('Duration(minutes: 1)');
+      final result = converter.convert(expr);
+      expect((result as IrIntValue).value, 60000);
+    });
   });
 
   group('Curves', () {
@@ -1303,6 +1316,32 @@ void main() {
       expect(result, isA<IrMapValue>());
       final map = (result as IrMapValue).entries;
       expect(map.length, equals(2));
+    });
+  });
+
+  group('SweepGradient', () {
+    test('converts SweepGradient with colors', () {
+      final expr = parseExpression(
+        "SweepGradient(colors: [Color(0xFFFF0000), Color(0xFF0000FF)])",
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'sweep');
+      expect(map.containsKey('colors'), isTrue);
+    });
+  });
+
+  group('Color constructors', () {
+    test('Color.fromARGB(255, 0, 0, 0) converts correctly', () {
+      final expr = parseExpression('Color.fromARGB(255, 0, 0, 0)');
+      final result = converter.convert(expr);
+      expect((result as IrIntValue).value, 0xFF000000);
+    });
+
+    test('Color.fromRGBO(255, 0, 0, 1.0) converts correctly', () {
+      final expr = parseExpression('Color.fromRGBO(255, 0, 0, 1.0)');
+      final result = converter.convert(expr);
+      expect((result as IrIntValue).value, 0xFFFF0000);
     });
   });
 }

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:analyzer/dart/ast/ast.dart';
 
 import 'expression_converter.dart';
@@ -104,8 +106,12 @@ class WidgetAstVisitor {
           try {
             final value = expressionConverter.convert(arg);
             properties[mapping.positionalParam!] = value;
-          } on UnsupportedExpressionError {
-            // Silently skip unsupported positional arguments.
+          } on UnsupportedExpressionError catch (e) {
+            developer.log(
+              'Skipping positional param "${mapping.positionalParam}" '
+              'on $widgetName: ${e.message}',
+              name: 'rfw_gen',
+            );
           }
         }
         positionalIndex++;
@@ -129,8 +135,11 @@ class WidgetAstVisitor {
     if (mapping.handlerParams.contains(paramName)) {
       try {
         properties[paramName] = expressionConverter.convertHandler(expression);
-      } on UnsupportedExpressionError {
-        // Silently skip unsupported handler expressions.
+      } on UnsupportedExpressionError catch (e) {
+        developer.log(
+          'Skipping handler "$paramName" on ${mapping.rfwName}: ${e.message}',
+          name: 'rfw_gen',
+        );
       }
       return;
     }
@@ -178,8 +187,11 @@ class WidgetAstVisitor {
         final value = expressionConverter.convert(expression);
         final paramMapping = mapping.params[paramName]!;
         properties[paramMapping.rfwName] = value;
-      } on UnsupportedExpressionError {
-        // Silently skip unsupported expressions.
+      } on UnsupportedExpressionError catch (e) {
+        developer.log(
+          'Skipping param "$paramName" on ${mapping.rfwName}: ${e.message}',
+          name: 'rfw_gen',
+        );
       }
       return;
     }
@@ -198,8 +210,11 @@ class WidgetAstVisitor {
     try {
       final value = expressionConverter.convert(expression);
       properties[paramName] = value;
-    } on UnsupportedExpressionError {
-      // Silently skip.
+    } on UnsupportedExpressionError catch (e) {
+      developer.log(
+        'Skipping unknown param "$paramName": ${e.message}',
+        name: 'rfw_gen',
+      );
     }
   }
 

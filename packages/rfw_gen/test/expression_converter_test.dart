@@ -748,4 +748,285 @@ void main() {
       expect(error, isA<Exception>());
     });
   });
+
+  // -------------------------------------------------------------------------
+  // InstanceCreationExpression (const prefix) tests
+  // -------------------------------------------------------------------------
+
+  group('const Color (InstanceCreationExpression)', () {
+    test('converts const Color(0xFF112233)', () {
+      final expr = parseExpression('const Color(0xFF112233)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, equals(0xFF112233));
+    });
+  });
+
+  group('const EdgeInsets (InstanceCreationExpression)', () {
+    test('converts const EdgeInsets.all(16.0)', () {
+      final expr = parseExpression('const EdgeInsets.all(16.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      expect((list.values[0] as IrNumberValue).value, equals(16.0));
+    });
+
+    test('converts const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)',
+        () {
+      final expr = parseExpression(
+          'const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(4));
+      expect((list.values[0] as IrNumberValue).value, equals(8.0));
+      expect((list.values[1] as IrNumberValue).value, equals(4.0));
+    });
+
+    test('converts const EdgeInsets.only(bottom: 4.0)', () {
+      final expr = parseExpression('const EdgeInsets.only(bottom: 4.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(4));
+      expect((list.values[3] as IrNumberValue).value, equals(4.0));
+    });
+  });
+
+  group('const Duration (InstanceCreationExpression)', () {
+    test('converts const Duration(milliseconds: 300)', () {
+      final expr = parseExpression('const Duration(milliseconds: 300)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrIntValue>());
+      expect((result as IrIntValue).value, equals(300));
+    });
+  });
+
+  group('const BorderRadius (InstanceCreationExpression)', () {
+    test('converts const BorderRadius.circular(8)', () {
+      final expr = parseExpression('const BorderRadius.circular(8)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(8.0));
+    });
+
+    test('converts const BorderRadius.all(Radius.circular(20))', () {
+      final expr =
+          parseExpression('const BorderRadius.all(Radius.circular(20))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(20.0));
+    });
+
+    test('converts BorderRadius.all without const', () {
+      final expr = parseExpression('BorderRadius.all(Radius.circular(12))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = result as IrListValue;
+      expect(list.values, hasLength(1));
+      final radius = list.values[0] as IrMapValue;
+      expect((radius.entries['x'] as IrNumberValue).value, equals(12.0));
+    });
+  });
+
+  group('const NetworkImage (InstanceCreationExpression)', () {
+    test('converts const NetworkImage url', () {
+      final expr = parseExpression(
+          "const NetworkImage('https://example.com/img.png')");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['source'] as IrStringValue).value,
+          equals('https://example.com/img.png'));
+      expect((map.entries['scale'] as IrNumberValue).value, equals(1.0));
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // New type converter tests
+  // -------------------------------------------------------------------------
+
+  group('TextStyle', () {
+    test('converts TextStyle with fontSize', () {
+      final expr = parseExpression('TextStyle(fontSize: 24.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['fontSize'] as IrNumberValue).value, equals(24.0));
+    });
+
+    test('converts TextStyle with color and fontWeight', () {
+      final expr = parseExpression(
+          'TextStyle(color: Color(0xFFFF0000), fontWeight: FontWeight.bold)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['color'] as IrIntValue).value, equals(0xFFFF0000));
+      expect(
+          (map.entries['fontWeight'] as IrStringValue).value, equals('bold'));
+    });
+
+    test('converts TextStyle with fontStyle italic', () {
+      final expr = parseExpression('TextStyle(fontStyle: FontStyle.italic)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(
+          (map.entries['fontStyle'] as IrStringValue).value, equals('italic'));
+    });
+
+    test('converts const TextStyle with multiple props', () {
+      final expr = parseExpression(
+          'const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Color(0xFF1565C0))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['fontSize'] as IrNumberValue).value, equals(16.0));
+      expect(
+          (map.entries['fontWeight'] as IrStringValue).value, equals('bold'));
+      expect((map.entries['color'] as IrIntValue).value, equals(0xFF1565C0));
+    });
+  });
+
+  group('Alignment', () {
+    test('converts Alignment(0.0, 0.0) to map', () {
+      final expr = parseExpression('Alignment(0.0, 0.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['x'] as IrNumberValue).value, equals(0.0));
+      expect((map.entries['y'] as IrNumberValue).value, equals(0.0));
+    });
+
+    test('converts const Alignment(-1.0, -1.0)', () {
+      final expr = parseExpression('const Alignment(-1.0, -1.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['x'] as IrNumberValue).value, equals(-1.0));
+      expect((map.entries['y'] as IrNumberValue).value, equals(-1.0));
+    });
+  });
+
+  group('BoxDecoration', () {
+    test('converts BoxDecoration with color', () {
+      final expr =
+          parseExpression('BoxDecoration(color: Color(0xFF2196F3))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['type'] as IrStringValue).value, equals('box'));
+      expect((map.entries['color'] as IrIntValue).value, equals(0xFF2196F3));
+    });
+
+    test('converts const BoxDecoration with gradient and borderRadius', () {
+      final expr = parseExpression(
+        'const BoxDecoration('
+        '  gradient: LinearGradient('
+        '    begin: Alignment(-1.0, -1.0),'
+        '    end: Alignment(1.0, 1.0),'
+        '    colors: [Color(0xFF2196F3), Color(0xFF9C27B0)],'
+        '  ),'
+        '  borderRadius: BorderRadius.all(Radius.circular(16)),'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['type'] as IrStringValue).value, equals('box'));
+      expect(map.entries['gradient'], isA<IrMapValue>());
+      expect(map.entries['borderRadius'], isA<IrListValue>());
+    });
+  });
+
+  group('LinearGradient', () {
+    test('converts LinearGradient with begin, end, colors', () {
+      final expr = parseExpression(
+        'LinearGradient('
+        '  begin: Alignment(-1.0, 0.0),'
+        '  end: Alignment(1.0, 0.0),'
+        '  colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['type'] as IrStringValue).value, equals('linear'));
+      expect(map.entries['begin'], isA<IrMapValue>());
+      expect(map.entries['end'], isA<IrMapValue>());
+      final colors = map.entries['colors'] as IrListValue;
+      expect(colors.values, hasLength(2));
+    });
+  });
+
+  group('BoxShadow', () {
+    test('converts BoxShadow with all params', () {
+      final expr = parseExpression(
+        'BoxShadow(color: Color(0x40000000), blurRadius: 8.0, offset: Offset(0.0, 4.0))',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['color'] as IrIntValue).value, equals(0x40000000));
+      expect(
+          (map.entries['blurRadius'] as IrNumberValue).value, equals(8.0));
+      final offset = map.entries['offset'] as IrMapValue;
+      expect((offset.entries['x'] as IrNumberValue).value, equals(0.0));
+      expect((offset.entries['y'] as IrNumberValue).value, equals(4.0));
+    });
+  });
+
+  group('Offset', () {
+    test('converts Offset(2.0, 3.0)', () {
+      final expr = parseExpression('Offset(2.0, 3.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['x'] as IrNumberValue).value, equals(2.0));
+      expect((map.entries['y'] as IrNumberValue).value, equals(3.0));
+    });
+  });
+
+  group('IconThemeData', () {
+    test('converts IconThemeData with color and size', () {
+      final expr = parseExpression(
+          'IconThemeData(color: Color(0xFF9C27B0), size: 40.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['color'] as IrIntValue).value, equals(0xFF9C27B0));
+      expect((map.entries['size'] as IrNumberValue).value, equals(40.0));
+    });
+
+    test('converts const IconThemeData', () {
+      final expr = parseExpression(
+          'const IconThemeData(color: Color(0xFF9C27B0), size: 40.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['color'] as IrIntValue).value, equals(0xFF9C27B0));
+    });
+  });
+
+  group('const SliverGridDelegate (InstanceCreationExpression)', () {
+    test('converts const SliverGridDelegateWithFixedCrossAxisCount', () {
+      final expr = parseExpression(
+        'const SliverGridDelegateWithFixedCrossAxisCount('
+        '  crossAxisCount: 2,'
+        '  mainAxisSpacing: 4.0,'
+        ')',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['crossAxisCount'] as IrIntValue).value, equals(2));
+    });
+  });
 }

@@ -57,6 +57,7 @@ class ExpressionConverter {
       SetOrMapLiteral() => _convertMapLiteral(expr),
       PrefixExpression() => _convertPrefixExpression(expr),
       MethodInvocation() => _convertMethodInvocation(expr),
+      InstanceCreationExpression() => _convertInstanceCreation(expr),
       PrefixedIdentifier() => _convertPrefixedIdentifier(expr),
       IndexExpression() => _convertIndexExpression(expr),
       _ => throw UnsupportedExpressionError(
@@ -140,14 +141,131 @@ class ExpressionConverter {
       return _convertGridDelegate(expr);
     }
 
+    // TextStyle(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'TextStyle') {
+      return _convertTextStyle(expr.argumentList);
+    }
+
+    // BoxDecoration(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'BoxDecoration') {
+      return _convertBoxDecoration(expr.argumentList);
+    }
+
+    // Alignment(x, y) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'Alignment') {
+      return _convertAlignment(expr.argumentList);
+    }
+
+    // IconThemeData(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'IconThemeData') {
+      return _convertIconThemeData(expr.argumentList);
+    }
+
+    // LinearGradient(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'LinearGradient') {
+      return _convertLinearGradient(expr.argumentList);
+    }
+
+    // RadialGradient(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'RadialGradient') {
+      return _convertRadialGradient(expr.argumentList);
+    }
+
+    // BoxShadow(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'BoxShadow') {
+      return _convertBoxShadow(expr.argumentList);
+    }
+
+    // Offset(x, y) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'Offset') {
+      return _convertOffset(expr.argumentList);
+    }
+
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
     );
   }
 
+  /// Routes [InstanceCreationExpression] (produced by `const` constructors)
+  /// to the same conversion logic used for [MethodInvocation].
+  ///
+  /// Without type resolution, the analyzer represents named constructors
+  /// like `const EdgeInsets.all(16.0)` as:
+  /// - `importPrefix` = "EdgeInsets", `typeName` = "all", `constructorName` = null
+  /// So we check `importPrefix` to reconstruct the real class + constructor.
+  IrValue _convertInstanceCreation(InstanceCreationExpression expr) {
+    final rawTypeName = expr.constructorName.type.name.lexeme;
+    final rawConstructorName = expr.constructorName.name?.name;
+    final importPrefix =
+        expr.constructorName.type.importPrefix?.name.lexeme;
+    final argList = expr.argumentList;
+
+    // Reconstruct real class name and constructor name.
+    // Without resolution: `const EdgeInsets.all(16)` → prefix="EdgeInsets", type="all"
+    // With resolution or no prefix: `const Color(0xFF)` → prefix=null, type="Color"
+    final String className;
+    final String? constructorName;
+    if (importPrefix != null && _isKnownClassName(importPrefix)) {
+      className = importPrefix;
+      constructorName = rawTypeName; // e.g., "all", "circular", "symmetric"
+    } else {
+      className = rawTypeName;
+      constructorName = rawConstructorName;
+    }
+
+    // Named constructors (e.g., EdgeInsets.all, BorderRadius.circular)
+    if (constructorName != null) {
+      return switch (className) {
+        'EdgeInsets' => _convertEdgeInsets(constructorName, argList),
+        'BorderRadius' => _convertBorderRadius(constructorName, argList),
+        'Radius' when constructorName == 'circular' =>
+          IrMapValue({'x': IrNumberValue(_toDouble(argList.arguments.first))}),
+        _ => throw UnsupportedExpressionError(
+            'Unsupported const constructor: $className.$constructorName',
+            offset: expr.offset,
+          ),
+      };
+    }
+
+    // Default constructors (no named constructor)
+    return switch (className) {
+      'Color' => _convertColorFromArgs(argList),
+      'Duration' => _convertDurationFromArgs(argList),
+      'NetworkImage' => _convertImageProviderFromArgs(argList),
+      'AssetImage' => _convertImageProviderFromArgs(argList),
+      'TextStyle' => _convertTextStyle(argList),
+      'BoxDecoration' => _convertBoxDecoration(argList),
+      'Alignment' => _convertAlignment(argList),
+      'IconThemeData' => _convertIconThemeData(argList),
+      'LinearGradient' => _convertLinearGradient(argList),
+      'RadialGradient' => _convertRadialGradient(argList),
+      'BoxShadow' => _convertBoxShadow(argList),
+      'Offset' => _convertOffset(argList),
+      _ when _knownGridDelegates.contains(className) =>
+        _convertGridDelegateFromArgs(argList),
+      _ => throw UnsupportedExpressionError(
+          'Unsupported const constructor: $className',
+          offset: expr.offset,
+        ),
+    };
+  }
+
+  /// Known class names that appear as import prefixes in unresolved AST.
+  bool _isKnownClassName(String name) {
+    return const {
+      'EdgeInsets',
+      'BorderRadius',
+      'Radius',
+    }.contains(name);
+  }
+
   IrIntValue _convertColor(MethodInvocation expr) {
-    final args = expr.argumentList.arguments;
+    return _convertColorFromArgs(expr.argumentList);
+  }
+
+  IrIntValue _convertColorFromArgs(ArgumentList argList) {
+    final args = argList.arguments;
     if (args.length == 1) {
       final arg = args.first;
       if (arg is IntegerLiteral) {
@@ -156,7 +274,7 @@ class ExpressionConverter {
     }
     throw UnsupportedExpressionError(
       'Color constructor expects a single integer argument',
-      offset: expr.offset,
+      offset: argList.offset,
     );
   }
 
@@ -286,8 +404,11 @@ class ExpressionConverter {
   }
 
   IrIntValue _convertDuration(MethodInvocation expr) {
-    final args = expr.argumentList.arguments;
-    for (final arg in args) {
+    return _convertDurationFromArgs(expr.argumentList);
+  }
+
+  IrIntValue _convertDurationFromArgs(ArgumentList argList) {
+    for (final arg in argList.arguments) {
       if (arg is NamedExpression && arg.name.label.name == 'milliseconds') {
         final value = arg.expression;
         if (value is IntegerLiteral) {
@@ -297,7 +418,7 @@ class ExpressionConverter {
     }
     throw UnsupportedExpressionError(
       'Duration requires a milliseconds named argument',
-      offset: expr.offset,
+      offset: argList.offset,
     );
   }
 
@@ -305,6 +426,8 @@ class ExpressionConverter {
     switch (method) {
       case 'circular':
         return _convertBorderRadiusCircular(argList);
+      case 'all':
+        return _convertBorderRadiusAll(argList);
       case 'only':
         return _convertBorderRadiusOnly(argList);
       default:
@@ -312,6 +435,11 @@ class ExpressionConverter {
           'Unsupported BorderRadius constructor: $method',
         );
     }
+  }
+
+  IrListValue _convertBorderRadiusAll(ArgumentList argList) {
+    final radiusValue = _extractRadiusValue(argList.arguments.first);
+    return IrListValue([IrMapValue({'x': IrNumberValue(radiusValue)})]);
   }
 
   IrListValue _convertBorderRadiusCircular(ArgumentList argList) {
@@ -346,10 +474,17 @@ class ExpressionConverter {
   }
 
   double _extractRadiusValue(Expression expr) {
+    // MethodInvocation: Radius.circular(20) without const
     if (expr is MethodInvocation &&
         expr.target is SimpleIdentifier &&
         (expr.target as SimpleIdentifier).name == 'Radius' &&
         expr.methodName.name == 'circular') {
+      return _toDouble(expr.argumentList.arguments.first);
+    }
+    // InstanceCreationExpression: const Radius.circular(20) or inside const context
+    if (expr is InstanceCreationExpression &&
+        expr.constructorName.type.name.lexeme == 'Radius' &&
+        expr.constructorName.name?.name == 'circular') {
       return _toDouble(expr.argumentList.arguments.first);
     }
     throw UnsupportedExpressionError(
@@ -359,10 +494,13 @@ class ExpressionConverter {
   }
 
   IrMapValue _convertImageProvider(MethodInvocation expr) {
-    final args = expr.argumentList.arguments;
+    return _convertImageProviderFromArgs(expr.argumentList);
+  }
+
+  IrMapValue _convertImageProviderFromArgs(ArgumentList argList) {
     String? source;
     double scale = 1.0;
-    for (final arg in args) {
+    for (final arg in argList.arguments) {
       if (arg is SimpleStringLiteral) {
         source = arg.value;
       } else if (arg is NamedExpression && arg.name.label.name == 'scale') {
@@ -372,7 +510,7 @@ class ExpressionConverter {
     if (source == null) {
       throw UnsupportedExpressionError(
         'ImageProvider requires a string argument',
-        offset: expr.offset,
+        offset: argList.offset,
       );
     }
     return IrMapValue({
@@ -382,14 +520,270 @@ class ExpressionConverter {
   }
 
   IrMapValue _convertGridDelegate(MethodInvocation expr) {
+    return _convertGridDelegateFromArgs(expr.argumentList);
+  }
+
+  IrMapValue _convertGridDelegateFromArgs(ArgumentList argList) {
     final entries = <String, IrValue>{};
-    for (final arg in expr.argumentList.arguments) {
+    for (final arg in argList.arguments) {
       if (arg is NamedExpression) {
         final name = arg.name.label.name;
         entries[name] = convert(arg.expression);
       }
     }
     return IrMapValue(entries);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Complex type converters (TextStyle, BoxDecoration, Alignment, etc.)
+  // ---------------------------------------------------------------------------
+
+  /// Known TextStyle font weight values mapped to rfwtxt strings.
+  static const _fontWeightMap = <String, String>{
+    'w100': 'w100',
+    'w200': 'w200',
+    'w300': 'w300',
+    'w400': 'w400',
+    'w500': 'w500',
+    'w600': 'w600',
+    'w700': 'w700',
+    'w800': 'w800',
+    'w900': 'w900',
+    'normal': 'normal',
+    'bold': 'bold',
+  };
+
+  /// Converts `TextStyle(fontSize: 24.0, color: Color(...), ...)` to IrMapValue.
+  IrMapValue _convertTextStyle(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'fontSize':
+          case 'letterSpacing':
+          case 'wordSpacing':
+          case 'height':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+          case 'color':
+          case 'decorationColor':
+            entries[name] = convert(arg.expression);
+          case 'fontWeight':
+            entries[name] = _convertFontEnum(arg.expression, _fontWeightMap);
+          case 'fontStyle':
+            entries[name] = _convertFontEnum(arg.expression, const {
+              'normal': 'normal',
+              'italic': 'italic',
+            });
+          case 'fontFamily':
+            entries[name] = convert(arg.expression);
+          case 'decoration':
+            entries[name] = _convertTextDecorationEnum(arg.expression);
+          case 'decorationStyle':
+            entries[name] = _convertFontEnum(arg.expression, const {
+              'solid': 'solid',
+              'double': 'double',
+              'dotted': 'dotted',
+              'dashed': 'dashed',
+              'wavy': 'wavy',
+            });
+          case 'overflow':
+            entries[name] = _convertFontEnum(arg.expression, const {
+              'clip': 'clip',
+              'fade': 'fade',
+              'ellipsis': 'ellipsis',
+              'visible': 'visible',
+            });
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  IrStringValue _convertFontEnum(Expression expr, Map<String, String> map) {
+    if (expr is PrefixedIdentifier) {
+      final id = expr.identifier.name;
+      if (map.containsKey(id)) return IrStringValue(map[id]!);
+    }
+    throw UnsupportedExpressionError(
+      'Unknown enum value: $expr',
+      offset: expr.offset,
+    );
+  }
+
+  IrStringValue _convertTextDecorationEnum(Expression expr) {
+    if (expr is PrefixedIdentifier) {
+      final id = expr.identifier.name;
+      const known = {
+        'none': 'none',
+        'underline': 'underline',
+        'overline': 'overline',
+        'lineThrough': 'lineThrough',
+      };
+      if (known.containsKey(id)) return IrStringValue(known[id]!);
+    }
+    throw UnsupportedExpressionError(
+      'Unknown TextDecoration: $expr',
+      offset: expr.offset,
+    );
+  }
+
+  /// Converts `BoxDecoration(color: ..., gradient: ..., borderRadius: ..., boxShadow: [...])`.
+  IrMapValue _convertBoxDecoration(ArgumentList argList) {
+    final entries = <String, IrValue>{'type': IrStringValue('box')};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'color':
+          case 'gradient':
+          case 'borderRadius':
+            entries[name] = convert(arg.expression);
+          case 'boxShadow':
+            // List of BoxShadow
+            if (arg.expression is ListLiteral) {
+              final list = arg.expression as ListLiteral;
+              entries[name] = IrListValue(
+                list.elements.map((e) => convert(e as Expression)).toList(),
+              );
+            }
+          case 'shape':
+            if (arg.expression is PrefixedIdentifier) {
+              final id = (arg.expression as PrefixedIdentifier).identifier.name;
+              entries[name] = IrStringValue(id);
+            }
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `Alignment(x, y)` to `{x: double, y: double}`.
+  IrMapValue _convertAlignment(ArgumentList argList) {
+    final args = argList.arguments;
+    if (args.length >= 2) {
+      return IrMapValue({
+        'x': IrNumberValue(_toDouble(args[0])),
+        'y': IrNumberValue(_toDouble(args[1])),
+      });
+    }
+    throw UnsupportedExpressionError(
+      'Alignment requires two positional arguments (x, y)',
+      offset: argList.offset,
+    );
+  }
+
+  /// Converts `IconThemeData(color: ..., size: ...)`.
+  IrMapValue _convertIconThemeData(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'color':
+            entries[name] = convert(arg.expression);
+          case 'size':
+          case 'opacity':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `LinearGradient(begin: ..., end: ..., colors: [...], stops: [...])`.
+  IrMapValue _convertLinearGradient(ArgumentList argList) {
+    final entries = <String, IrValue>{'type': IrStringValue('linear')};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'begin':
+          case 'end':
+            entries[name] = convert(arg.expression);
+          case 'colors':
+            if (arg.expression is ListLiteral) {
+              final list = arg.expression as ListLiteral;
+              entries[name] = IrListValue(
+                list.elements.map((e) => convert(e as Expression)).toList(),
+              );
+            }
+          case 'stops':
+            if (arg.expression is ListLiteral) {
+              final list = arg.expression as ListLiteral;
+              entries[name] = IrListValue(
+                list.elements.map((e) => convert(e as Expression)).toList(),
+              );
+            }
+          case 'tileMode':
+            if (arg.expression is PrefixedIdentifier) {
+              final id = (arg.expression as PrefixedIdentifier).identifier.name;
+              entries[name] = IrStringValue(id);
+            }
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `RadialGradient(center: ..., radius: ..., colors: [...])`.
+  IrMapValue _convertRadialGradient(ArgumentList argList) {
+    final entries = <String, IrValue>{'type': IrStringValue('radial')};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'center':
+            entries[name] = convert(arg.expression);
+          case 'radius':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+          case 'colors':
+          case 'stops':
+            if (arg.expression is ListLiteral) {
+              final list = arg.expression as ListLiteral;
+              entries[name] = IrListValue(
+                list.elements.map((e) => convert(e as Expression)).toList(),
+              );
+            }
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `BoxShadow(color: ..., blurRadius: ..., offset: Offset(...))`.
+  IrMapValue _convertBoxShadow(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'color':
+            entries[name] = convert(arg.expression);
+          case 'blurRadius':
+          case 'spreadRadius':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+          case 'offset':
+            entries[name] = convert(arg.expression);
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `Offset(x, y)` to `{x: double, y: double}`.
+  IrMapValue _convertOffset(ArgumentList argList) {
+    final args = argList.arguments;
+    if (args.length >= 2) {
+      return IrMapValue({
+        'x': IrNumberValue(_toDouble(args[0])),
+        'y': IrNumberValue(_toDouble(args[1])),
+      });
+    }
+    throw UnsupportedExpressionError(
+      'Offset requires two positional arguments (x, y)',
+      offset: argList.offset,
+    );
   }
 
   /// Converts a handler expression to an IR handler value.
@@ -559,9 +953,13 @@ class ExpressionConverter {
 
   /// Extracts a double value from a numeric expression.
   /// Converts int literals to double for EdgeInsets consistency.
+  /// Handles negative values (PrefixExpression with '-').
   double _toDouble(Expression expr) {
     if (expr is DoubleLiteral) return expr.value;
     if (expr is IntegerLiteral) return expr.value!.toDouble();
+    if (expr is PrefixExpression && expr.operator.lexeme == '-') {
+      return -_toDouble(expr.operand);
+    }
     throw UnsupportedExpressionError(
       'Expected numeric literal, got ${expr.runtimeType}',
       offset: expr.offset,

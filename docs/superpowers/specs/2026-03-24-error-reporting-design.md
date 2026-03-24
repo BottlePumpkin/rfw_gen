@@ -78,7 +78,7 @@ class RfwGenIssue {
 #### 3. `RfwConverter` 반환값 변경
 
 현재: `String convertFromAst(FunctionDeclaration function)`
-변경: `ConvertResult convertFromAst(FunctionDeclaration function)`
+변경: `ConvertResult convertFromAst(FunctionDeclaration function, {String? source})`
 
 ```dart
 class ConvertResult {
@@ -90,7 +90,17 @@ class ConvertResult {
 }
 ```
 
-`convertFromSource()`도 동일하게 변경.
+`convertFromSource()`도 동일하게 `ConvertResult` 반환으로 변경. `convertFromSource`는 자체적으로 source 문자열을 가지고 있으므로 `IssueCollector`를 직접 생성하여 `convertFromAst`에 전달한다.
+
+### source 문자열 전달 전략
+
+`IssueCollector`의 offset→line:column 변환에는 원본 Dart 소스가 필요하다.
+
+- **`convertFromSource()`**: 내부에서 `parseString(content: dartSource)`를 호출하므로 source를 이미 가지고 있음. `IssueCollector(dartSource)`를 생성.
+- **`convertFromAst()`**: `FunctionDeclaration` AST 노드만 받으므로 source가 없음. `{String? source}` optional 파라미터를 추가.
+  - source가 제공되면 offset→line:column 변환 가능
+  - source가 없으면 offset만 보고 (line:column 없이)
+- **`rfw_widget_builder.dart`**: `buildStep.readAsString()`으로 source를 이미 읽고 있으므로 `convertFromAst(function, source: source)`로 전달.
 
 ### 변경 흐름
 
@@ -127,34 +137,45 @@ class ConvertResult {
 
 ### suggestion 매핑
 
+#### ExpressionConverter 에러 (ast_visitor catch 지점에서 매핑)
+
 | 에러 패턴 | suggestion |
 |-----------|-----------|
 | `Unsupported expression type: ConditionalExpression` | `삼항연산자 대신 RfwSwitch를 사용하세요` |
 | `Unsupported expression type: FunctionExpressionInvocation` | `함수 호출 결과는 지원되지 않습니다. const 값을 직접 사용하세요` |
 | `Unsupported method invocation: *` | `지원되지 않는 메서드입니다. 지원 목록: Color, EdgeInsets, TextStyle 등` |
 | `Unsupported const constructor: *` | `지원되지 않는 생성자입니다` |
-| `UnsupportedWidgetError` | `rfw_gen.yaml에 위젯을 등록하거나 지원 위젯 목록을 확인하세요` |
 | `Unknown *Alignment* constant` | `지원되는 값: topLeft, topCenter, topRight, centerLeft, center, ...` |
 | `Unsupported EdgeInsets constructor` | `지원되는 생성자: .all, .symmetric, .only, .fromLTRB` |
 | `Unsupported BorderRadius constructor` | `지원되는 생성자: .circular, .all, .only` |
 
+#### AST 구조 에러 (ast_visitor 자체 경고)
+
+| 에러 패턴 | suggestion |
+|-----------|-----------|
+| `UnsupportedWidgetError` | `rfw_gen.yaml에 위젯을 등록하거나 지원 위젯 목록을 확인하세요` |
+| children가 ListLiteral이 아닌 경우 | `children 파라미터에는 리스트 리터럴 [...]을 사용하세요` |
+| named slot이 ListLiteral이 아닌 경우 | `리스트 슬롯에는 리스트 리터럴 [...]을 사용하세요` |
+
 ### offset 누락 보완 (7곳)
 
-| 위치 | 현재 | 수정 |
-|------|------|------|
-| `_convertEdgeInsets()` | method name만 | 호출부에서 `expr.offset` 전달 |
-| `_convertEdgeInsetsDirectional()` | method name만 | 호출부에서 `expr.offset` 전달 |
-| `_convertRfwIcon()` | name만 | 호출부에서 `expr.offset` 전달 |
-| `_convertAlignmentConstant()` | name만 | 호출부에서 `expr.offset` 전달 |
-| `_convertAlignmentDirectionalConstant()` | name만 | 호출부에서 `expr.offset` 전달 |
-| `_convertTextDecorationEnum()` | id만 | 호출부에서 `expr.offset` 전달 |
-| `_convertFontEnum()` | id만 | 호출부에서 `expr.offset` 전달 |
+| 위치 | line | 현재 | 수정 |
+|------|------|------|------|
+| `_convertEdgeInsets()` | 384 | method name만 | 호출부에서 `expr.offset` 전달 |
+| `_convertEdgeInsetsDirectional()` | 472 | method name만 | 호출부에서 `expr.offset` 전달 |
+| `_convertRfwIcon()` | 541 | name만 | 호출부에서 `expr.offset` 전달 |
+| `_convertAlignmentConstant()` | 569 | name만 | 호출부에서 `expr.offset` 전달 |
+| `_convertAlignmentDirectionalConstant()` | 592 | name만 | 호출부에서 `expr.offset` 전달 |
+| `_convertBorderRadius()` | 639 | method name만 | 호출부에서 `expr.offset` 전달 |
+| `_convertDynamicRef()` inline | 1146 | refType만 | 호출부에서 `expr.offset` 전달 |
+
+참고: `_convertTextDecorationEnum()` (line 835)과 `_convertFontEnum()` (line 818)은 이미 `offset: expr.offset`을 포함하고 있어 수정 불필요.
 
 각 헬퍼 메서드에 `{int? offset}` 파라미터를 추가하고, 호출부에서 원본 expression의 offset을 전달한다.
 
 ### rfwtxt 검증 단계
 
-`rfw_widget_builder.dart`에서 rfwtxt 파일 작성 전에 검증:
+`rfw_widget_builder.dart`에서 rfwtxt 파일 작성 전에 `parseLibraryFile()`로 검증한다. 현재 `toBlob()` 내부에서도 `parseLibraryFile()`을 호출하지만, 검증 단계를 명시적으로 분리하여 의도를 명확히 한다. 검증 통과 시 `toBlob()`에서 다시 파싱하는 중복이 있으나, 코드 생성은 빈번한 작업이 아니므로 성능 영향은 무시할 수 있다.
 
 ```dart
 // 생성된 rfwtxt 검증
@@ -168,6 +189,37 @@ try {
   return; // .rfwtxt와 .rfw 모두 생성하지 않음
 }
 ```
+
+### UnsupportedWidgetError 처리 전략
+
+`UnsupportedWidgetError`는 현재 `ast_visitor.dart`의 `extractWidgetTree()` → `_convertWidget()`에서 throw된다. 이 에러는 **throw를 유지**한다.
+
+이유:
+- 루트 위젯이나 자식 위젯이 미등록이면 해당 위젯 트리 전체가 변환 불가
+- 파라미터 skip과 다르게, 위젯 자체를 skip하면 의미 있는 rfwtxt를 생성할 수 없음
+- `rfw_widget_builder.dart`의 기존 `catch (e) { log.severe(...) }` 패턴으로 처리
+
+변경점: catch 블록에서 suggestion을 추가하여 사용자에게 대안을 제시한다.
+
+```dart
+// rfw_widget_builder.dart
+try {
+  final result = converter.convertFromAst(function, source: source);
+  // ...
+} on UnsupportedWidgetError catch (e) {
+  log.severe('${function.name.lexeme}: ${e.toString()}\n'
+    '  Suggestion: rfw_gen.yaml에 위젯을 등록하거나 지원 위젯 목록을 확인하세요');
+} catch (e) {
+  log.severe('Failed to convert ${function.name.lexeme}: $e');
+}
+```
+
+### 범위 밖 에러 경로
+
+다음 에러들은 이번 변경 범위에 포함하지 않는다:
+
+- **`widget_registry.dart`의 `ArgumentError` (4곳)**: rfw_gen.yaml 설정 파싱 시 발생. 변환 시작 전에 발생하므로 IssueCollector 범위 밖. 기존 동작(즉시 throw → 빌드 실패) 유지.
+- **`rfwtxt_emitter.dart`의 `StateError` (NaN/Infinity)**: 정상적인 Dart 소스에서는 발생하지 않음. rfw_gen 내부 버그 지표이므로 throw 유지.
 
 ### _extractStateDecl 에러 처리
 
@@ -215,9 +267,10 @@ try {
 
 ### 기존 테스트 수정
 
-- `converter_test.dart`: `convertFromAst()` 반환값이 `ConvertResult`로 변경됨에 따라 수정
-- `expression_converter_test.dart`: offset 관련 테스트 보강
-- `ast_visitor_test.dart`: `UnsupportedWidgetError` 대신 collector 기반 동작 확인
+- `converter_test.dart`: `convertFromAst()` 반환값이 `ConvertResult`로 변경됨에 따라 `.rfwtxt` 접근으로 수정
+- `expression_converter_test.dart`: offset 관련 테스트 보강 (7곳 누락 보완 검증)
+- `ast_visitor_test.dart`: collector 주입 후 warning 수집 동작 확인
+- `rfw_widget_builder_test.dart` (있을 경우): 이슈 출력 + 검증 단계 동작 확인
 
 ## 공개 API 영향
 

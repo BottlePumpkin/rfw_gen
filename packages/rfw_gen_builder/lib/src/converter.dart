@@ -15,8 +15,10 @@ import 'widget_registry.dart';
 /// Ties together [WidgetAstVisitor] and [RfwtxtEmitter] into a single
 /// entry point for both build_runner and MCP usage.
 class RfwConverter {
+  /// The widget registry used to resolve Flutter widget names to rfwtxt mappings.
   final WidgetRegistry registry;
 
+  /// Creates a converter backed by the given [registry].
   RfwConverter({required this.registry});
 
   /// Converts a Dart source string containing a widget-building function

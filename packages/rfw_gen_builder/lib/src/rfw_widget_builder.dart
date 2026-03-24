@@ -12,15 +12,20 @@ import 'widget_registry.dart';
 /// A custom [Builder] that finds `@RfwWidget`-annotated top-level functions
 /// and generates `.rfwtxt` (text) and `.rfw` (binary) output files.
 class RfwWidgetBuilder implements Builder {
+  /// The build_runner options passed from `build.yaml`.
   final BuilderOptions options;
 
+  /// Creates a builder that converts `@RfwWidget`-annotated functions.
   RfwWidgetBuilder(this.options);
 
+  /// Maps each `.dart` input to `.rfwtxt` (text) and `.rfw` (binary) outputs.
   @override
   Map<String, List<String>> get buildExtensions => const {
         '.dart': ['.rfwtxt', '.rfw'],
       };
 
+  /// Scans [buildStep] for `@RfwWidget` functions, converts each to rfwtxt,
+  /// and writes both `.rfwtxt` and `.rfw` outputs.
   @override
   FutureOr<void> build(BuildStep buildStep) async {
     final source = await buildStep.readAsString(buildStep.inputId);

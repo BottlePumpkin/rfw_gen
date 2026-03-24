@@ -133,12 +133,14 @@ class ExpressionConverter {
 
     // EdgeInsets.xxx(...) — parses as MethodInvocation with target 'EdgeInsets'
     if (target is SimpleIdentifier && target.name == 'EdgeInsets') {
-      return _convertEdgeInsets(methodName, expr.argumentList);
+      return _convertEdgeInsets(methodName, expr.argumentList,
+          offset: expr.offset);
     }
 
     // EdgeInsetsDirectional.xxx(...) — parses as MethodInvocation with target 'EdgeInsetsDirectional'
     if (target is SimpleIdentifier && target.name == 'EdgeInsetsDirectional') {
-      return _convertEdgeInsetsDirectional(methodName, expr.argumentList);
+      return _convertEdgeInsetsDirectional(methodName, expr.argumentList,
+          offset: expr.offset);
     }
 
     // Duration(milliseconds: 300) — parses as MethodInvocation with no target
@@ -148,7 +150,8 @@ class ExpressionConverter {
 
     // BorderRadius.xxx(...) — parses as MethodInvocation with target 'BorderRadius'
     if (target is SimpleIdentifier && target.name == 'BorderRadius') {
-      return _convertBorderRadius(methodName, expr.argumentList);
+      return _convertBorderRadius(methodName, expr.argumentList,
+          offset: expr.offset);
     }
 
     // NetworkImage('url') — parses as MethodInvocation with no target
@@ -273,10 +276,13 @@ class ExpressionConverter {
     // Named constructors (e.g., EdgeInsets.all, BorderRadius.circular)
     if (constructorName != null) {
       return switch (className) {
-        'EdgeInsets' => _convertEdgeInsets(constructorName, argList),
-        'EdgeInsetsDirectional' =>
-          _convertEdgeInsetsDirectional(constructorName, argList),
-        'BorderRadius' => _convertBorderRadius(constructorName, argList),
+        'EdgeInsets' =>
+          _convertEdgeInsets(constructorName, argList, offset: expr.offset),
+        'EdgeInsetsDirectional' => _convertEdgeInsetsDirectional(
+            constructorName, argList,
+            offset: expr.offset),
+        'BorderRadius' =>
+          _convertBorderRadius(constructorName, argList, offset: expr.offset),
         'Radius' when constructorName == 'circular' =>
           IrMapValue({'x': IrNumberValue(_toDouble(argList.arguments.first))}),
         'Border' when constructorName == 'all' => _convertBorderAll(argList),
@@ -377,7 +383,8 @@ class ExpressionConverter {
     );
   }
 
-  IrListValue _convertEdgeInsets(String method, ArgumentList argList) {
+  IrListValue _convertEdgeInsets(String method, ArgumentList argList,
+      {int? offset}) {
     switch (method) {
       case 'all':
         return _convertEdgeInsetsAll(argList);
@@ -390,6 +397,7 @@ class ExpressionConverter {
       default:
         throw UnsupportedExpressionError(
           'Unsupported EdgeInsets constructor: $method',
+          offset: offset,
         );
     }
   }
@@ -465,8 +473,8 @@ class ExpressionConverter {
     ]);
   }
 
-  IrListValue _convertEdgeInsetsDirectional(
-      String method, ArgumentList argList) {
+  IrListValue _convertEdgeInsetsDirectional(String method, ArgumentList argList,
+      {int? offset}) {
     switch (method) {
       case 'all':
         return _convertEdgeInsetsAll(argList);
@@ -479,6 +487,7 @@ class ExpressionConverter {
       default:
         throw UnsupportedExpressionError(
           'Unsupported EdgeInsetsDirectional constructor: $method',
+          offset: offset,
         );
     }
   }
@@ -528,15 +537,16 @@ class ExpressionConverter {
     }
 
     if (prefix == 'RfwIcon') {
-      return _convertRfwIcon(identifier);
+      return _convertRfwIcon(identifier, offset: expr.offset);
     }
 
     if (prefix == 'Alignment') {
-      return _convertAlignmentConstant(identifier);
+      return _convertAlignmentConstant(identifier, offset: expr.offset);
     }
 
     if (prefix == 'AlignmentDirectional') {
-      return _convertAlignmentDirectionalConstant(identifier);
+      return _convertAlignmentDirectionalConstant(identifier,
+          offset: expr.offset);
     }
 
     throw UnsupportedExpressionError(
@@ -545,10 +555,11 @@ class ExpressionConverter {
     );
   }
 
-  IrMapValue _convertRfwIcon(String name) {
+  IrMapValue _convertRfwIcon(String name, {int? offset}) {
     final codepoint = RfwIcon.lookup(name);
     if (codepoint == null) {
-      throw UnsupportedExpressionError('Unknown RfwIcon: $name');
+      throw UnsupportedExpressionError('Unknown RfwIcon: $name',
+          offset: offset);
     }
     return IrMapValue({
       'icon': IrIntValue(codepoint),
@@ -568,7 +579,7 @@ class ExpressionConverter {
     'bottomRight': [1.0, 1.0],
   };
 
-  IrMapValue _convertAlignmentConstant(String name) {
+  IrMapValue _convertAlignmentConstant(String name, {int? offset}) {
     final values = _alignmentConstants[name];
     if (values != null) {
       return IrMapValue({
@@ -576,7 +587,8 @@ class ExpressionConverter {
         'y': IrNumberValue(values[1]),
       });
     }
-    throw UnsupportedExpressionError('Unknown Alignment constant: $name');
+    throw UnsupportedExpressionError('Unknown Alignment constant: $name',
+        offset: offset);
   }
 
   static const _alignmentDirectionalConstants = <String, List<double>>{
@@ -591,7 +603,7 @@ class ExpressionConverter {
     'bottomEnd': [1.0, 1.0],
   };
 
-  IrMapValue _convertAlignmentDirectionalConstant(String name) {
+  IrMapValue _convertAlignmentDirectionalConstant(String name, {int? offset}) {
     final values = _alignmentDirectionalConstants[name];
     if (values != null) {
       return IrMapValue({
@@ -601,6 +613,7 @@ class ExpressionConverter {
     }
     throw UnsupportedExpressionError(
       'Unknown AlignmentDirectional constant: $name',
+      offset: offset,
     );
   }
 
@@ -637,7 +650,8 @@ class ExpressionConverter {
     );
   }
 
-  IrListValue _convertBorderRadius(String method, ArgumentList argList) {
+  IrListValue _convertBorderRadius(String method, ArgumentList argList,
+      {int? offset}) {
     switch (method) {
       case 'circular':
         return _convertBorderRadiusCircular(argList);
@@ -648,6 +662,7 @@ class ExpressionConverter {
       default:
         throw UnsupportedExpressionError(
           'Unsupported BorderRadius constructor: $method',
+          offset: offset,
         );
     }
   }
@@ -1155,7 +1170,8 @@ class ExpressionConverter {
         'DataRef' => IrDataRef(path),
         'ArgsRef' => IrArgsRef(path),
         'StateRef' => IrStateRef(path),
-        _ => throw UnsupportedExpressionError('Unknown ref type: $refType'),
+        _ => throw UnsupportedExpressionError('Unknown ref type: $refType',
+            offset: expr.offset),
       };
     }
     throw UnsupportedExpressionError(

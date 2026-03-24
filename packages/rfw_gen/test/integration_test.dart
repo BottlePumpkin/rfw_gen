@@ -315,6 +315,125 @@ Widget build() {
       expect(rfwtxt, contains('import core.widgets;'));
       expect(rfwtxt, contains('import material;'));
     });
+
+    test('Rotation widget emits Rotation( with turns param', () {
+      const input = '''
+Widget build() {
+  return Rotation(
+    turns: 0.25,
+    child: Container(color: Color(0xFF000000)),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('Rotation('));
+      expect(rfwtxt, contains('turns: 0.25'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('Scale widget emits Scale( with scale param', () {
+      const input = '''
+Widget build() {
+  return Scale(
+    scale: 2.0,
+    child: Container(color: Color(0xFF000000)),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('Scale('));
+      expect(rfwtxt, contains('scale: 2.0'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('SizedBoxShrink widget emits SizedBoxShrink(', () {
+      const input = '''
+Widget build() {
+  return SizedBoxShrink();
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('SizedBoxShrink('));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('AnimationDefaults widget emits AnimationDefaults( with duration', () {
+      const input = '''
+Widget build() {
+  return AnimationDefaults(
+    duration: Duration(milliseconds: 600),
+    child: Container(color: Color(0xFF000000)),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('AnimationDefaults('));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('AnimatedPadding uses core.widgets import and emits padding/duration params', () {
+      const input = '''
+Widget build() {
+  return AnimatedPadding(
+    padding: EdgeInsets.all(16.0),
+    duration: Duration(milliseconds: 300),
+    child: Container(color: Color(0xFF000000)),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('AnimatedPadding('));
+      expect(rfwtxt, contains('padding:'));
+      expect(rfwtxt, contains('duration: 300'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('AnimatedOpacity uses core.widgets import and emits opacity/duration params', () {
+      const input = '''
+Widget build() {
+  return AnimatedOpacity(
+    opacity: 0.5,
+    duration: Duration(milliseconds: 300),
+    child: Container(color: Color(0xFF000000)),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('AnimatedOpacity('));
+      expect(rfwtxt, contains('opacity: 0.5'));
+      expect(rfwtxt, contains('duration: 300'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
+
+    test('PositionedDirectional uses core.widgets import and emits top/end params', () {
+      const input = '''
+Widget build() {
+  return Stack(
+    children: [
+      PositionedDirectional(
+        top: 10.0,
+        end: 20.0,
+        child: Container(color: Color(0xFF000000)),
+      ),
+    ],
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('PositionedDirectional('));
+      expect(rfwtxt, contains('end: 20.0'));
+      final library = parseLibraryFile(rfwtxt);
+      expect(library.widgets, isNotEmpty);
+    });
   });
 
   group('dynamic features integration', () {

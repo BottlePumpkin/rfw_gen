@@ -1,5 +1,6 @@
 import 'package:rfw/formats.dart';
 import 'package:rfw_gen/rfw_gen.dart';
+import 'package:rfw_gen_builder/rfw_gen_builder.dart';
 import 'package:test/test.dart';
 
 void main() {

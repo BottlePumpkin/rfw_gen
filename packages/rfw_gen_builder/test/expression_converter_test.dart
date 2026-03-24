@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:rfw_gen/rfw_gen.dart';
+import 'package:rfw_gen_builder/src/expression_converter.dart';
+import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:test/test.dart';
 
 Expression parseExpression(String code) {

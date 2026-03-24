@@ -1,4 +1,4 @@
-import 'package:rfw_gen/rfw_gen.dart';
+import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:test/test.dart';
 
 void main() {

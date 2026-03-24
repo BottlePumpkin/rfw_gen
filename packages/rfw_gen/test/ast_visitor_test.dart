@@ -581,6 +581,56 @@ Widget build() {
       );
     });
 
+    test('childList non-ListLiteral does not throw and omits children', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Column(
+    children: someVariableList,
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'Column');
+      // children should be missing because the expression is not a ListLiteral
+      expect(node.properties.containsKey('children'), isFalse);
+    });
+
+    test('named slot list non-ListLiteral does not throw and omits slot', () {
+      registry.register(
+        'AppBar',
+        const WidgetMapping(
+          rfwName: 'material.AppBar',
+          import: 'material',
+          childType: ChildType.namedSlots,
+          namedChildSlots: {
+            'leading': false,
+            'title': false,
+            'actions': true,
+          },
+          params: {},
+        ),
+      );
+
+      final fn = parseFunction('''
+Widget build() {
+  return AppBar(
+    title: Text('Title'),
+    actions: someVariableList,
+  );
+}
+''');
+
+      final node = visitor.extractWidgetTree(fn);
+
+      expect(node.name, 'AppBar');
+      // title should still be present
+      expect(node.properties['title'], isA<IrWidgetNode>());
+      // actions should be missing because the expression is not a ListLiteral
+      expect(node.properties.containsKey('actions'), isFalse);
+    });
+
     test('throws when no return expression found', () {
       final fn = parseFunction('''
 void doNothing() {

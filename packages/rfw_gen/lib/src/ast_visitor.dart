@@ -201,7 +201,13 @@ class WidgetAstVisitor {
             .map((e) => _convertWidgetOrSpecial(e as Expression))
             .toList();
         properties[paramName] = IrListValue(children);
-      } else if (!isList) {
+      } else if (isList) {
+        developer.log(
+          'Warning: named slot list "$paramName" on ${mapping.rfwName} is not a '
+          'ListLiteral (got ${expression.runtimeType}). Slot will be missing.',
+          name: 'rfw_gen',
+        );
+      } else {
         properties[paramName] = _convertWidgetOrSpecial(expression);
       }
       return;
@@ -221,6 +227,13 @@ class WidgetAstVisitor {
                 .map((e) => _convertWidgetOrSpecial(e as Expression))
                 .toList();
             properties[paramName] = IrListValue(children);
+          } else {
+            developer.log(
+              'Warning: children parameter on ${mapping.rfwName} is not a '
+              'ListLiteral (got ${expression.runtimeType}). '
+              'Children will be missing.',
+              name: 'rfw_gen',
+            );
           }
         case ChildType.none:
         case ChildType.namedSlots:

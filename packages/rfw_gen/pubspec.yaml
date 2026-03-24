@@ -1,7 +1,12 @@
 name: rfw_gen
-description: Convert Flutter Widget code to RFW (Remote Flutter Widgets) format.
+description: Annotations and runtime helpers for converting Flutter Widget code to RFW (Remote Flutter Widgets) format.
 version: 0.1.0
-publish_to: none
+homepage: https://github.com/byeonghopark-jobis/rfw_gen
+repository: https://github.com/byeonghopark-jobis/rfw_gen
+topics:
+  - rfw
+  - remote-flutter-widgets
+  - code-generation
 
 environment:
   sdk: ^3.0.0

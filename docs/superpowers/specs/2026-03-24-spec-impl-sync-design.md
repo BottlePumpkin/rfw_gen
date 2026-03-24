@@ -9,8 +9,8 @@ rfw-widgets.md / rfw-types.md에 정의된 스펙과 실제 구현(WidgetRegistr
 **파라미터 누락 (WidgetRegistry)**
 | 위젯 | 빠진 파라미터 | 영향 |
 |------|-------------|------|
-| Column | `textDirection` | RTL 레이아웃 불가 |
-| Row | `textDirection` | RTL 레이아웃 불가 |
+| Column | `textDirection` (주: 기존 `textBaseline`은 c49eab8에서 추가 완료, 별개 파라미터) | RTL 레이아웃 불가 |
+| Row | `textDirection` (주: 기존 `textBaseline`은 c49eab8에서 추가 완료, 별개 파라미터) | RTL 레이아웃 불가 |
 | Card | `shape` | ShapeBorder 지정 불가 |
 
 **타입 변환기 누락 (ExpressionConverter)**
@@ -65,10 +65,11 @@ rfw-widgets.md / rfw-types.md에 정의된 스펙과 실제 구현(WidgetRegistr
 
 기존 `_convertBorderSide()`와 `_convertBorderRadius()`를 재사용한다.
 
-등록 위치:
-- `_convertMethodInvocation()`: target == null && methodName 매칭
-- `_convertInstanceCreation()`: default constructor switch에 추가
-- `_isKnownClassName()`에 ShapeBorder 관련 클래스 추가 불필요 (named constructor 없음)
+등록 위치 (두 AST 경로 모두 처리 필수):
+- `_convertMethodInvocation()`: `RoundedRectangleBorder(...)` — target == null && methodName 매칭 3건 추가
+- `_convertInstanceCreation()`: `const RoundedRectangleBorder(...)` — default constructor switch (line 279)에 3건 추가
+- 두 경로 모두에 `RoundedRectangleBorder`, `CircleBorder`, `StadiumBorder` 등록 필요
+- `_isKnownClassName()`에 추가 불필요 (named constructor 없음, default constructor만 사용)
 
 #### 1-3. rfw-widgets.md 문서 보완
 
@@ -93,12 +94,13 @@ const sampleExpressions = {
   'textStyle': 'TextStyle(fontSize: 14.0)',
   'boxDecoration': 'BoxDecoration(color: Color(0xFF000000))',
   'shapeBorder': 'RoundedRectangleBorder()',
+  'duration': 'Duration(milliseconds: 300)',
+  'curve': 'Curves.easeInOut',
   'iconData': 'RfwIcon.home',
   'imageProvider': 'NetworkImage("https://example.com/img.png")',
-  'iconThemeData': 'IconThemeData(size: 24.0)',
   'visualDensity': 'VisualDensity.compact',
   'gridDelegate': 'SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2)',
-  null: '16.0',  // direct pass-through
+  null: '16.0',  // direct pass-through (iconThemeData 등 ParamMapping.direct() 포함)
 };
 ```
 
@@ -122,7 +124,8 @@ test('total param count does not regress', () {
   final totalParams = registry.supportedWidgets.values
       .map((w) => w.params.length + w.handlerParams.length)
       .reduce((a, b) => a + b);
-  expect(totalParams, greaterThanOrEqualTo(EXPECTED_MINIMUM));
+  // 구현 시점에 registry를 순회하여 현재 총 수를 계산 후 하드코딩
+  expect(totalParams, greaterThanOrEqualTo(/* 구현 시 산출 */));
 });
 ```
 
@@ -132,11 +135,20 @@ test('total param count does not regress', () {
 
 각 위젯별로 모든 파라미터를 포함한 Flutter 코드 → RfwConverter로 rfwtxt 생성 → `parseLibraryFile()`로 파싱 성공 확인.
 
+구현 참고:
+- childType별로 최소 유효 위젯 트리 생성 (child → `SizedBox()`, childList → `[SizedBox()]`, namedSlots → 필수 슬롯만)
+- 기존 integration_test.dart의 패턴을 참고하여 확장
+- 복잡도가 높으므로, 핵심 위젯(Container, Card, Scaffold 등)부터 점진적으로 추가
+
 이 테스트가 잡는 버그: "IR 변환은 됐는데 rfwtxt emitter 출력이 잘못됨"
 
 ### Phase 3: 문서 자동 생성 (향후 C' 발전)
 
-WidgetRegistry에서 rfw-widgets.md를 자동 생성하는 스크립트 추가. Phase 1-2가 안정화된 후 진행.
+WidgetRegistry에서 rfw-widgets.md를 자동 생성하는 스크립트 추가. Phase 1-2의 동기화 테스트가 CI에서 안정적으로 통과하고, 위젯 추가 워크플로우가 정립된 후 진행.
+
+### 참고: transformer 키와 ExpressionConverter dispatch의 관계
+
+WidgetRegistry의 `ParamMapping.transformer`는 메타데이터 역할이다. ExpressionConverter는 transformer 키로 dispatch하지 않고, AST의 클래스 이름(`RoundedRectangleBorder`, `BorderSide` 등)으로 매칭한다. 따라서 transformer 키 `'shapeBorder'`를 등록하는 것과, ExpressionConverter에서 `RoundedRectangleBorder` 등을 인식하는 것은 별개로 구현해야 한다. 테스트 1은 이 두 계층이 실제로 연결되는지를 검증하는 역할이다.
 
 ## 수정 대상 파일
 

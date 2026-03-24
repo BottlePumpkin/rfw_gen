@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 
 import 'ir.dart';
-import 'rfw_icons.dart';
+import 'package:rfw_gen/rfw_gen.dart' show RfwIcon;
 
 /// Thrown when an expression cannot be converted to an IR value.
 class UnsupportedExpressionError implements Exception {

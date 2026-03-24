@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:build/build.dart';
-import 'package:rfw_gen/rfw_gen.dart';
 import 'package:yaml/yaml.dart';
+
+import 'converter.dart';
+import 'widget_registry.dart';
 
 /// A custom [Builder] that finds `@RfwWidget`-annotated top-level functions
 /// and generates `.rfwtxt` (text) and `.rfw` (binary) output files.

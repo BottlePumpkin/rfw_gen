@@ -1,12 +1,6 @@
 export 'src/annotations.dart';
-export 'src/rfw_helpers.dart';
-export 'src/ast_visitor.dart';
-export 'src/converter.dart';
 export 'src/errors.dart';
-export 'src/expression_converter.dart';
-export 'src/ir.dart';
 export 'src/rfw_handler.dart';
+export 'src/rfw_helpers.dart';
 export 'src/rfw_icons.dart';
-export 'src/rfwtxt_emitter.dart';
-export 'src/widget_registry.dart';
 export 'src/rfw_only_widgets.dart';

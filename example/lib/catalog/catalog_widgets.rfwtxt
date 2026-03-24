@@ -643,6 +643,46 @@ widget coloredBoxDemo = Column(
   ]
 );
 
+widget borderDemo = Container(
+  width: 200.0,
+  height: 100.0,
+  decoration: {
+    type: "box",
+    color: 0xFFE3F2FD,
+    border: {
+      type: "box",
+      sides: [
+        {
+          color: 0xFF1565C0,
+          width: 2.0
+        },
+        {
+          color: 0xFF1565C0,
+          width: 2.0
+        },
+        {
+          color: 0xFF1565C0,
+          width: 2.0
+        },
+        {
+          color: 0xFF1565C0,
+          width: 2.0
+        }
+      ]
+    },
+    borderRadius: [
+      {
+        x: 8.0
+      }
+    ]
+  },
+  child: Center(
+    child: Text(
+      text: "Border Demo"
+    )
+  )
+);
+
 widget rotationDemo = Row(
   mainAxisAlignment: "spaceEvenly",
   children: [

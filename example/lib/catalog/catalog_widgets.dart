@@ -113,10 +113,13 @@ Widget buildSizedBoxDemo() {
         height: 50.0,
         child: ColoredBox(color: const Color(0xFF2196F3)),
       ),
-      Spacer(flex: 1),
-      SizedBoxExpand(
+      SizedBox(height: 16.0),
+      SizedBox(
+        width: 200.0,
+        height: 80.0,
         child: ColoredBox(color: const Color(0xFFE8EAF6)),
       ),
+      SizedBox(height: 16.0),
       SizedBoxShrink(),
     ],
   );
@@ -422,6 +425,25 @@ Widget buildColoredBoxDemo() {
         placeholderHeight: 50.0,
       ),
     ],
+  );
+}
+
+@RfwWidget('borderDemo')
+Widget buildBorderDemo() {
+  return Container(
+    width: 200.0,
+    height: 100.0,
+    decoration: BoxDecoration(
+      color: const Color(0xFFE3F2FD),
+      border: Border.all(
+        color: const Color(0xFF1565C0),
+        width: 2.0,
+      ),
+      borderRadius: const BorderRadius.all(Radius.circular(8)),
+    ),
+    child: Center(
+      child: Text('Border Demo'),
+    ),
   );
 }
 

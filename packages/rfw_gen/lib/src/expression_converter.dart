@@ -38,6 +38,7 @@ class ExpressionConverter {
     'HitTestBehavior',
     'MaterialType',
     'TextBaseline',
+    'BorderStyle',
   };
 
   static const _knownGridDelegates = <String>{
@@ -204,6 +205,21 @@ class ExpressionConverter {
       return _convertOffset(expr.argumentList);
     }
 
+    // BorderSide(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'BorderSide') {
+      return _convertBorderSide(expr.argumentList);
+    }
+
+    // Border.all(...) — parses as MethodInvocation with target 'Border'
+    if (target is SimpleIdentifier && target.name == 'Border') {
+      if (methodName == 'all') return _convertBorderAll(expr.argumentList);
+    }
+
+    // Border(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'Border') {
+      return _convertBorder(expr.argumentList);
+    }
+
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
@@ -245,6 +261,7 @@ class ExpressionConverter {
         'BorderRadius' => _convertBorderRadius(constructorName, argList),
         'Radius' when constructorName == 'circular' =>
           IrMapValue({'x': IrNumberValue(_toDouble(argList.arguments.first))}),
+        'Border' when constructorName == 'all' => _convertBorderAll(argList),
         _ => throw UnsupportedExpressionError(
             'Unsupported const constructor: $className.$constructorName',
             offset: expr.offset,
@@ -267,6 +284,8 @@ class ExpressionConverter {
       'SweepGradient' => _convertSweepGradient(argList),
       'BoxShadow' => _convertBoxShadow(argList),
       'Offset' => _convertOffset(argList),
+      'BorderSide' => _convertBorderSide(argList),
+      'Border' => _convertBorder(argList),
       _ when _knownGridDelegates.contains(className) =>
         _convertGridDelegateFromArgs(argList),
       _ => throw UnsupportedExpressionError(
@@ -283,6 +302,7 @@ class ExpressionConverter {
       'EdgeInsetsDirectional',
       'BorderRadius',
       'Radius',
+      'Border',
     }.contains(name);
   }
 
@@ -813,6 +833,7 @@ class ExpressionConverter {
           case 'color':
           case 'gradient':
           case 'borderRadius':
+          case 'border':
             entries[name] = convert(arg.expression);
           case 'boxShadow':
             // List of BoxShadow
@@ -1170,6 +1191,68 @@ class ExpressionConverter {
       'Unsupported index expression base: ${current.runtimeType}',
       offset: expr.offset,
     );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Border / BorderSide converters
+  // ---------------------------------------------------------------------------
+
+  /// Converts `BorderSide(color: ..., width: ..., style: ...)` to IrMapValue.
+  IrMapValue _convertBorderSide(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'color':
+            entries[name] = convert(arg.expression);
+          case 'width':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+          case 'style':
+            if (arg.expression is PrefixedIdentifier) {
+              entries[name] = IrStringValue(
+                (arg.expression as PrefixedIdentifier).identifier.name,
+              );
+            }
+          default:
+            entries[name] = convert(arg.expression);
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `Border.all({color, width, style})` to 4 identical sides.
+  IrMapValue _convertBorderAll(ArgumentList argList) {
+    final side = _convertBorderSide(argList);
+    return IrMapValue({
+      'type': IrStringValue('box'),
+      'sides': IrListValue([side, side, side, side]),
+    });
+  }
+
+  /// Converts `Border(top: ..., right: ..., bottom: ..., left: ...)`.
+  IrMapValue _convertBorder(ArgumentList argList) {
+    final sides = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        if (['top', 'right', 'bottom', 'left'].contains(name)) {
+          sides[name] = convert(arg.expression);
+        }
+      }
+    }
+    // Build [top, right, bottom, left] list
+    final defaultSide = IrMapValue({});
+    return IrMapValue({
+      'type': IrStringValue('box'),
+      'sides': IrListValue([
+        sides['top'] ?? defaultSide,
+        sides['right'] ?? defaultSide,
+        sides['bottom'] ?? defaultSide,
+        sides['left'] ?? defaultSide,
+      ]),
+    });
   }
 
   /// Extracts a double value from a numeric expression.

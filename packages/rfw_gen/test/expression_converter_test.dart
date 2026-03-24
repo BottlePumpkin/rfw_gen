@@ -1344,4 +1344,84 @@ void main() {
       expect((result as IrIntValue).value, 0xFFFF0000);
     });
   });
+
+  group('Border and BorderSide', () {
+    test('converts BorderSide with color and width', () {
+      final expr = parseExpression(
+        'BorderSide(color: Color(0xFF000000), width: 2.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('color'), isTrue);
+      expect((map['color'] as IrIntValue).value, 0xFF000000);
+      expect(map.containsKey('width'), isTrue);
+      expect((map['width'] as IrNumberValue).value, 2.0);
+    });
+
+    test('converts BorderSide with style', () {
+      final expr = parseExpression(
+        'BorderSide(color: Color(0xFF000000), width: 1.0, style: BorderStyle.solid)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['style'] as IrStringValue).value, 'solid');
+    });
+
+    test('converts Border.all', () {
+      final expr = parseExpression(
+        'Border.all(color: Color(0xFF000000), width: 1.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'box');
+      expect(map.containsKey('sides'), isTrue);
+      final sides = (map['sides'] as IrListValue).values;
+      expect(sides, hasLength(4));
+      // All sides should be identical
+      for (final side in sides) {
+        final sideMap = (side as IrMapValue).entries;
+        expect((sideMap['color'] as IrIntValue).value, 0xFF000000);
+        expect((sideMap['width'] as IrNumberValue).value, 1.0);
+      }
+    });
+
+    test('converts Border with individual sides', () {
+      final expr = parseExpression(
+        'Border(top: BorderSide(color: Color(0xFFFF0000), width: 2.0), bottom: BorderSide(color: Color(0xFF0000FF), width: 1.0))',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'box');
+      final sides = (map['sides'] as IrListValue).values;
+      expect(sides, hasLength(4));
+      // top side
+      final top = (sides[0] as IrMapValue).entries;
+      expect((top['color'] as IrIntValue).value, 0xFFFF0000);
+      expect((top['width'] as IrNumberValue).value, 2.0);
+      // right side (default empty)
+      expect((sides[1] as IrMapValue).entries, isEmpty);
+      // bottom side
+      final bottom = (sides[2] as IrMapValue).entries;
+      expect((bottom['color'] as IrIntValue).value, 0xFF0000FF);
+      expect((bottom['width'] as IrNumberValue).value, 1.0);
+      // left side (default empty)
+      expect((sides[3] as IrMapValue).entries, isEmpty);
+    });
+
+    test('BoxDecoration with border converts', () {
+      final expr = parseExpression(
+        'BoxDecoration(color: Color(0xFF000000), border: Border.all(color: Color(0xFFFF0000)))',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('border'), isTrue);
+      final border = (map['border'] as IrMapValue).entries;
+      expect((border['type'] as IrStringValue).value, 'box');
+      expect(border.containsKey('sides'), isTrue);
+    });
+  });
 }

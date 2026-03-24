@@ -9,7 +9,9 @@ topics:
   - code-generation
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
+
+resolution: workspace
 
 dependencies:
   rfw: ^1.0.0

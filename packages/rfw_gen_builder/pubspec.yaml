@@ -10,7 +10,9 @@ topics:
   - build-runner
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
+
+resolution: workspace
 
 dependencies:
   analyzer: ">=7.4.5 <10.0.0"

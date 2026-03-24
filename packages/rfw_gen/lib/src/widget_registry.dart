@@ -519,6 +519,7 @@ class WidgetRegistry {
           rfwName: 'core.Icon',
           import: 'core.widgets',
           childType: ChildType.none,
+          positionalParam: 'icon',
           params: {
             'icon': ParamMapping('iconData', transformer: 'iconData'),
             'size': ParamMapping.direct('size'),

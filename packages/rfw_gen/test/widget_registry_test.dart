@@ -521,6 +521,11 @@ void main() {
         expect(w.params.containsKey('semanticLabel'), isTrue);
       });
 
+      test('Icon supports positional param for icon', () {
+        final mapping = registry.supportedWidgets['Icon']!;
+        expect(mapping.positionalParam, equals('icon'));
+      });
+
       test('IconTheme has child and iconThemeData', () {
         final w = registry.supportedWidgets['IconTheme']!;
         expect(w.childType, equals(ChildType.child));

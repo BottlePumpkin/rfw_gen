@@ -112,13 +112,19 @@ class RfwtxtEmitter {
     return v.toString();
   }
 
-  /// Emits an integer as `0xXXXXXXXX` (uppercase hex, 8 digits zero-padded).
+  /// Emits an integer value.
+  ///
+  /// Color-like values (ARGB with alpha channel, i.e. >= 0x01000000) and
+  /// negative values are emitted as `0xXXXXXXXX` (uppercase hex, 8 digits).
+  /// Small non-negative values are emitted as decimal for readability.
   String _emitInt(int v) {
-    // toRadixString produces lowercase; convert to uppercase.
-    // Use unsigned 32-bit representation so negative ints display correctly.
-    final unsigned = v & 0xFFFFFFFF;
-    final hex = unsigned.toRadixString(16).toUpperCase().padLeft(8, '0');
-    return '0x$hex';
+    if (v >= 0x01000000 || v < 0) {
+      // Color-like or negative → hex with 32-bit unsigned mask.
+      final unsigned = v & 0xFFFFFFFF;
+      final hex = unsigned.toRadixString(16).toUpperCase().padLeft(8, '0');
+      return '0x$hex';
+    }
+    return v.toString();
   }
 
   /// Emits a list value.

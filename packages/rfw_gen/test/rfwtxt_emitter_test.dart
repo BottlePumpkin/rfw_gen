@@ -78,7 +78,7 @@ void main() {
       expect(result, contains('color: 0xFF2196F3'));
     });
 
-    test('integer zero emits 0x00000000', () {
+    test('integer zero emits as decimal 0', () {
       final root = IrWidgetNode(
         name: 'Container',
         properties: {'color': IrIntValue(0)},
@@ -90,7 +90,70 @@ void main() {
         imports: {'core.widgets'},
       );
 
-      expect(result, contains('color: 0x00000000'));
+      expect(result, contains('color: 0'));
+    });
+
+    // Test 3b: Small integers emit as decimal
+    test('small integer like flex emits as decimal', () {
+      final root = IrWidgetNode(
+        name: 'Expanded',
+        properties: {'flex': IrIntValue(2)},
+      );
+
+      final result = emitter.emit(
+        widgetName: 'myExpanded',
+        root: root,
+        imports: {'core.widgets'},
+      );
+
+      expect(result, contains('flex: 2'));
+      expect(result, isNot(contains('0x00000002')));
+    });
+
+    test('Duration milliseconds emits as decimal', () {
+      final root = IrWidgetNode(
+        name: 'Opacity',
+        properties: {'duration': IrIntValue(300)},
+      );
+
+      final result = emitter.emit(
+        widgetName: 'myOpacity',
+        root: root,
+        imports: {'core.widgets'},
+      );
+
+      expect(result, contains('duration: 300'));
+      expect(result, isNot(contains('0x')));
+    });
+
+    test('color value emits as hex', () {
+      final root = IrWidgetNode(
+        name: 'Container',
+        properties: {'color': IrIntValue(0xFF000000)},
+      );
+
+      final result = emitter.emit(
+        widgetName: 'myContainer',
+        root: root,
+        imports: {'core.widgets'},
+      );
+
+      expect(result, contains('color: 0xFF000000'));
+    });
+
+    test('negative integer emits as hex', () {
+      final root = IrWidgetNode(
+        name: 'Widget',
+        properties: {'value': IrIntValue(-1)},
+      );
+
+      final result = emitter.emit(
+        widgetName: 'myWidget',
+        root: root,
+        imports: {'core.widgets'},
+      );
+
+      expect(result, contains('value: 0xFFFFFFFF'));
     });
 
     // Test 4: Number values
@@ -368,7 +431,7 @@ void main() {
         root: node,
         imports: {'core.widgets'},
       );
-      expect(output, contains('icon: 0x0000E318'));
+      expect(output, contains('icon: 58136'));
       expect(output, contains('fontFamily: "MaterialIcons"'));
     });
 
@@ -385,7 +448,7 @@ void main() {
         root: node,
         imports: {'core.widgets'},
       );
-      expect(output, contains('duration: 0x0000012C'));
+      expect(output, contains('duration: 300'));
     });
 
     test('emits Curve as string', () {
@@ -743,7 +806,7 @@ void main() {
           },
         );
         expect(output, contains('widget myWidget {'));
-        expect(output, contains('count: 0x00000000'));
+        expect(output, contains('count: 0'));
         expect(output, contains('label: "hello"'));
         expect(output, contains('} = '));
       });

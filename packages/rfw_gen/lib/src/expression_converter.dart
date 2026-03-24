@@ -37,6 +37,7 @@ class ExpressionConverter {
     'ImageRepeat',
     'HitTestBehavior',
     'MaterialType',
+    'TextBaseline',
   };
 
   static const _knownGridDelegates = <String>{

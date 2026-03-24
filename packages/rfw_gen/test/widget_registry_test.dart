@@ -694,6 +694,52 @@ void main() {
     });
   });
 
+  group('Missing params and handlers', () {
+    late WidgetRegistry registry;
+
+    setUp(() {
+      registry = WidgetRegistry.core();
+    });
+
+    test('Column has textBaseline param', () {
+      final mapping = registry.supportedWidgets['Column']!;
+      expect(mapping.params.containsKey('textBaseline'), isTrue);
+    });
+
+    test('Row has textBaseline param', () {
+      final mapping = registry.supportedWidgets['Row']!;
+      expect(mapping.params.containsKey('textBaseline'), isTrue);
+    });
+
+    test('Container has additional params', () {
+      final mapping = registry.supportedWidgets['Container']!;
+      expect(mapping.params.containsKey('foregroundDecoration'), isTrue);
+      expect(mapping.params.containsKey('constraints'), isTrue);
+      expect(mapping.params.containsKey('transform'), isTrue);
+      expect(mapping.params.containsKey('clipBehavior'), isTrue);
+    });
+
+    test('animated widgets have onEnd handler', () {
+      for (final name in [
+        'Container',
+        'Align',
+        'Opacity',
+        'Padding',
+        'DefaultTextStyle',
+        'Positioned',
+        'Rotation',
+        'Scale',
+      ]) {
+        final mapping = registry.supportedWidgets[name]!;
+        expect(
+          mapping.handlerParams.contains('onEnd'),
+          isTrue,
+          reason: '$name should have onEnd handler',
+        );
+      }
+    });
+  });
+
   group('WidgetRegistry.register()', () {
     test('adds a custom widget to the registry', () {
       final registry = WidgetRegistry.core();

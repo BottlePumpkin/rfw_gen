@@ -221,6 +221,7 @@ class WidgetRegistry {
                 ParamMapping('crossAxisAlignment', transformer: 'enum'),
             'verticalDirection':
                 ParamMapping('verticalDirection', transformer: 'enum'),
+            'textBaseline': ParamMapping('textBaseline', transformer: 'enum'),
           },
         ),
         'Row': WidgetMapping(
@@ -236,6 +237,7 @@ class WidgetRegistry {
                 ParamMapping('crossAxisAlignment', transformer: 'enum'),
             'verticalDirection':
                 ParamMapping('verticalDirection', transformer: 'enum'),
+            'textBaseline': ParamMapping('textBaseline', transformer: 'enum'),
           },
         ),
         'Center': WidgetMapping(
@@ -260,6 +262,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'AspectRatio': WidgetMapping(
           rfwName: 'core.AspectRatio',
@@ -404,7 +407,15 @@ class WidgetRegistry {
             'alignment': ParamMapping('alignment', transformer: 'alignment'),
             'decoration':
                 ParamMapping('decoration', transformer: 'boxDecoration'),
+            'foregroundDecoration': ParamMapping('foregroundDecoration',
+                transformer: 'boxDecoration'),
+            'constraints': ParamMapping.direct('constraints'),
+            'transform': ParamMapping.direct('transform'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'SizedBox': WidgetMapping(
           rfwName: 'core.SizedBox',
@@ -426,6 +437,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'ClipRRect': WidgetMapping(
           rfwName: 'core.ClipRRect',
@@ -461,6 +473,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'Directionality': WidgetMapping(
           rfwName: 'core.Directionality',
@@ -519,6 +532,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'Placeholder': WidgetMapping(
           rfwName: 'core.Placeholder',
@@ -619,6 +633,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'Rotation': WidgetMapping(
           rfwName: 'core.Rotation',
@@ -631,6 +646,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
         'Scale': WidgetMapping(
           rfwName: 'core.Scale',
@@ -643,6 +659,7 @@ class WidgetRegistry {
             'duration': ParamMapping('duration', transformer: 'duration'),
             'curve': ParamMapping('curve', transformer: 'curve'),
           },
+          handlerParams: {'onEnd'},
         ),
       };
 

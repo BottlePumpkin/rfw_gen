@@ -12,22 +12,27 @@ jobs:
       id-token: write # Required for pub.dev OIDC authentication
     steps:
       - uses: actions/checkout@v4
-      - uses: dart-lang/setup-dart@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
 
       - name: Resolve workspace dependencies
-        run: dart pub get
+        run: flutter pub get
 
       - name: Publish rfw_gen
         run: dart pub publish --directory packages/rfw_gen --force
+        continue-on-error: true
 
       - name: Wait for pub.dev indexing
         run: sleep 60
 
       - name: Publish rfw_gen_builder
         run: dart pub publish --directory packages/rfw_gen_builder --force
+        continue-on-error: true
 
       - name: Wait for pub.dev indexing
         run: sleep 60
 
       - name: Publish rfw_gen_mcp
         run: dart pub publish --directory packages/rfw_gen_mcp --force
+        continue-on-error: true

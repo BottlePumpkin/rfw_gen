@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:rfw/formats.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 import 'package:test/test.dart';
 
@@ -93,6 +94,97 @@ void main() {
           );
         }
       }
+    });
+  });
+
+  group('Spec sync: Regression guard', () {
+    test('widget count does not regress', () {
+      expect(
+        registry.supportedWidgets.length,
+        greaterThanOrEqualTo(56),
+        reason: 'Widget count decreased. Did you accidentally remove a widget?',
+      );
+    });
+
+    test('total param + handler count does not regress', () {
+      var totalParams = 0;
+      var totalHandlers = 0;
+      for (final widget in registry.supportedWidgets.values) {
+        totalParams += widget.params.length;
+        totalHandlers += widget.handlerParams.length;
+      }
+      // Print for visibility when updating the baseline
+      // ignore: avoid_print
+      print('Current counts: params=$totalParams, handlers=$totalHandlers, '
+          'total=${totalParams + totalHandlers}');
+      expect(
+        totalParams + totalHandlers,
+        greaterThanOrEqualTo(233),
+        reason: 'Total param+handler count decreased. '
+            'Did you accidentally remove params?',
+      );
+    });
+  });
+
+  group('Spec sync: End-to-end rfwtxt parsing', () {
+    late RfwConverter rfwConverter;
+
+    setUp(() {
+      rfwConverter = RfwConverter(registry: WidgetRegistry.core());
+    });
+
+    test('Container with all params produces parseable rfwtxt', () {
+      const input = '''
+Widget build() {
+  return Container(
+    alignment: Alignment.center,
+    padding: EdgeInsets.all(8.0),
+    color: Color(0xFF000000),
+    width: 100.0,
+    height: 50.0,
+    clipBehavior: Clip.hardEdge,
+    margin: EdgeInsets.symmetric(horizontal: 4.0),
+    duration: Duration(milliseconds: 300),
+    curve: Curves.easeInOut,
+    child: Text('hello'),
+  );
+}
+''';
+      final rfwtxt = rfwConverter.convertFromSource(input);
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('Card with shape produces parseable rfwtxt', () {
+      const input = '''
+Widget build() {
+  return Card(
+    color: Color(0xFFFFFFFF),
+    elevation: 4.0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      side: BorderSide(color: Color(0xFF000000), width: 1.0),
+    ),
+    margin: EdgeInsets.all(8.0),
+    child: Text('card'),
+  );
+}
+''';
+      final rfwtxt = rfwConverter.convertFromSource(input);
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
+    });
+
+    test('Row with textDirection produces parseable rfwtxt', () {
+      const input = '''
+Widget build() {
+  return Row(
+    textDirection: TextDirection.rtl,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [Text('a'), Text('b')],
+  );
+}
+''';
+      final rfwtxt = rfwConverter.convertFromSource(input);
+      expect(() => parseLibraryFile(rfwtxt), returnsNormally);
     });
   });
 }

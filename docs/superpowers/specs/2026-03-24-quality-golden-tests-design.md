@@ -214,7 +214,7 @@ example/test/
 테스트 setUp에서 `FontLoader`로 명시적 로드:
 
 ```dart
-Future<void> loadFonts() async {
+Future<void> loadTestFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final regular = File('test/fonts/Roboto-Regular.ttf').readAsBytes()

@@ -169,25 +169,12 @@ final Uint8List _kTransparentPng = Uint8List.fromList(<int>[
 class TestHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    // 실제 HttpClient를 반환하되, Flutter test 환경에서는
-    // 네트워크 호출이 차단됨. 이미지가 로드 실패해도 빈 영역으로 렌더링됨.
-    // 만약 네트워크 에러로 테스트가 실패하면, 아래 대안 접근법을 사용:
-    //
-    // 대안: mocktail 패키지의 MockHttpClient 사용
-    // 또는 test_data.dart에서 이미지 URL을 빈 문자열로 대체
+    // Flutter test 환경에서는 기본적으로 네트워크 호출이 차단됨.
+    // super를 반환하되, pumpWidget에서 FlutterError.onError로
+    // 이미지 로드 에러를 무시하여 깨끗한 골든을 생성.
     return super.createHttpClient(context);
   }
 }
-
-// Note: Flutter test 환경에서 NetworkImage가 에러를 발생시키면,
-// GoldenTestHelper.pumpWidget에서 FlutterError.onError를 override하여
-// 이미지 로드 에러를 무시하는 방법도 있다:
-//
-// final originalOnError = FlutterError.onError;
-// FlutterError.onError = (details) {
-//   if (details.exception.toString().contains('HTTP')) return;
-//   originalOnError?.call(details);
-// };
 
 // ============================================================
 // Tolerant Golden File Comparator
@@ -224,8 +211,8 @@ class TolerantGoldenFileComparator extends LocalFileComparator {
     if (_bytesEqual(imageBytes, goldenBytes)) return true;
 
     // 바이트가 다르면 픽셀 단위 비교
-    final testImage = await decodeImageFromList(imageBytes);
-    final goldenImage = await decodeImageFromList(goldenBytes);
+    final testImage = await ui.decodeImageFromList(imageBytes);
+    final goldenImage = await ui.decodeImageFromList(goldenBytes);
 
     // 이미지 크기가 다르면 즉시 실패
     if (testImage.width != goldenImage.width ||
@@ -339,6 +326,18 @@ class GoldenTestHelper {
   }) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
     addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    // 네트워크 이미지 로드 에러를 무시 (이커머스 picsum URL 등)
+    final originalOnError = FlutterError.onError;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      if (details.exception.toString().contains('HTTP') ||
+          details.exception.toString().contains('NetworkImage') ||
+          details.exception.toString().contains('SocketException')) {
+        return; // 네트워크 관련 에러 무시
+      }
+      originalOnError?.call(details);
+    };
+    addTearDown(() => FlutterError.onError = originalOnError);
 
     await tester.pumpWidget(
       MaterialApp(

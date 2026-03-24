@@ -56,6 +56,18 @@ void main() {
 5. 골든 이미지 육안 확인
 6. 커밋
 
+## 카테고리 → 테스트 파일 매핑
+
+| main.dart 카테고리 키 | 테스트 파일명 slug |
+|----------------------|------------------|
+| Layout | layout |
+| Scrolling | scrolling |
+| Styling & Visual | styling |
+| Transform | transform |
+| Interaction | interaction |
+| Material | material |
+| Other | other |
+
 ## 주의사항
 
 - 골든 이미지는 Linux CI 기준. macOS 로컬과 다를 수 있음

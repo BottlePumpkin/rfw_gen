@@ -574,6 +574,9 @@ class WidgetRegistry {
             'strokeWidth': ParamMapping.direct('strokeWidth'),
             'placeholderWidth': ParamMapping.direct('placeholderWidth'),
             'placeholderHeight': ParamMapping.direct('placeholderHeight'),
+            // Flutter aliases (Flutter uses fallbackWidth/fallbackHeight)
+            'fallbackWidth': ParamMapping.direct('placeholderWidth'),
+            'fallbackHeight': ParamMapping.direct('placeholderHeight'),
           },
         ),
       };

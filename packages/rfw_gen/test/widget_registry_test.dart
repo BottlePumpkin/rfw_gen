@@ -555,6 +555,14 @@ void main() {
         expect(w.params.containsKey('strokeWidth'), isTrue);
       });
 
+      test('Placeholder accepts both Flutter and RFW param names', () {
+        final mapping = registry.supportedWidgets['Placeholder']!;
+        expect(mapping.params.containsKey('fallbackWidth'), isTrue);
+        expect(mapping.params.containsKey('fallbackHeight'), isTrue);
+        expect(mapping.params['fallbackWidth']!.rfwName, equals('placeholderWidth'));
+        expect(mapping.params['fallbackHeight']!.rfwName, equals('placeholderHeight'));
+      });
+
       test('Directionality has textDirection enum', () {
         final w = registry.supportedWidgets['Directionality']!;
         expect(w.childType, equals(ChildType.child));

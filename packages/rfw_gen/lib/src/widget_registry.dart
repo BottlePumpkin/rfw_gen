@@ -773,6 +773,8 @@ class WidgetRegistry {
             'selected': ParamMapping.direct('selected'),
             'contentPadding':
                 ParamMapping('contentPadding', transformer: 'edgeInsets'),
+            'visualDensity':
+                ParamMapping('visualDensity', transformer: 'visualDensity'),
           },
           handlerParams: {'onTap', 'onLongPress'},
         ),

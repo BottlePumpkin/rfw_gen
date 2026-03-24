@@ -1424,4 +1424,67 @@ void main() {
       expect(border.containsKey('sides'), isTrue);
     });
   });
+
+  group('VisualDensity', () {
+    test('converts VisualDensity.compact to enum', () {
+      final expr = parseExpression('VisualDensity.compact');
+      final result = converter.convert(expr);
+      expect(result, isA<IrEnumValue>());
+      expect((result as IrEnumValue).value, 'compact');
+    });
+
+    test('converts VisualDensity.comfortable to enum', () {
+      final expr = parseExpression('VisualDensity.comfortable');
+      final result = converter.convert(expr);
+      expect(result, isA<IrEnumValue>());
+      expect((result as IrEnumValue).value, 'comfortable');
+    });
+
+    test('converts VisualDensity.standard to enum', () {
+      final expr = parseExpression('VisualDensity.standard');
+      final result = converter.convert(expr);
+      expect(result, isA<IrEnumValue>());
+      expect((result as IrEnumValue).value, 'standard');
+    });
+
+    test('converts VisualDensity.adaptivePlatformDensity to enum', () {
+      final expr = parseExpression('VisualDensity.adaptivePlatformDensity');
+      final result = converter.convert(expr);
+      expect(result, isA<IrEnumValue>());
+      expect((result as IrEnumValue).value, 'adaptivePlatformDensity');
+    });
+
+    test('converts VisualDensity constructor to map', () {
+      final expr = parseExpression(
+        'VisualDensity(horizontal: -2.0, vertical: -2.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['horizontal'] as IrNumberValue).value, -2.0);
+      expect((map['vertical'] as IrNumberValue).value, -2.0);
+    });
+
+    test('converts VisualDensity constructor with positive values', () {
+      final expr = parseExpression(
+        'VisualDensity(horizontal: 4.0, vertical: 4.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['horizontal'] as IrNumberValue).value, 4.0);
+      expect((map['vertical'] as IrNumberValue).value, 4.0);
+    });
+
+    test('converts const VisualDensity constructor to map', () {
+      final expr = parseExpression(
+        'const VisualDensity(horizontal: -1.0, vertical: 0.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['horizontal'] as IrNumberValue).value, -1.0);
+      expect((map['vertical'] as IrNumberValue).value, 0.0);
+    });
+  });
 }

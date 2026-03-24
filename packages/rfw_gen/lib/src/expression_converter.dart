@@ -39,6 +39,7 @@ class ExpressionConverter {
     'MaterialType',
     'TextBaseline',
     'BorderStyle',
+    'VisualDensity',
   };
 
   static const _knownGridDelegates = <String>{
@@ -220,6 +221,11 @@ class ExpressionConverter {
       return _convertBorder(expr.argumentList);
     }
 
+    // VisualDensity(horizontal: ..., vertical: ...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'VisualDensity') {
+      return _convertVisualDensity(expr.argumentList);
+    }
+
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
@@ -286,6 +292,7 @@ class ExpressionConverter {
       'Offset' => _convertOffset(argList),
       'BorderSide' => _convertBorderSide(argList),
       'Border' => _convertBorder(argList),
+      'VisualDensity' => _convertVisualDensity(argList),
       _ when _knownGridDelegates.contains(className) =>
         _convertGridDelegateFromArgs(argList),
       _ => throw UnsupportedExpressionError(
@@ -1022,6 +1029,19 @@ class ExpressionConverter {
       'Offset requires two positional arguments (x, y)',
       offset: argList.offset,
     );
+  }
+
+  IrMapValue _convertVisualDensity(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        if (name == 'horizontal' || name == 'vertical') {
+          entries[name] = IrNumberValue(_toDouble(arg.expression));
+        }
+      }
+    }
+    return IrMapValue(entries);
   }
 
   /// Converts a handler expression to an IR handler value.

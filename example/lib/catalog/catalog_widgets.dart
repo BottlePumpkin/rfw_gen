@@ -767,6 +767,28 @@ Widget buildProgressDemo() {
   );
 }
 
+@RfwWidget('visualDensityDemo')
+Widget buildVisualDensityDemo() {
+  return Column(
+    children: [
+      ListTile(
+        title: Text('Compact Density'),
+        visualDensity: VisualDensity.compact,
+      ),
+      Divider(),
+      ListTile(
+        title: Text('Comfortable Density'),
+        visualDensity: VisualDensity.comfortable,
+      ),
+      Divider(),
+      ListTile(
+        title: Text('Custom Density'),
+        visualDensity: const VisualDensity(horizontal: -4.0, vertical: -4.0),
+      ),
+    ],
+  );
+}
+
 @RfwWidget('overflowBarDemo')
 Widget buildOverflowBarDemo() {
   return OverflowBar(

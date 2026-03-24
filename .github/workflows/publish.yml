@@ -1,0 +1,29 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Publish rfw_gen
+        run: dart pub publish --directory packages/rfw_gen --force
+
+      - name: Wait for pub.dev indexing
+        run: sleep 60
+
+      - name: Patch rfw_gen_builder dependency for publishing
+        run: |
+          cd packages/rfw_gen_builder
+          sed -i '/rfw_gen:/,/path:/c\  rfw_gen: ^0.1.0' pubspec.yaml
+
+      - name: Publish rfw_gen_builder
+        run: dart pub publish --directory packages/rfw_gen_builder --force

@@ -207,6 +207,7 @@ class WidgetRegistry {
       ..._transformWidgets(),
       ..._interactionWidgets(),
       ..._otherWidgets(),
+      ..._animatedAliases(),
       ..._materialWidgets(),
     });
   }
@@ -748,6 +749,122 @@ class WidgetRegistry {
             'bottom': ParamMapping.direct('bottom'),
             'minimum': ParamMapping('minimum', transformer: 'edgeInsets'),
           },
+        ),
+      };
+
+  // ---------------------------------------------------------------------------
+  // Animated widget aliases (map to same RFW widgets as non-animated)
+  // ---------------------------------------------------------------------------
+
+  static Map<String, WidgetMapping> _animatedAliases() => const {
+        'AnimatedAlign': WidgetMapping(
+          rfwName: 'core.Align',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'widthFactor': ParamMapping.direct('widthFactor'),
+            'heightFactor': ParamMapping.direct('heightFactor'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+          handlerParams: {'onEnd'},
+        ),
+        'AnimatedContainer': WidgetMapping(
+          rfwName: 'core.Container',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'color': ParamMapping('color', transformer: 'color'),
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'margin': ParamMapping('margin', transformer: 'edgeInsets'),
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+            'alignment': ParamMapping('alignment', transformer: 'alignment'),
+            'decoration':
+                ParamMapping('decoration', transformer: 'boxDecoration'),
+            'foregroundDecoration': ParamMapping('foregroundDecoration',
+                transformer: 'boxDecoration'),
+            'constraints': ParamMapping.direct('constraints'),
+            'transform': ParamMapping.direct('transform'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+          handlerParams: {'onEnd'},
+        ),
+        'AnimatedPadding': WidgetMapping(
+          rfwName: 'core.Padding',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+          handlerParams: {'onEnd'},
+        ),
+        'AnimatedDefaultTextStyle': WidgetMapping(
+          rfwName: 'core.DefaultTextStyle',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'style': ParamMapping('style', transformer: 'textStyle'),
+            'textAlign': ParamMapping('textAlign', transformer: 'enum'),
+            'softWrap': ParamMapping.direct('softWrap'),
+            'overflow': ParamMapping('overflow', transformer: 'enum'),
+            'maxLines': ParamMapping.direct('maxLines'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+          handlerParams: {'onEnd'},
+        ),
+        'AnimatedOpacity': WidgetMapping(
+          rfwName: 'core.Opacity',
+          import: 'core.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {
+            'opacity': ParamMapping.direct('opacity'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+          handlerParams: {'onEnd'},
+        ),
+        'PositionedDirectional': WidgetMapping(
+          rfwName: 'core.Positioned',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'start': ParamMapping.direct('start'),
+            'top': ParamMapping.direct('top'),
+            'end': ParamMapping.direct('end'),
+            'bottom': ParamMapping.direct('bottom'),
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+          },
+        ),
+        'AnimatedPositionedDirectional': WidgetMapping(
+          rfwName: 'core.Positioned',
+          import: 'core.widgets',
+          childType: ChildType.child,
+          childParam: 'child',
+          params: {
+            'start': ParamMapping.direct('start'),
+            'top': ParamMapping.direct('top'),
+            'end': ParamMapping.direct('end'),
+            'bottom': ParamMapping.direct('bottom'),
+            'width': ParamMapping.direct('width'),
+            'height': ParamMapping.direct('height'),
+            'duration': ParamMapping('duration', transformer: 'duration'),
+            'curve': ParamMapping('curve', transformer: 'curve'),
+          },
+          handlerParams: {'onEnd'},
         ),
       };
 

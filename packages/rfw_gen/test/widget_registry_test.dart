@@ -85,7 +85,7 @@ void main() {
     });
 
     test('contains exactly 56 widgets', () {
-      expect(registry.supportedWidgets, hasLength(56));
+      expect(registry.supportedWidgets, hasLength(63));
     });
 
     test('supports Text, Column, Row, Container, SizedBox, Center', () {
@@ -1046,6 +1046,59 @@ Tapper:
       expect(registry.isSupported('Tapper'), isTrue);
       expect(registry.supportedWidgets['Tapper']!.handlerParams, {'onTap'});
       expect(registry.supportedWidgets['Tapper']!.childParam, 'child');
+    });
+  });
+
+  group('Animated widget aliases', () {
+    late WidgetRegistry registry;
+
+    setUp(() {
+      registry = WidgetRegistry.core();
+    });
+
+    test('AnimatedAlign maps to core.Align', () {
+      final mapping = registry.supportedWidgets['AnimatedAlign']!;
+      expect(mapping.rfwName, equals('core.Align'));
+      expect(mapping.params.containsKey('duration'), isTrue);
+      expect(mapping.params.containsKey('curve'), isTrue);
+    });
+
+    test('AnimatedContainer maps to core.Container', () {
+      final mapping = registry.supportedWidgets['AnimatedContainer']!;
+      expect(mapping.rfwName, equals('core.Container'));
+      expect(mapping.params.containsKey('duration'), isTrue);
+    });
+
+    test('AnimatedPadding maps to core.Padding', () {
+      final mapping = registry.supportedWidgets['AnimatedPadding']!;
+      expect(mapping.rfwName, equals('core.Padding'));
+      expect(mapping.params.containsKey('duration'), isTrue);
+    });
+
+    test('AnimatedDefaultTextStyle maps to core.DefaultTextStyle', () {
+      final mapping = registry.supportedWidgets['AnimatedDefaultTextStyle']!;
+      expect(mapping.rfwName, equals('core.DefaultTextStyle'));
+      expect(mapping.params.containsKey('duration'), isTrue);
+    });
+
+    test('AnimatedOpacity maps to core.Opacity', () {
+      final mapping = registry.supportedWidgets['AnimatedOpacity']!;
+      expect(mapping.rfwName, equals('core.Opacity'));
+      expect(mapping.params.containsKey('duration'), isTrue);
+    });
+
+    test('PositionedDirectional maps to core.Positioned', () {
+      final mapping = registry.supportedWidgets['PositionedDirectional']!;
+      expect(mapping.rfwName, equals('core.Positioned'));
+      expect(mapping.params.containsKey('start'), isTrue);
+      expect(mapping.params.containsKey('end'), isTrue);
+    });
+
+    test('AnimatedPositionedDirectional maps to core.Positioned', () {
+      final mapping = registry.supportedWidgets['AnimatedPositionedDirectional']!;
+      expect(mapping.rfwName, equals('core.Positioned'));
+      expect(mapping.params.containsKey('duration'), isTrue);
+      expect(mapping.params.containsKey('end'), isTrue);
     });
   });
 }

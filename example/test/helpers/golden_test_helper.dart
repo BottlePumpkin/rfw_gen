@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,8 +13,320 @@ import 'test_data.dart';
 // Network Image Mock
 // ============================================================
 
+// 1x1 투명 PNG (valid, base64: iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)
+final _kTransparentPng = base64Decode(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
+
 /// 모든 HTTP 요청에 1x1 투명 PNG를 반환하는 HttpOverrides.
-class TestHttpOverrides extends HttpOverrides {}
+/// 실제 네트워크 연결을 하지 않고 즉시 응답을 반환합니다.
+class TestHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return _MockHttpClient();
+  }
+}
+
+class _MockHttpClient implements HttpClient {
+  @override
+  Future<HttpClientRequest> getUrl(Uri url) async {
+    return _MockHttpClientRequest(url);
+  }
+
+  @override
+  Future<HttpClientRequest> get(String host, int port, String path) async {
+    return _MockHttpClientRequest(
+        Uri(scheme: 'http', host: host, port: port, path: path));
+  }
+
+  @override
+  Future<HttpClientRequest> openUrl(String method, Uri url) async {
+    return _MockHttpClientRequest(url);
+  }
+
+  @override
+  Future<HttpClientRequest> open(
+          String method, String host, int port, String path) async =>
+      _MockHttpClientRequest(
+          Uri(scheme: 'http', host: host, port: port, path: path));
+
+  @override
+  Future<HttpClientRequest> postUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+  @override
+  Future<HttpClientRequest> post(String host, int port, String path) async =>
+      _MockHttpClientRequest(
+          Uri(scheme: 'http', host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> putUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+  @override
+  Future<HttpClientRequest> put(String host, int port, String path) async =>
+      _MockHttpClientRequest(
+          Uri(scheme: 'http', host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> deleteUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+  @override
+  Future<HttpClientRequest> delete(
+          String host, int port, String path) async =>
+      _MockHttpClientRequest(
+          Uri(scheme: 'http', host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> headUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+  @override
+  Future<HttpClientRequest> head(String host, int port, String path) async =>
+      _MockHttpClientRequest(
+          Uri(scheme: 'http', host: host, port: port, path: path));
+  @override
+  Future<HttpClientRequest> patchUrl(Uri url) async =>
+      _MockHttpClientRequest(url);
+  @override
+  Future<HttpClientRequest> patch(String host, int port, String path) async =>
+      _MockHttpClientRequest(
+          Uri(scheme: 'http', host: host, port: port, path: path));
+
+  @override
+  bool autoUncompress = true;
+  @override
+  Duration? connectionTimeout;
+  @override
+  Duration idleTimeout = const Duration(seconds: 15);
+  @override
+  int? maxConnectionsPerHost;
+  @override
+  String? userAgent;
+
+  @override
+  void addCredentials(
+      Uri url, String realm, HttpClientCredentials credentials) {}
+  @override
+  void addProxyCredentials(
+      String host, int port, String realm, HttpClientCredentials credentials) {}
+  @override
+  set authenticate(
+      Future<bool> Function(Uri url, String scheme, String? realm)? f) {}
+  @override
+  set authenticateProxy(
+      Future<bool> Function(
+              String host, int port, String scheme, String? realm)?
+          f) {}
+  @override
+  set badCertificateCallback(
+      bool Function(X509Certificate cert, String host, int port)? callback) {}
+  @override
+  set connectionFactory(
+      Future<ConnectionTask<Socket>> Function(
+              Uri url, String? proxyHost, int? proxyPort)?
+          f) {}
+  @override
+  set findProxy(String Function(Uri url)? f) {}
+  @override
+  set keyLog(Function(String line)? callback) {}
+
+  @override
+  void close({bool force = false}) {}
+}
+
+class _MockHttpClientRequest implements HttpClientRequest {
+  final Uri _uri;
+  _MockHttpClientRequest(this._uri);
+
+  @override
+  Future<HttpClientResponse> close() async {
+    return _MockHttpClientResponse();
+  }
+
+  @override
+  HttpHeaders get headers => _MockHeaders();
+  @override
+  Encoding get encoding => utf8;
+  @override
+  set encoding(Encoding value) {}
+  @override
+  bool get bufferOutput => true;
+  @override
+  set bufferOutput(bool value) {}
+  @override
+  int get contentLength => -1;
+  @override
+  set contentLength(int value) {}
+  @override
+  bool get persistentConnection => true;
+  @override
+  set persistentConnection(bool value) {}
+  @override
+  bool get followRedirects => true;
+  @override
+  set followRedirects(bool value) {}
+  @override
+  int get maxRedirects => 5;
+  @override
+  set maxRedirects(int value) {}
+  @override
+  Uri get uri => _uri;
+  @override
+  String get method => 'GET';
+  @override
+  HttpConnectionInfo? get connectionInfo => null;
+  @override
+  List<Cookie> get cookies => [];
+
+  @override
+  void abort([Object? exception, StackTrace? stackTrace]) {}
+  @override
+  void add(List<int> data) {}
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) {}
+  @override
+  Future addStream(Stream<List<int>> stream) async {}
+  @override
+  Future flush() async {}
+  @override
+  void write(Object? obj) {}
+  @override
+  void writeAll(Iterable objects, [String separator = '']) {}
+  @override
+  void writeCharCode(int charCode) {}
+  @override
+  void writeln([Object? obj = '']) {}
+  @override
+  Future<HttpClientResponse> get done async => _MockHttpClientResponse();
+}
+
+class _MockHttpClientResponse extends Stream<List<int>>
+    implements HttpClientResponse {
+  @override
+  final int statusCode = 200;
+  @override
+  final String reasonPhrase = 'OK';
+  @override
+  final HttpHeaders headers = _MockHeaders();
+  @override
+  final int contentLength = -1;
+  @override
+  final bool persistentConnection = false;
+  @override
+  final bool isRedirect = false;
+  @override
+  final List<RedirectInfo> redirects = const [];
+  @override
+  final List<Cookie> cookies = const [];
+  @override
+  final HttpConnectionInfo? connectionInfo = null;
+  @override
+  final X509Certificate? certificate = null;
+
+  @override
+  StreamSubscription<List<int>> listen(
+    void Function(List<int>)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return Stream.fromIterable([_kTransparentPng]).listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
+  }
+
+  @override
+  HttpClientResponseCompressionState get compressionState =>
+      HttpClientResponseCompressionState.notCompressed;
+
+  @override
+  Future<Socket> detachSocket() =>
+      throw UnsupportedError('detachSocket not supported in mock');
+
+  @override
+  Future<HttpClientResponse> redirect(
+      [String? method, Uri? url, bool? followLoops]) async => this;
+}
+
+class _MockHeaders implements HttpHeaders {
+  final Map<String, List<String>> _headers = {
+    'content-type': ['image/png'],
+  };
+
+  @override
+  List<String>? operator [](String name) => _headers[name.toLowerCase()];
+
+  @override
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {
+    _headers.putIfAbsent(name.toLowerCase(), () => []).add(value.toString());
+  }
+
+  @override
+  String? value(String name) {
+    final vals = _headers[name.toLowerCase()];
+    return vals?.isEmpty == true ? null : vals?.first;
+  }
+
+  @override
+  void set(String name, Object value, {bool preserveHeaderCase = false}) {
+    _headers[name.toLowerCase()] = [value.toString()];
+  }
+
+  @override
+  void remove(String name, Object value) {
+    _headers[name.toLowerCase()]?.remove(value.toString());
+  }
+
+  @override
+  void removeAll(String name) => _headers.remove(name.toLowerCase());
+
+  @override
+  void forEach(void Function(String name, List<String> values) action) {
+    _headers.forEach(action);
+  }
+
+  @override
+  void noFolding(String name) {}
+
+  @override
+  void clear() => _headers.clear();
+
+  @override
+  bool get chunkedTransferEncoding => false;
+  @override
+  set chunkedTransferEncoding(bool value) {}
+  @override
+  int get contentLength => -1;
+  @override
+  set contentLength(int value) {}
+  @override
+  ContentType? get contentType => ContentType.parse('image/png');
+  @override
+  set contentType(ContentType? value) {}
+  @override
+  DateTime? get date => null;
+  @override
+  set date(DateTime? value) {}
+  @override
+  DateTime? get expires => null;
+  @override
+  set expires(DateTime? value) {}
+  @override
+  String? get host => null;
+  @override
+  set host(String? value) {}
+  @override
+  DateTime? get ifModifiedSince => null;
+  @override
+  set ifModifiedSince(DateTime? value) {}
+  @override
+  bool get persistentConnection => false;
+  @override
+  set persistentConnection(bool value) {}
+  @override
+  int? get port => null;
+  @override
+  set port(int? value) {}
+  @override
+  List<String> get transferEncoding => [];
+}
 
 // ============================================================
 // Tolerant Golden File Comparator

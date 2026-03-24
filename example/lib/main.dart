@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
       'containerDemo', 'paddingOpacityDemo', 'clipRRectDemo',
       'defaultTextStyleDemo', 'directionalityDemo',
       'iconDemo', 'iconThemeDemo', 'imageDemo',
-      'textDemo', 'coloredBoxDemo',
+      'textDemo', 'coloredBoxDemo', 'borderDemo',
     ],
     'Transform': [
       'rotationDemo', 'scaleDemo', 'fittedBoxDemo',
@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
     'Material': [
       'scaffoldDemo', 'materialDemo', 'cardDemo', 'buttonDemo',
       'listTileDemo', 'sliderDemo', 'drawerDemo', 'dividerDemo',
-      'progressDemo', 'overflowBarDemo',
+      'progressDemo', 'overflowBarDemo', 'visualDensityDemo',
     ],
     'Other': [
       'animationDefaultsDemo', 'safeAreaDemo', 'argsPatternDemo',

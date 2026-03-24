@@ -755,11 +755,15 @@ class ExpressionConverter {
               entries[name] = IrListValue(
                 list.elements.map((e) => convert(e as Expression)).toList(),
               );
+            } else {
+              entries[name] = convert(arg.expression);
             }
           case 'shape':
             if (arg.expression is PrefixedIdentifier) {
               final id = (arg.expression as PrefixedIdentifier).identifier.name;
               entries[name] = IrStringValue(id);
+            } else {
+              entries[name] = convert(arg.expression);
             }
         }
       }
@@ -816,6 +820,8 @@ class ExpressionConverter {
               entries[name] = IrListValue(
                 list.elements.map((e) => convert(e as Expression)).toList(),
               );
+            } else {
+              entries[name] = convert(arg.expression);
             }
           case 'stops':
             if (arg.expression is ListLiteral) {
@@ -823,11 +829,15 @@ class ExpressionConverter {
               entries[name] = IrListValue(
                 list.elements.map((e) => convert(e as Expression)).toList(),
               );
+            } else {
+              entries[name] = convert(arg.expression);
             }
           case 'tileMode':
             if (arg.expression is PrefixedIdentifier) {
               final id = (arg.expression as PrefixedIdentifier).identifier.name;
               entries[name] = IrStringValue(id);
+            } else {
+              entries[name] = convert(arg.expression);
             }
         }
       }
@@ -853,6 +863,8 @@ class ExpressionConverter {
               entries[name] = IrListValue(
                 list.elements.map((e) => convert(e as Expression)).toList(),
               );
+            } else {
+              entries[name] = convert(arg.expression);
             }
         }
       }

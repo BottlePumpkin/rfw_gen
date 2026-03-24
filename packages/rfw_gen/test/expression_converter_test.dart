@@ -1148,4 +1148,99 @@ void main() {
       );
     });
   });
+
+  group('Silent drop fixes', () {
+    test('BoxDecoration with valid color still works', () {
+      final expr = parseExpression('BoxDecoration(color: Color(0xFF000000))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('color'), isTrue);
+      expect(map.containsKey('type'), isTrue);
+    });
+
+    test('LinearGradient with valid colors list works', () {
+      final expr = parseExpression(
+        'LinearGradient(colors: [Color(0xFFFF0000), Color(0xFF0000FF)])',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('colors'), isTrue);
+      expect(map.containsKey('type'), isTrue);
+    });
+
+    test('BoxDecoration boxShadow non-list falls through to convert()', () {
+      // MethodInvocation is not ListLiteral — should not be silently dropped
+      final expr = parseExpression(
+        'BoxDecoration(boxShadow: getBoxShadows())',
+      );
+      // getBoxShadows() is a MethodInvocation which convert() cannot handle
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+
+    test('BoxDecoration shape non-prefixed falls through to convert()', () {
+      // MethodInvocation is not PrefixedIdentifier — should not be silently dropped
+      final expr = parseExpression(
+        'BoxDecoration(shape: getShape())',
+      );
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+
+    test('LinearGradient colors non-list falls through to convert()', () {
+      final expr = parseExpression(
+        'LinearGradient(colors: getColors())',
+      );
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+
+    test('LinearGradient stops non-list falls through to convert()', () {
+      final expr = parseExpression(
+        'LinearGradient(stops: getStops())',
+      );
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+
+    test('LinearGradient tileMode non-prefixed falls through to convert()', () {
+      final expr = parseExpression(
+        'LinearGradient(tileMode: getTileMode())',
+      );
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+
+    test('RadialGradient colors non-list falls through to convert()', () {
+      final expr = parseExpression(
+        'RadialGradient(colors: getColors())',
+      );
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+
+    test('RadialGradient stops non-list falls through to convert()', () {
+      final expr = parseExpression(
+        'RadialGradient(stops: getStops())',
+      );
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+  });
 }

@@ -664,6 +664,54 @@ void main() {
       });
     });
 
+    // NaN / Infinity guard tests
+    group('NaN and Infinity guard', () {
+      test('throws on NaN value', () {
+        final node = IrWidgetNode(
+          name: 'SizedBox',
+          properties: {'width': IrNumberValue(double.nan)},
+        );
+        expect(
+          () => emitter.emit(
+            widgetName: 'test',
+            root: node,
+            imports: {'core.widgets'},
+          ),
+          throwsStateError,
+        );
+      });
+
+      test('throws on Infinity value', () {
+        final node = IrWidgetNode(
+          name: 'SizedBox',
+          properties: {'width': IrNumberValue(double.infinity)},
+        );
+        expect(
+          () => emitter.emit(
+            widgetName: 'test',
+            root: node,
+            imports: {'core.widgets'},
+          ),
+          throwsStateError,
+        );
+      });
+
+      test('throws on negative Infinity value', () {
+        final node = IrWidgetNode(
+          name: 'SizedBox',
+          properties: {'width': IrNumberValue(double.negativeInfinity)},
+        );
+        expect(
+          () => emitter.emit(
+            widgetName: 'test',
+            root: node,
+            imports: {'core.widgets'},
+          ),
+          throwsStateError,
+        );
+      });
+    });
+
     // stateDecl tests
     group('stateDecl parameter', () {
       test('emits widget with stateDecl block', () {

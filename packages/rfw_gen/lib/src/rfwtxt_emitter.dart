@@ -102,6 +102,9 @@ class RfwtxtEmitter {
 
   /// Emits a double value. Whole numbers always show `.0`.
   String _emitNumber(double v) {
+    if (v.isNaN || v.isInfinite) {
+      throw StateError('Cannot emit special float value: $v');
+    }
     if (v == v.truncateToDouble()) {
       // Whole number — format without scientific notation.
       return '${v.truncate().toString()}.0';

@@ -364,9 +364,9 @@ Widget buildIconDemo() {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: [
-      Icon(icon: RfwIcon.home, size: 32.0, color: const Color(0xFF2196F3)),
-      Icon(icon: RfwIcon.favorite, size: 32.0, color: const Color(0xFFE91E63)),
-      Icon(icon: RfwIcon.star, size: 32.0, color: const Color(0xFFFF9800)),
+      Icon(RfwIcon.home, size: 32.0, color: const Color(0xFF2196F3)),
+      Icon(RfwIcon.favorite, size: 32.0, color: const Color(0xFFE91E63)),
+      Icon(RfwIcon.star, size: 32.0, color: const Color(0xFFFF9800)),
     ],
   );
 }
@@ -378,9 +378,9 @@ Widget buildIconThemeDemo() {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Icon(icon: RfwIcon.star),
-        Icon(icon: RfwIcon.favorite),
-        Icon(icon: RfwIcon.bookmark),
+        Icon(RfwIcon.star),
+        Icon(RfwIcon.favorite),
+        Icon(RfwIcon.bookmark),
       ],
     ),
   );
@@ -421,8 +421,8 @@ Widget buildColoredBoxDemo() {
       Placeholder(
         color: const Color(0xFFFF5722),
         strokeWidth: 2.0,
-        placeholderWidth: 100.0,
-        placeholderHeight: 50.0,
+        fallbackWidth: 100.0,
+        fallbackHeight: 50.0,
       ),
     ],
   );
@@ -612,7 +612,7 @@ Widget buildScaffoldDemo() {
     ),
     floatingActionButton: FloatingActionButton(
       onPressed: RfwHandler.event('fab.pressed', {}),
-      child: Icon(icon: RfwIcon.add),
+      child: Icon(RfwIcon.add),
     ),
   );
 }
@@ -673,15 +673,15 @@ Widget buildListTileDemo() {
   return Column(
     children: [
       ListTile(
-        leading: Icon(icon: RfwIcon.email, size: 40.0, color: const Color(0xFF2196F3)),
+        leading: Icon(RfwIcon.email, size: 40.0, color: const Color(0xFF2196F3)),
         title: Text('List Tile Title'),
         subtitle: Text('Subtitle text here'),
-        trailing: Icon(icon: RfwIcon.chevronRight),
+        trailing: Icon(RfwIcon.chevronRight),
         onTap: RfwHandler.event('listTile.tap', {}),
       ),
       Divider(),
       ListTile(
-        leading: Icon(icon: RfwIcon.settings, size: 40.0, color: const Color(0xFF757575)),
+        leading: Icon(RfwIcon.settings, size: 40.0, color: const Color(0xFF757575)),
         title: Text('Settings'),
         onTap: RfwHandler.event('listTile.settings', {}),
       ),
@@ -714,12 +714,12 @@ Widget buildDrawerDemo() {
       child: ListView(
         children: [
           ListTile(
-            leading: Icon(icon: RfwIcon.home),
+            leading: Icon(RfwIcon.home),
             title: Text('Home'),
             onTap: RfwHandler.event('drawer.home', {}),
           ),
           ListTile(
-            leading: Icon(icon: RfwIcon.settings),
+            leading: Icon(RfwIcon.settings),
             title: Text('Settings'),
             onTap: RfwHandler.event('drawer.settings', {}),
           ),

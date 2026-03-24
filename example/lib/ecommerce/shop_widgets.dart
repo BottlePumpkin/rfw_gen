@@ -61,7 +61,7 @@ Widget buildShopHome() {
                   onTap: RfwHandler.event('navigate', {'page': 'productList'}),
                   child: Column(
                     children: [
-                      Icon(icon: cat['icon'], size: 32.0, color: const Color(0xFF2196F3)),
+                      Icon(cat['icon'], size: 32.0, color: const Color(0xFF2196F3)),
                       SizedBox(height: 4.0),
                       Text(cat['name'], style: const TextStyle(fontSize: 12.0)),
                     ],
@@ -347,7 +347,7 @@ Widget buildCart() {
                     children: [
                       GestureDetector(
                         onTap: RfwHandler.event('cart.decrease', {'id': cartItem['id']}),
-                        child: Icon(icon: RfwIcon.remove, color: const Color(0xFF757575)),
+                        child: Icon(RfwIcon.remove, color: const Color(0xFF757575)),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -358,7 +358,7 @@ Widget buildCart() {
                       ),
                       GestureDetector(
                         onTap: RfwHandler.event('cart.increase', {'id': cartItem['id']}),
-                        child: Icon(icon: RfwIcon.add, color: const Color(0xFF2196F3)),
+                        child: Icon(RfwIcon.add, color: const Color(0xFF2196F3)),
                       ),
                     ],
                   ),
@@ -412,7 +412,7 @@ Widget buildOrderComplete() {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon: RfwIcon.check, size: 80.0, color: const Color(0xFF4CAF50)),
+          Icon(RfwIcon.check, size: 80.0, color: const Color(0xFF4CAF50)),
           SizedBox(height: 24.0),
           Text(
             '주문이 완료되었습니다!',

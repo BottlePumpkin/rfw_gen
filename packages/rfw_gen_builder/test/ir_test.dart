@@ -138,7 +138,8 @@ void main() {
         },
       );
       expect(node.properties['text'], isA<IrStringValue>());
-      expect((node.properties['text']! as IrStringValue).value, equals('Hello'));
+      expect(
+          (node.properties['text']! as IrStringValue).value, equals('Hello'));
       expect(node.properties['maxLines'], isA<IrIntValue>());
     });
 
@@ -164,11 +165,13 @@ void main() {
 
       final first = children.values[0] as IrWidgetNode;
       expect(first.name, equals('Text'));
-      expect((first.properties['text']! as IrStringValue).value, equals('First'));
+      expect(
+          (first.properties['text']! as IrStringValue).value, equals('First'));
 
       final second = children.values[1] as IrWidgetNode;
       expect(second.name, equals('Text'));
-      expect((second.properties['text']! as IrStringValue).value, equals('Second'));
+      expect((second.properties['text']! as IrStringValue).value,
+          equals('Second'));
     });
 
     test('is an IrValue', () {

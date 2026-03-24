@@ -336,8 +336,7 @@ class WidgetAstVisitor {
           value = expressionConverter.convert(arg.expression);
         } else if (name == 'cases') {
           if (arg.expression is SetOrMapLiteral) {
-            for (final entry
-                in (arg.expression as SetOrMapLiteral).elements) {
+            for (final entry in (arg.expression as SetOrMapLiteral).elements) {
               if (entry is MapLiteralEntry) {
                 final key = expressionConverter.convert(entry.key);
                 final val = _convertWidgetOrSpecial(entry.value);

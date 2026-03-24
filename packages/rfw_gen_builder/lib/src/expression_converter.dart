@@ -71,7 +71,8 @@ class ExpressionConverter {
   }
 
   IrListValue _convertListLiteral(ListLiteral expr) {
-    return IrListValue(expr.elements.map((e) => convert(e as Expression)).toList());
+    return IrListValue(
+        expr.elements.map((e) => convert(e as Expression)).toList());
   }
 
   IrValue _convertPrefixExpression(PrefixExpression expr) {
@@ -117,8 +118,10 @@ class ExpressionConverter {
 
     // Color.fromARGB / Color.fromRGBO — parses as MethodInvocation with target 'Color'
     if (target is SimpleIdentifier && target.name == 'Color') {
-      if (methodName == 'fromARGB') return _convertColorFromARGB(expr.argumentList);
-      if (methodName == 'fromRGBO') return _convertColorFromRGBO(expr.argumentList);
+      if (methodName == 'fromARGB')
+        return _convertColorFromARGB(expr.argumentList);
+      if (methodName == 'fromRGBO')
+        return _convertColorFromRGBO(expr.argumentList);
     }
 
     // Color(0xFFxxxxxx) — parses as MethodInvocation with no target
@@ -227,7 +230,9 @@ class ExpressionConverter {
     }
 
     // RoundedRectangleBorder/CircleBorder/StadiumBorder(...) — ShapeBorder types
-    if (target == null && const {'RoundedRectangleBorder', 'CircleBorder', 'StadiumBorder'}.contains(methodName)) {
+    if (target == null &&
+        const {'RoundedRectangleBorder', 'CircleBorder', 'StadiumBorder'}
+            .contains(methodName)) {
       return _convertShapeBorder(methodName, expr.argumentList);
     }
 
@@ -247,8 +252,7 @@ class ExpressionConverter {
   IrValue _convertInstanceCreation(InstanceCreationExpression expr) {
     final rawTypeName = expr.constructorName.type.name.lexeme;
     final rawConstructorName = expr.constructorName.name?.name;
-    final importPrefix =
-        expr.constructorName.type.importPrefix?.name.lexeme;
+    final importPrefix = expr.constructorName.type.importPrefix?.name.lexeme;
     final argList = expr.argumentList;
 
     // Reconstruct real class name and constructor name.
@@ -268,7 +272,8 @@ class ExpressionConverter {
     if (constructorName != null) {
       return switch (className) {
         'EdgeInsets' => _convertEdgeInsets(constructorName, argList),
-        'EdgeInsetsDirectional' => _convertEdgeInsetsDirectional(constructorName, argList),
+        'EdgeInsetsDirectional' =>
+          _convertEdgeInsetsDirectional(constructorName, argList),
         'BorderRadius' => _convertBorderRadius(constructorName, argList),
         'Radius' when constructorName == 'circular' =>
           IrMapValue({'x': IrNumberValue(_toDouble(argList.arguments.first))}),
@@ -458,7 +463,8 @@ class ExpressionConverter {
     ]);
   }
 
-  IrListValue _convertEdgeInsetsDirectional(String method, ArgumentList argList) {
+  IrListValue _convertEdgeInsetsDirectional(
+      String method, ArgumentList argList) {
     switch (method) {
       case 'all':
         return _convertEdgeInsetsAll(argList);
@@ -514,7 +520,9 @@ class ExpressionConverter {
     }
 
     if (prefix == 'BorderRadius' && identifier == 'zero') {
-      return IrListValue([IrMapValue({'x': IrNumberValue(0.0)})]);
+      return IrListValue([
+        IrMapValue({'x': IrNumberValue(0.0)})
+      ]);
     }
 
     if (prefix == 'RfwIcon') {
@@ -644,12 +652,16 @@ class ExpressionConverter {
 
   IrListValue _convertBorderRadiusAll(ArgumentList argList) {
     final radiusValue = _extractRadiusValue(argList.arguments.first);
-    return IrListValue([IrMapValue({'x': IrNumberValue(radiusValue)})]);
+    return IrListValue([
+      IrMapValue({'x': IrNumberValue(radiusValue)})
+    ]);
   }
 
   IrListValue _convertBorderRadiusCircular(ArgumentList argList) {
     final value = _toDouble(argList.arguments.first);
-    return IrListValue([IrMapValue({'x': IrNumberValue(value)})]);
+    return IrListValue([
+      IrMapValue({'x': IrNumberValue(value)})
+    ]);
   }
 
   IrListValue _convertBorderRadiusOnly(ArgumentList argList) {
@@ -1125,9 +1137,7 @@ class ExpressionConverter {
     for (final element in expr.elements) {
       if (element is MapLiteralEntry) {
         final key = element.key;
-        final keyStr = key is SimpleStringLiteral
-            ? key.value
-            : key.toString();
+        final keyStr = key is SimpleStringLiteral ? key.value : key.toString();
         entries[keyStr] = convert(element.value);
       }
       // Non-MapLiteralEntry elements (Set literals) are skipped safely
@@ -1177,8 +1187,7 @@ class ExpressionConverter {
           value = convert(arg.expression);
         } else if (name == 'cases') {
           if (arg.expression is SetOrMapLiteral) {
-            for (final entry
-                in (arg.expression as SetOrMapLiteral).elements) {
+            for (final entry in (arg.expression as SetOrMapLiteral).elements) {
               if (entry is MapLiteralEntry) {
                 cases[convert(entry.key)] = convert(entry.value);
               }

@@ -25,7 +25,8 @@ class RfwIcon {
   static const int expandLess = 0xe232;
   static const int moreVert = 0xe3e1;
   static const int moreHoriz = 0xe3df;
-  static const int arrowBackIos = 0xe093; // alias for arrowForward codepoint varies
+  static const int arrowBackIos =
+      0xe093; // alias for arrowForward codepoint varies
   static const int arrowForwardIos = 0xe093;
   static const int firstPage = 0xe268;
   static const int lastPage = 0xe39b;
@@ -236,7 +237,8 @@ class RfwIcon {
     'message': message, 'comment': comment, 'forum': forum,
     'call': call, 'contactPhone': contactPhone, 'contactMail': contactMail,
     'chatBubble': chatBubble, 'chatBubbleOutline': chatBubbleOutline,
-    'notificationsActive': notificationsActive, 'notificationsOff': notificationsOff,
+    'notificationsActive': notificationsActive,
+    'notificationsOff': notificationsOff,
 
     // Social
     'person': person, 'personAdd': personAdd, 'personOutline': personOutline,
@@ -272,7 +274,8 @@ class RfwIcon {
     'warningAmber': warningAmber, 'error': error, 'errorOutline': errorOutline,
     'help': help, 'helpOutline': helpOutline, 'visibility': visibility,
     'visibilityOff': visibilityOff, 'lock': lock, 'lockOpen': lockOpen,
-    'reportProblem': reportProblem, 'block': block, 'doNotDisturb': doNotDisturb,
+    'reportProblem': reportProblem, 'block': block,
+    'doNotDisturb': doNotDisturb,
 
     // Maps / Places
     'place': place, 'map': map, 'myLocation': myLocation,

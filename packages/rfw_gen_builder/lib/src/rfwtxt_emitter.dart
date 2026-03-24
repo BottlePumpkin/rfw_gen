@@ -80,9 +80,8 @@ class RfwtxtEmitter {
       IrMapValue v => _emitMap(v, indent: indent),
       IrWidgetNode v => _emitWidget(v, indent: indent),
       IrSetStateValue v =>
-          'set state.${v.field} = ${_emitValue(v.value, indent: indent)}',
-      IrSetStateFromArgValue v =>
-          'set state.${v.field} = args.${v.argName}',
+        'set state.${v.field} = ${_emitValue(v.value, indent: indent)}',
+      IrSetStateFromArgValue v => 'set state.${v.field} = args.${v.argName}',
       IrEventValue v => _emitEvent(v, indent: indent),
       IrDataRef v => 'data.${v.path}',
       IrArgsRef v => 'args.${v.path}',

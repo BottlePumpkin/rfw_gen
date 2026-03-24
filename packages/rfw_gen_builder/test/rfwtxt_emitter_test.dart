@@ -395,8 +395,7 @@ void main() {
       );
 
       final lines = result.split('\n');
-      final importLines =
-          lines.where((l) => l.startsWith('import ')).toList();
+      final importLines = lines.where((l) => l.startsWith('import ')).toList();
       expect(importLines.length, equals(3));
       // They should be sorted
       expect(importLines, equals(importLines.toList()..sort()));
@@ -511,7 +510,8 @@ void main() {
         final node = IrWidgetNode(name: 'GestureDetector', properties: {
           'onTap': IrSetStateValue('pressed', IrBoolValue(true)),
         });
-        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        final output = emitter
+            .emit(widgetName: 'test', root: node, imports: {'core.widgets'});
         expect(output, contains('onTap: set state.pressed = true'));
       });
 
@@ -519,15 +519,18 @@ void main() {
         final node = IrWidgetNode(name: 'Slider', properties: {
           'onChanged': IrSetStateFromArgValue('sliderValue'),
         });
-        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
-        expect(output, contains('onChanged: set state.sliderValue = args.value'));
+        final output = emitter
+            .emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        expect(
+            output, contains('onChanged: set state.sliderValue = args.value'));
       });
 
       test('emits event without args', () {
         final node = IrWidgetNode(name: 'ElevatedButton', properties: {
           'onPressed': IrEventValue('button.click'),
         });
-        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        final output = emitter
+            .emit(widgetName: 'test', root: node, imports: {'core.widgets'});
         expect(output, contains('onPressed: event "button.click" {}'));
       });
 
@@ -538,7 +541,8 @@ void main() {
             'quantity': IrIntValue(1),
           }),
         });
-        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        final output = emitter
+            .emit(widgetName: 'test', root: node, imports: {'core.widgets'});
         expect(output, contains('event "cart.add"'));
         expect(output, contains('itemId:'));
         expect(output, contains('quantity:'));
@@ -548,7 +552,8 @@ void main() {
         final node = IrWidgetNode(name: 'Widget', properties: {
           'onTap': IrSetStateValue('count', IrIntValue(0)),
         });
-        final output = emitter.emit(widgetName: 'test', root: node, imports: {'core.widgets'});
+        final output = emitter
+            .emit(widgetName: 'test', root: node, imports: {'core.widgets'});
         expect(output, contains('set state.count ='));
       });
     });
@@ -812,7 +817,9 @@ void main() {
         expect(output, contains('} = '));
       });
 
-      test('emit without stateDecl produces unchanged behavior (backward compat)', () {
+      test(
+          'emit without stateDecl produces unchanged behavior (backward compat)',
+          () {
         final root = IrWidgetNode(
           name: 'Text',
           properties: {'text': IrStringValue('Hello')},

@@ -384,15 +384,19 @@ Widget build() {
     // Widget-value param auto-detection
     // -----------------------------------------------------------------
 
-    test('widget-value param: unknown param with registered widget is converted', () {
+    test(
+        'widget-value param: unknown param with registered widget is converted',
+        () {
       // Register a custom widget with optionalChild that has a non-standard widget param
-      registry.register('ConditionalWidget', const WidgetMapping(
-        rfwName: 'ConditionalWidget',
-        import: 'custom.widgets',
-        childType: ChildType.optionalChild,
-        childParam: 'child',
-        params: {},
-      ));
+      registry.register(
+          'ConditionalWidget',
+          const WidgetMapping(
+            rfwName: 'ConditionalWidget',
+            import: 'custom.widgets',
+            childType: ChildType.optionalChild,
+            childParam: 'child',
+            params: {},
+          ));
       visitor = WidgetAstVisitor(
         registry: registry,
         expressionConverter: expressionConverter,
@@ -415,19 +419,24 @@ Widget build() {
       expect(nullChild.name, 'Text');
     });
 
-    test('widget-value param: deeply nested widget-value params are converted', () {
-      registry.register('Outer', const WidgetMapping(
-        rfwName: 'Outer',
-        import: 'custom.widgets',
-        childType: ChildType.none,
-        params: {},
-      ));
-      registry.register('Inner', const WidgetMapping(
-        rfwName: 'Inner',
-        import: 'custom.widgets',
-        childType: ChildType.none,
-        params: {},
-      ));
+    test('widget-value param: deeply nested widget-value params are converted',
+        () {
+      registry.register(
+          'Outer',
+          const WidgetMapping(
+            rfwName: 'Outer',
+            import: 'custom.widgets',
+            childType: ChildType.none,
+            params: {},
+          ));
+      registry.register(
+          'Inner',
+          const WidgetMapping(
+            rfwName: 'Inner',
+            import: 'custom.widgets',
+            childType: ChildType.none,
+            params: {},
+          ));
       visitor = WidgetAstVisitor(
         registry: registry,
         expressionConverter: expressionConverter,
@@ -447,13 +456,16 @@ Widget build() {
       expect((slot.properties['label'] as IrStringValue).value, 'hello');
     });
 
-    test('widget-value param: non-widget unknown params still pass through', () {
-      registry.register('MyWidget', const WidgetMapping(
-        rfwName: 'MyWidget',
-        import: 'custom.widgets',
-        childType: ChildType.none,
-        params: {},
-      ));
+    test('widget-value param: non-widget unknown params still pass through',
+        () {
+      registry.register(
+          'MyWidget',
+          const WidgetMapping(
+            rfwName: 'MyWidget',
+            import: 'custom.widgets',
+            childType: ChildType.none,
+            params: {},
+          ));
       visitor = WidgetAstVisitor(
         registry: registry,
         expressionConverter: expressionConverter,

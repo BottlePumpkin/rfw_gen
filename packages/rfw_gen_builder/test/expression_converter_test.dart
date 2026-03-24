@@ -160,8 +160,8 @@ void main() {
 
   group('EdgeInsets.symmetric', () {
     test('converts symmetric with both horizontal and vertical', () {
-      final expr =
-          parseExpression('EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)');
+      final expr = parseExpression(
+          'EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)');
       final result = converter.convert(expr);
       expect(result, isA<IrListValue>());
       final list = result as IrListValue;
@@ -251,8 +251,7 @@ void main() {
     });
 
     test('converts EdgeInsetsDirectional.only(start: 16)', () {
-      final expr =
-          parseExpression('EdgeInsetsDirectional.only(start: 16.0)');
+      final expr = parseExpression('EdgeInsetsDirectional.only(start: 16.0)');
       final result = converter.convert(expr);
       expect(result, isA<IrListValue>());
       final list = (result as IrListValue).values;
@@ -485,7 +484,8 @@ void main() {
 
   group('ImageProvider', () {
     test('converts NetworkImage to map with source', () {
-      final expr = parseExpression("NetworkImage('https://example.com/img.png')");
+      final expr =
+          parseExpression("NetworkImage('https://example.com/img.png')");
       final result = converter.convert(expr);
       expect(result, isA<IrMapValue>());
       final map = result as IrMapValue;
@@ -527,8 +527,10 @@ void main() {
       expect(result, isA<IrMapValue>());
       final map = result as IrMapValue;
       expect((map.entries['crossAxisCount'] as IrIntValue).value, equals(2));
-      expect((map.entries['mainAxisSpacing'] as IrNumberValue).value, equals(4.0));
-      expect((map.entries['crossAxisSpacing'] as IrNumberValue).value, equals(4.0));
+      expect(
+          (map.entries['mainAxisSpacing'] as IrNumberValue).value, equals(4.0));
+      expect((map.entries['crossAxisSpacing'] as IrNumberValue).value,
+          equals(4.0));
     });
 
     test('converts SliverGridDelegateWithMaxCrossAxisExtent', () {
@@ -540,7 +542,8 @@ void main() {
       final result = converter.convert(expr);
       expect(result, isA<IrMapValue>());
       final map = result as IrMapValue;
-      expect((map.entries['maxCrossAxisExtent'] as IrNumberValue).value, equals(200.0));
+      expect((map.entries['maxCrossAxisExtent'] as IrNumberValue).value,
+          equals(200.0));
     });
   });
 
@@ -681,8 +684,8 @@ void main() {
 
   group('RfwConcat', () {
     test('converts RfwConcat with mixed parts', () {
-      final expr = parseExpression(
-          "RfwConcat(['Hello, ', DataRef('name'), '!'])");
+      final expr =
+          parseExpression("RfwConcat(['Hello, ', DataRef('name'), '!'])");
       final result = converter.convert(expr);
       expect(result, isA<IrConcat>());
       final concat = result as IrConcat;
@@ -926,8 +929,8 @@ void main() {
 
   group('const NetworkImage (InstanceCreationExpression)', () {
     test('converts const NetworkImage url', () {
-      final expr = parseExpression(
-          "const NetworkImage('https://example.com/img.png')");
+      final expr =
+          parseExpression("const NetworkImage('https://example.com/img.png')");
       final result = converter.convert(expr);
       expect(result, isA<IrMapValue>());
       final map = result as IrMapValue;
@@ -1005,8 +1008,7 @@ void main() {
 
   group('BoxDecoration', () {
     test('converts BoxDecoration with color', () {
-      final expr =
-          parseExpression('BoxDecoration(color: Color(0xFF2196F3))');
+      final expr = parseExpression('BoxDecoration(color: Color(0xFF2196F3))');
       final result = converter.convert(expr);
       expect(result, isA<IrMapValue>());
       final map = result as IrMapValue;
@@ -1063,8 +1065,7 @@ void main() {
       expect(result, isA<IrMapValue>());
       final map = result as IrMapValue;
       expect((map.entries['color'] as IrIntValue).value, equals(0x40000000));
-      expect(
-          (map.entries['blurRadius'] as IrNumberValue).value, equals(8.0));
+      expect((map.entries['blurRadius'] as IrNumberValue).value, equals(8.0));
       final offset = map.entries['offset'] as IrMapValue;
       expect((offset.entries['x'] as IrNumberValue).value, equals(0.0));
       expect((offset.entries['y'] as IrNumberValue).value, equals(4.0));

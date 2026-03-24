@@ -26,7 +26,13 @@ class Rotation {
   final Object? curve;
   final Object? child;
   final Object? onEnd;
-  const Rotation({this.turns, this.alignment, this.duration, this.curve, this.child, this.onEnd});
+  const Rotation(
+      {this.turns,
+      this.alignment,
+      this.duration,
+      this.curve,
+      this.child,
+      this.onEnd});
 }
 
 /// Scale transform with implicit animation support.
@@ -38,7 +44,13 @@ class Scale {
   final Object? curve;
   final Object? child;
   final Object? onEnd;
-  const Scale({this.scale, this.alignment, this.duration, this.curve, this.child, this.onEnd});
+  const Scale(
+      {this.scale,
+      this.alignment,
+      this.duration,
+      this.curve,
+      this.child,
+      this.onEnd});
 }
 
 /// Sets default animation duration and curve for descendant widgets.

@@ -9,13 +9,15 @@ void main() {
     });
 
     test('contains none, child, optionalChild, childList, namedSlots', () {
-      expect(ChildType.values, containsAll([
-        ChildType.none,
-        ChildType.child,
-        ChildType.optionalChild,
-        ChildType.childList,
-        ChildType.namedSlots,
-      ]));
+      expect(
+          ChildType.values,
+          containsAll([
+            ChildType.none,
+            ChildType.child,
+            ChildType.optionalChild,
+            ChildType.childList,
+            ChildType.namedSlots,
+          ]));
     });
   });
 
@@ -179,7 +181,8 @@ void main() {
 
       test('has crossAxisAlignment param with enum transformer', () {
         expect(column.params.containsKey('crossAxisAlignment'), isTrue);
-        expect(column.params['crossAxisAlignment']!.transformer, equals('enum'));
+        expect(
+            column.params['crossAxisAlignment']!.transformer, equals('enum'));
       });
 
       test('has verticalDirection param with enum transformer', () {
@@ -287,7 +290,8 @@ void main() {
 
       test('has decoration param with boxDecoration transformer', () {
         expect(container.params.containsKey('decoration'), isTrue);
-        expect(container.params['decoration']!.transformer, equals('boxDecoration'));
+        expect(container.params['decoration']!.transformer,
+            equals('boxDecoration'));
       });
 
       test('import is core.widgets', () {
@@ -332,9 +336,19 @@ void main() {
     group('Layout widgets', () {
       test('supports all layout widgets', () {
         for (final name in [
-          'Align', 'AspectRatio', 'Expanded', 'Flexible', 'FittedBox',
-          'FractionallySizedBox', 'IntrinsicHeight', 'IntrinsicWidth',
-          'SizedBoxExpand', 'SizedBoxShrink', 'Spacer', 'Stack', 'Wrap',
+          'Align',
+          'AspectRatio',
+          'Expanded',
+          'Flexible',
+          'FittedBox',
+          'FractionallySizedBox',
+          'IntrinsicHeight',
+          'IntrinsicWidth',
+          'SizedBoxExpand',
+          'SizedBoxShrink',
+          'Spacer',
+          'Stack',
+          'Wrap',
         ]) {
           expect(registry.isSupported(name), isTrue, reason: '$name not found');
         }
@@ -438,7 +452,12 @@ void main() {
 
     group('Scrolling widgets', () {
       test('supports all scrolling widgets', () {
-        for (final name in ['ListView', 'GridView', 'SingleChildScrollView', 'ListBody']) {
+        for (final name in [
+          'ListView',
+          'GridView',
+          'SingleChildScrollView',
+          'ListBody'
+        ]) {
           expect(registry.isSupported(name), isTrue, reason: '$name not found');
         }
       });
@@ -476,8 +495,16 @@ void main() {
     group('Styling widgets', () {
       test('supports all styling widgets', () {
         for (final name in [
-          'Padding', 'ClipRRect', 'ColoredBox', 'DefaultTextStyle',
-          'Directionality', 'Icon', 'IconTheme', 'Image', 'Opacity', 'Placeholder',
+          'Padding',
+          'ClipRRect',
+          'ColoredBox',
+          'DefaultTextStyle',
+          'Directionality',
+          'Icon',
+          'IconTheme',
+          'Image',
+          'Opacity',
+          'Placeholder',
         ]) {
           expect(registry.isSupported(name), isTrue, reason: '$name not found');
         }
@@ -559,8 +586,10 @@ void main() {
         final mapping = registry.supportedWidgets['Placeholder']!;
         expect(mapping.params.containsKey('fallbackWidth'), isTrue);
         expect(mapping.params.containsKey('fallbackHeight'), isTrue);
-        expect(mapping.params['fallbackWidth']!.rfwName, equals('placeholderWidth'));
-        expect(mapping.params['fallbackHeight']!.rfwName, equals('placeholderHeight'));
+        expect(mapping.params['fallbackWidth']!.rfwName,
+            equals('placeholderWidth'));
+        expect(mapping.params['fallbackHeight']!.rfwName,
+            equals('placeholderHeight'));
       });
 
       test('Directionality has textDirection enum', () {
@@ -645,11 +674,23 @@ void main() {
     group('Material widgets', () {
       test('supports all 17 material widgets', () {
         for (final name in [
-          'Scaffold', 'AppBar', 'ListTile', 'Card', 'Material',
-          'ElevatedButton', 'TextButton', 'OutlinedButton',
-          'FloatingActionButton', 'InkWell', 'Divider', 'VerticalDivider',
-          'CircularProgressIndicator', 'LinearProgressIndicator',
-          'Drawer', 'OverflowBar', 'Slider',
+          'Scaffold',
+          'AppBar',
+          'ListTile',
+          'Card',
+          'Material',
+          'ElevatedButton',
+          'TextButton',
+          'OutlinedButton',
+          'FloatingActionButton',
+          'InkWell',
+          'Divider',
+          'VerticalDivider',
+          'CircularProgressIndicator',
+          'LinearProgressIndicator',
+          'Drawer',
+          'OverflowBar',
+          'Slider',
         ]) {
           expect(registry.isSupported(name), isTrue, reason: '$name not found');
         }
@@ -706,7 +747,13 @@ void main() {
       });
 
       test('all material widgets use material import', () {
-        for (final name in ['Scaffold', 'AppBar', 'Card', 'ElevatedButton', 'Divider']) {
+        for (final name in [
+          'Scaffold',
+          'AppBar',
+          'Card',
+          'ElevatedButton',
+          'Divider'
+        ]) {
           expect(registry.supportedWidgets[name]!.import, equals('material'));
         }
       });
@@ -790,11 +837,13 @@ void main() {
       final registry = WidgetRegistry.core();
       final beforeCount = registry.supportedWidgets.length;
 
-      registry.register('NewWidget', const WidgetMapping(
-        rfwName: 'core.NewWidget',
-        params: {},
-        import: 'core.widgets',
-      ));
+      registry.register(
+          'NewWidget',
+          const WidgetMapping(
+            rfwName: 'core.NewWidget',
+            params: {},
+            import: 'core.widgets',
+          ));
 
       expect(registry.supportedWidgets.length, equals(beforeCount + 1));
     });
@@ -811,7 +860,8 @@ void main() {
       registry.register('Text', newTextMapping);
 
       expect(registry.supportedWidgets['Text']!.rfwName, equals('custom.Text'));
-      expect(registry.supportedWidgets['Text']!.positionalParam, equals('content'));
+      expect(registry.supportedWidgets['Text']!.positionalParam,
+          equals('content'));
     });
   });
 
@@ -892,7 +942,9 @@ void main() {
     test('throws when import is missing', () {
       final registry = WidgetRegistry();
       expect(
-        () => registry.registerFromConfig({'Bad': {'child_type': 'none'}}),
+        () => registry.registerFromConfig({
+          'Bad': {'child_type': 'none'}
+        }),
         throwsA(isA<ArgumentError>().having(
           (e) => e.message,
           'message',
@@ -964,7 +1016,9 @@ void main() {
       );
     });
 
-    test('throws when named_child_slots provided with non-namedSlots child_type', () {
+    test(
+        'throws when named_child_slots provided with non-namedSlots child_type',
+        () {
       final registry = WidgetRegistry();
       expect(
         () => registry.registerFromConfig({
@@ -1017,7 +1071,10 @@ void main() {
       registry.registerFromConfig({
         'A': {'import': 'lib.a'},
         'B': {'import': 'lib.b', 'child_type': 'child'},
-        'C': {'import': 'lib.c', 'handlers': ['onTap']},
+        'C': {
+          'import': 'lib.c',
+          'handlers': ['onTap']
+        },
       });
       expect(registry.isSupported('A'), isTrue);
       expect(registry.isSupported('B'), isTrue);
@@ -1042,7 +1099,8 @@ Tapper:
       registry.registerFromConfig(Map<String, dynamic>.from(parsed));
 
       expect(registry.isSupported('MystiqueText'), isTrue);
-      expect(registry.supportedWidgets['MystiqueText']!.import, 'mystique.widgets');
+      expect(registry.supportedWidgets['MystiqueText']!.import,
+          'mystique.widgets');
       expect(registry.isSupported('Tapper'), isTrue);
       expect(registry.supportedWidgets['Tapper']!.handlerParams, {'onTap'});
       expect(registry.supportedWidgets['Tapper']!.childParam, 'child');
@@ -1095,7 +1153,8 @@ Tapper:
     });
 
     test('AnimatedPositionedDirectional maps to core.Positioned', () {
-      final mapping = registry.supportedWidgets['AnimatedPositionedDirectional']!;
+      final mapping =
+          registry.supportedWidgets['AnimatedPositionedDirectional']!;
       expect(mapping.rfwName, equals('core.Positioned'));
       expect(mapping.params.containsKey('duration'), isTrue);
       expect(mapping.params.containsKey('end'), isTrue);

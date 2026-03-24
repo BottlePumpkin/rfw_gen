@@ -26,8 +26,7 @@ class RfwHandler {
       RfwSetStateFromArg(field, argName);
 
   /// Event dispatch: `event "name" { key: value, ... }`
-  static RfwEvent event(String name,
-          [Map<String, dynamic> args = const {}]) =>
+  static RfwEvent event(String name, [Map<String, dynamic> args = const {}]) =>
       RfwEvent(name, args);
 }
 

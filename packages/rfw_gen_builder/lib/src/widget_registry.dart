@@ -132,9 +132,7 @@ class WidgetRegistry {
       }
 
       final childType = _parseChildType(config['child_type'] as String?);
-      final handlers = (config['handlers'] as List?)
-              ?.cast<String>()
-              .toSet() ??
+      final handlers = (config['handlers'] as List?)?.cast<String>().toSet() ??
           const <String>{};
 
       // Validate named_child_slots
@@ -167,8 +165,7 @@ class WidgetRegistry {
       }
 
       final childParam = config['child_param'] as String? ??
-          (childType == ChildType.child ||
-                  childType == ChildType.optionalChild
+          (childType == ChildType.child || childType == ChildType.optionalChild
               ? 'child'
               : childType == ChildType.childList
                   ? 'children'
@@ -391,8 +388,7 @@ class WidgetRegistry {
           childParam: 'children',
           params: {
             'alignment': ParamMapping('alignment', transformer: 'alignment'),
-            'textDirection':
-                ParamMapping('textDirection', transformer: 'enum'),
+            'textDirection': ParamMapping('textDirection', transformer: 'enum'),
             'fit': ParamMapping('fit', transformer: 'enum'),
             'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
           },
@@ -410,8 +406,7 @@ class WidgetRegistry {
             'runSpacing': ParamMapping.direct('runSpacing'),
             'crossAxisAlignment':
                 ParamMapping('crossAxisAlignment', transformer: 'enum'),
-            'textDirection':
-                ParamMapping('textDirection', transformer: 'enum'),
+            'textDirection': ParamMapping('textDirection', transformer: 'enum'),
             'verticalDirection':
                 ParamMapping('verticalDirection', transformer: 'enum'),
             'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
@@ -512,8 +507,7 @@ class WidgetRegistry {
           childType: ChildType.child,
           childParam: 'child',
           params: {
-            'textDirection':
-                ParamMapping('textDirection', transformer: 'enum'),
+            'textDirection': ParamMapping('textDirection', transformer: 'enum'),
           },
         ),
         'Icon': WidgetMapping(
@@ -543,7 +537,8 @@ class WidgetRegistry {
           childType: ChildType.optionalChild,
           childParam: 'child',
           params: {
-            'image': ParamMapping('imageProvider', transformer: 'imageProvider'),
+            'image':
+                ParamMapping('imageProvider', transformer: 'imageProvider'),
             'imageProvider': ParamMapping.direct('imageProvider'),
             'semanticLabel': ParamMapping.direct('semanticLabel'),
             'width': ParamMapping.direct('width'),
@@ -936,8 +931,7 @@ class WidgetRegistry {
           childParam: 'child',
           params: {
             'autofocus': ParamMapping.direct('autofocus'),
-            'clipBehavior':
-                ParamMapping('clipBehavior', transformer: 'enum'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
           },
           handlerParams: {'onPressed', 'onLongPress'},
         ),
@@ -948,8 +942,7 @@ class WidgetRegistry {
           childParam: 'child',
           params: {
             'autofocus': ParamMapping.direct('autofocus'),
-            'clipBehavior':
-                ParamMapping('clipBehavior', transformer: 'enum'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
           },
           handlerParams: {'onPressed', 'onLongPress'},
         ),
@@ -960,8 +953,7 @@ class WidgetRegistry {
           childParam: 'child',
           params: {
             'autofocus': ParamMapping.direct('autofocus'),
-            'clipBehavior':
-                ParamMapping('clipBehavior', transformer: 'enum'),
+            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
           },
           handlerParams: {'onPressed', 'onLongPress'},
         ),
@@ -985,8 +977,7 @@ class WidgetRegistry {
           childType: ChildType.optionalChild,
           childParam: 'child',
           params: {
-            'splashColor':
-                ParamMapping('splashColor', transformer: 'color'),
+            'splashColor': ParamMapping('splashColor', transformer: 'color'),
             'highlightColor':
                 ParamMapping('highlightColor', transformer: 'color'),
             'borderRadius':
@@ -1015,8 +1006,7 @@ class WidgetRegistry {
             'type': ParamMapping('type', transformer: 'enum'),
             'elevation': ParamMapping.direct('elevation'),
             'color': ParamMapping('color', transformer: 'color'),
-            'shadowColor':
-                ParamMapping('shadowColor', transformer: 'color'),
+            'shadowColor': ParamMapping('shadowColor', transformer: 'color'),
           },
         ),
         'Divider': WidgetMapping(
@@ -1093,8 +1083,7 @@ class WidgetRegistry {
             'max': ParamMapping.direct('max'),
             'value': ParamMapping.direct('value'),
             'divisions': ParamMapping.direct('divisions'),
-            'activeColor':
-                ParamMapping('activeColor', transformer: 'color'),
+            'activeColor': ParamMapping('activeColor', transformer: 'color'),
           },
           handlerParams: {'onChanged', 'onChangeStart', 'onChangeEnd'},
         ),

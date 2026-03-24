@@ -34,7 +34,9 @@ Widget buildList() {
       expect(library.widgets, isNotEmpty);
     });
 
-    test('nested Container > Column > [Text, SizedBox, Text] with color and padding parses without error', () {
+    test(
+        'nested Container > Column > [Text, SizedBox, Text] with color and padding parses without error',
+        () {
       const input = '''
 Widget buildNested() {
   return Container(
@@ -375,7 +377,9 @@ Widget build() {
       expect(library.widgets, isNotEmpty);
     });
 
-    test('AnimatedPadding uses core.widgets import and emits padding/duration params', () {
+    test(
+        'AnimatedPadding uses core.widgets import and emits padding/duration params',
+        () {
       const input = '''
 Widget build() {
   return AnimatedPadding(
@@ -394,7 +398,9 @@ Widget build() {
       expect(library.widgets, isNotEmpty);
     });
 
-    test('AnimatedOpacity uses core.widgets import and emits opacity/duration params', () {
+    test(
+        'AnimatedOpacity uses core.widgets import and emits opacity/duration params',
+        () {
       const input = '''
 Widget build() {
   return AnimatedOpacity(
@@ -413,7 +419,9 @@ Widget build() {
       expect(library.widgets, isNotEmpty);
     });
 
-    test('PositionedDirectional uses core.widgets import and emits top/end params', () {
+    test(
+        'PositionedDirectional uses core.widgets import and emits top/end params',
+        () {
       const input = '''
 Widget build() {
   return Stack(
@@ -551,7 +559,8 @@ Widget buildItem() {
       expect(() => parseLibraryFile(rfwtxt), returnsNormally);
     });
 
-    test('complex: RfwFor + DataRef inside Column produces parseable rfwtxt', () {
+    test('complex: RfwFor + DataRef inside Column produces parseable rfwtxt',
+        () {
       const source = '''
 Widget buildFeed() {
   return Column(

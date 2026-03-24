@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:rfw_gen/rfw_gen.dart';
 import 'package:rfw_gen_builder/rfw_gen_builder.dart';
 import 'package:rfw_gen_builder/src/ast_visitor.dart';
 import 'package:test/test.dart';
@@ -15,9 +16,9 @@ void main() {
     test('converts simple Text widget', () {
       const input = "Widget buildGreeting() { return Text('Hello'); }";
       final result = converter.convertFromSource(input);
-      expect(result, contains('import core.widgets;'));
-      expect(result, contains('widget greeting = Text('));
-      expect(result, contains('text: "Hello"'));
+      expect(result.rfwtxt, contains('import core.widgets;'));
+      expect(result.rfwtxt, contains('widget greeting = Text('));
+      expect(result.rfwtxt, contains('text: "Hello"'));
     });
 
     test('converts Column with children', () {
@@ -32,10 +33,10 @@ Widget buildMyList() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      expect(result, contains('import core.widgets;'));
-      expect(result, contains('widget myList = Column('));
-      expect(result, contains('text: "First"'));
-      expect(result, contains('text: "Second"'));
+      expect(result.rfwtxt, contains('import core.widgets;'));
+      expect(result.rfwtxt, contains('widget myList = Column('));
+      expect(result.rfwtxt, contains('text: "First"'));
+      expect(result.rfwtxt, contains('text: "Second"'));
     });
 
     test('converts nested Container > Text with color and padding', () {
@@ -49,11 +50,11 @@ Widget buildCard() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      expect(result, contains('import core.widgets;'));
-      expect(result, contains('widget card = Container('));
-      expect(result, contains('color: 0xFF42A5F5'));
-      expect(result, contains('padding: [16.0]'));
-      expect(result, contains('text: "Inside"'));
+      expect(result.rfwtxt, contains('import core.widgets;'));
+      expect(result.rfwtxt, contains('widget card = Container('));
+      expect(result.rfwtxt, contains('color: 0xFF42A5F5'));
+      expect(result.rfwtxt, contains('padding: [16.0]'));
+      expect(result.rfwtxt, contains('text: "Inside"'));
     });
 
     test('extracts custom name from @RfwWidget annotation', () {
@@ -64,8 +65,8 @@ Widget buildSomething() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget myCustomName = Text('));
-      expect(result, contains('text: "Annotated"'));
+      expect(result.rfwtxt, contains('widget myCustomName = Text('));
+      expect(result.rfwtxt, contains('text: "Annotated"'));
     });
 
     test('converts SizedBox with dimensions', () {
@@ -75,9 +76,9 @@ Widget buildSpacer() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget spacer = SizedBox('));
-      expect(result, contains('width: 100.0'));
-      expect(result, contains('height: 50.0'));
+      expect(result.rfwtxt, contains('widget spacer = SizedBox('));
+      expect(result.rfwtxt, contains('width: 100.0'));
+      expect(result.rfwtxt, contains('height: 50.0'));
     });
 
     test('converts Row with mainAxisAlignment enum', () {
@@ -93,8 +94,8 @@ Widget buildToolbar() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget toolbar = Row('));
-      expect(result, contains('mainAxisAlignment: "center"'));
+      expect(result.rfwtxt, contains('widget toolbar = Row('));
+      expect(result.rfwtxt, contains('mainAxisAlignment: "center"'));
     });
 
     test('throws on unsupported widget', () {
@@ -112,15 +113,15 @@ Widget buildBad() {
     test('arrow function body works', () {
       const input = "Widget buildArrow() => Text('Arrow');";
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget arrow = Text('));
-      expect(result, contains('text: "Arrow"'));
+      expect(result.rfwtxt, contains('widget arrow = Text('));
+      expect(result.rfwtxt, contains('text: "Arrow"'));
     });
 
     test('function name fallback without build prefix', () {
       const input = "Widget simple() { return Text('Plain'); }";
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget simple = Text('));
-      expect(result, contains('text: "Plain"'));
+      expect(result.rfwtxt, contains('widget simple = Text('));
+      expect(result.rfwtxt, contains('text: "Plain"'));
     });
 
     test('throws StateError when no function declaration found', () {
@@ -129,6 +130,30 @@ Widget buildBad() {
         () => converter.convertFromSource(input),
         throwsStateError,
       );
+    });
+  });
+
+  group('ConvertResult', () {
+    test('convertFromSource returns ConvertResult with no issues for valid input', () {
+      const input = "Widget buildGreeting() { return Text('Hello'); }";
+      final result = converter.convertFromSource(input);
+      expect(result.rfwtxt, contains('widget greeting'));
+      expect(result.issues, isEmpty);
+    });
+
+    test('convertFromSource collects warning for unsupported expression', () {
+      const input = '''
+Widget buildTest() {
+  return Container(
+    color: someFunction(),
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.rfwtxt, contains('widget test'));
+      expect(result.issues, hasLength(1));
+      expect(result.issues.first.severity, RfwGenSeverity.warning);
+      expect(result.issues.first.line, isNotNull);
     });
   });
 
@@ -148,8 +173,8 @@ widget greeting = Text(
 
     test('round-trip: source -> rfwtxt -> blob produces valid binary', () {
       const input = "Widget buildGreeting() { return Text('Hello'); }";
-      final rfwtxt = converter.convertFromSource(input);
-      final blob = converter.toBlob(rfwtxt);
+      final result = converter.convertFromSource(input);
+      final blob = converter.toBlob(result.rfwtxt);
       expect(blob, isA<Uint8List>());
       expect(blob.isNotEmpty, isTrue);
     });
@@ -158,9 +183,9 @@ widget greeting = Text(
   group('Import collection', () {
     test('core-only widget produces core.widgets import', () {
       const input = "Widget build() { return Text('Hello'); }";
-      final rfwtxt = converter.convertFromSource(input);
-      expect(rfwtxt, contains('import core.widgets;'));
-      expect(rfwtxt, isNot(contains('import material;')));
+      final result = converter.convertFromSource(input);
+      expect(result.rfwtxt, contains('import core.widgets;'));
+      expect(result.rfwtxt, isNot(contains('import material;')));
     });
 
     test('collects imports from widgets inside IrForLoop body', () {
@@ -182,8 +207,8 @@ Widget test() {
 """;
       final converter = RfwConverter(registry: WidgetRegistry.core());
       final result = converter.convertFromSource(source);
-      expect(result, contains('import core.widgets;'));
-      expect(result, contains('import material;'));
+      expect(result.rfwtxt, contains('import core.widgets;'));
+      expect(result.rfwtxt, contains('import material;'));
     });
   });
 
@@ -197,7 +222,7 @@ Widget toggle() {
 """;
       final converter = RfwConverter(registry: WidgetRegistry.core());
       final result = converter.convertFromSource(source);
-      expect(result, contains('widget toggle { down: false } = SizedBox('));
+      expect(result.rfwtxt, contains('widget toggle { down: false } = SizedBox('));
     });
   });
 
@@ -205,19 +230,19 @@ Widget toggle() {
     test('buildGreeting -> greeting', () {
       const input = "Widget buildGreeting() { return Text('hi'); }";
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget greeting ='));
+      expect(result.rfwtxt, contains('widget greeting ='));
     });
 
     test('buildMyCard -> myCard', () {
       const input = "Widget buildMyCard() { return Text('hi'); }";
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget myCard ='));
+      expect(result.rfwtxt, contains('widget myCard ='));
     });
 
     test('simple -> simple (no build prefix)', () {
       const input = "Widget simple() { return Text('hi'); }";
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget simple ='));
+      expect(result.rfwtxt, contains('widget simple ='));
     });
 
     test('@RfwWidget annotation takes precedence over function name', () {
@@ -226,7 +251,7 @@ Widget toggle() {
 Widget buildSomethingElse() { return Text('hi'); }
 ''';
       final result = converter.convertFromSource(input);
-      expect(result, contains('widget override ='));
+      expect(result.rfwtxt, contains('widget override ='));
     });
   });
 }

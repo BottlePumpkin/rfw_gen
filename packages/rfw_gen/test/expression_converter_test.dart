@@ -239,6 +239,80 @@ void main() {
     });
   });
 
+  group('EdgeInsetsDirectional', () {
+    test('converts EdgeInsetsDirectional.all(8)', () {
+      final expr = parseExpression('EdgeInsetsDirectional.all(8.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = (result as IrListValue).values;
+      expect(list.length, 1);
+      expect((list[0] as IrNumberValue).value, 8.0);
+    });
+
+    test('converts EdgeInsetsDirectional.only(start: 16)', () {
+      final expr =
+          parseExpression('EdgeInsetsDirectional.only(start: 16.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = (result as IrListValue).values;
+      expect((list[0] as IrNumberValue).value, 16.0); // start
+      expect((list[1] as IrNumberValue).value, 0.0); // top
+      expect((list[2] as IrNumberValue).value, 0.0); // end
+      expect((list[3] as IrNumberValue).value, 0.0); // bottom
+    });
+
+    test('converts EdgeInsetsDirectional.fromSTEB', () {
+      final expr = parseExpression(
+        'EdgeInsetsDirectional.fromSTEB(8.0, 16.0, 8.0, 16.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = (result as IrListValue).values;
+      expect(list.length, 4);
+      expect((list[0] as IrNumberValue).value, 8.0);
+      expect((list[1] as IrNumberValue).value, 16.0);
+      expect((list[2] as IrNumberValue).value, 8.0);
+      expect((list[3] as IrNumberValue).value, 16.0);
+    });
+
+    test('converts EdgeInsetsDirectional.symmetric', () {
+      final expr = parseExpression(
+        'EdgeInsetsDirectional.symmetric(horizontal: 12.0, vertical: 6.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = (result as IrListValue).values;
+      expect(list.length, 4);
+      expect((list[0] as IrNumberValue).value, 12.0); // start=horizontal
+      expect((list[1] as IrNumberValue).value, 6.0); // top=vertical
+      expect((list[2] as IrNumberValue).value, 12.0); // end=horizontal
+      expect((list[3] as IrNumberValue).value, 6.0); // bottom=vertical
+    });
+
+    test('converts EdgeInsetsDirectional.only with all params', () {
+      final expr = parseExpression(
+        'EdgeInsetsDirectional.only(start: 1.0, top: 2.0, end: 3.0, bottom: 4.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = (result as IrListValue).values;
+      expect(list.length, 4);
+      expect((list[0] as IrNumberValue).value, 1.0);
+      expect((list[1] as IrNumberValue).value, 2.0);
+      expect((list[2] as IrNumberValue).value, 3.0);
+      expect((list[3] as IrNumberValue).value, 4.0);
+    });
+
+    test('converts const EdgeInsetsDirectional.all(8)', () {
+      final expr = parseExpression('const EdgeInsetsDirectional.all(8.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrListValue>());
+      final list = (result as IrListValue).values;
+      expect(list.length, 1);
+      expect((list[0] as IrNumberValue).value, 8.0);
+    });
+  });
+
   group('Enum values', () {
     test('converts MainAxisAlignment.center', () {
       final expr = parseExpression('MainAxisAlignment.center');

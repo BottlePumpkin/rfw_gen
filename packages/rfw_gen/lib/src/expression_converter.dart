@@ -116,6 +116,11 @@ class ExpressionConverter {
       return _convertEdgeInsets(methodName, expr.argumentList);
     }
 
+    // EdgeInsetsDirectional.xxx(...) — parses as MethodInvocation with target 'EdgeInsetsDirectional'
+    if (target is SimpleIdentifier && target.name == 'EdgeInsetsDirectional') {
+      return _convertEdgeInsetsDirectional(methodName, expr.argumentList);
+    }
+
     // Duration(milliseconds: 300) — parses as MethodInvocation with no target
     if (target == null && methodName == 'Duration') {
       return _convertDuration(expr);
@@ -218,6 +223,7 @@ class ExpressionConverter {
     if (constructorName != null) {
       return switch (className) {
         'EdgeInsets' => _convertEdgeInsets(constructorName, argList),
+        'EdgeInsetsDirectional' => _convertEdgeInsetsDirectional(constructorName, argList),
         'BorderRadius' => _convertBorderRadius(constructorName, argList),
         'Radius' when constructorName == 'circular' =>
           IrMapValue({'x': IrNumberValue(_toDouble(argList.arguments.first))}),
@@ -255,6 +261,7 @@ class ExpressionConverter {
   bool _isKnownClassName(String name) {
     return const {
       'EdgeInsets',
+      'EdgeInsetsDirectional',
       'BorderRadius',
       'Radius',
     }.contains(name);
@@ -363,6 +370,49 @@ class ExpressionConverter {
       IrNumberValue(_toDouble(args[1])),
       IrNumberValue(_toDouble(args[2])),
       IrNumberValue(_toDouble(args[3])),
+    ]);
+  }
+
+  IrListValue _convertEdgeInsetsDirectional(String method, ArgumentList argList) {
+    switch (method) {
+      case 'all':
+        return _convertEdgeInsetsAll(argList);
+      case 'symmetric':
+        return _convertEdgeInsetsSymmetric(argList);
+      case 'only':
+        return _convertEdgeInsetsDirectionalOnly(argList);
+      case 'fromSTEB':
+        return _convertEdgeInsetsFromLTRB(argList);
+      default:
+        throw UnsupportedExpressionError(
+          'Unsupported EdgeInsetsDirectional constructor: $method',
+        );
+    }
+  }
+
+  IrListValue _convertEdgeInsetsDirectionalOnly(ArgumentList argList) {
+    double start = 0.0, top = 0.0, end = 0.0, bottom = 0.0;
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        final value = _toDouble(arg.expression);
+        switch (name) {
+          case 'start':
+            start = value;
+          case 'top':
+            top = value;
+          case 'end':
+            end = value;
+          case 'bottom':
+            bottom = value;
+        }
+      }
+    }
+    return IrListValue([
+      IrNumberValue(start),
+      IrNumberValue(top),
+      IrNumberValue(end),
+      IrNumberValue(bottom),
     ]);
   }
 

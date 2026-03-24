@@ -1,4 +1,4 @@
-// ignore_for_file: argument_type_not_assignable, undefined_function, undefined_class, undefined_named_parameter, not_enough_positional_arguments
+// ignore_for_file: argument_type_not_assignable, list_element_type_not_assignable
 import 'package:flutter/material.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 
@@ -74,7 +74,7 @@ Widget buildStackDemo() {
     children: [
       Container(width: 200.0, height: 200.0, color: const Color(0xFF2196F3)),
       Container(width: 150.0, height: 150.0, color: const Color(0xFF4CAF50)),
-      Positioned(
+      PositionedDirectional(
         top: 10.0,
         end: 10.0,
         child: Container(width: 40.0, height: 40.0, color: const Color(0xFFFF9800)),
@@ -288,13 +288,13 @@ Widget buildContainerDemo() {
 Widget buildPaddingOpacityDemo() {
   return Column(
     children: [
-      Padding(
+      AnimatedPadding(
         padding: const EdgeInsets.all(24.0),
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         child: Container(width: 100.0, height: 50.0, color: const Color(0xFF2196F3)),
       ),
-      Opacity(
+      AnimatedOpacity(
         opacity: 0.5,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
@@ -321,7 +321,7 @@ Widget buildClipRRectDemo() {
 
 @RfwWidget('defaultTextStyleDemo')
 Widget buildDefaultTextStyleDemo() {
-  return DefaultTextStyle(
+  return AnimatedDefaultTextStyle(
     style: const TextStyle(fontSize: 20.0, color: Color(0xFF1565C0), fontWeight: FontWeight.bold),
     duration: const Duration(milliseconds: 400),
     child: Column(
@@ -543,7 +543,7 @@ Widget buildInkWellDemo() {
 // ============================================================
 
 @RfwWidget('animationDefaultsDemo')
-Widget buildAnimationDefaultsDemo() {
+Object buildAnimationDefaultsDemo() {
   return AnimationDefaults(
     duration: const Duration(milliseconds: 600),
     curve: Curves.fastOutSlowIn,

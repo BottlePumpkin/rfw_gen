@@ -1,9 +1,8 @@
-import 'dart:developer' as developer;
-
 import 'package:analyzer/dart/ast/ast.dart';
 
 import 'expression_converter.dart';
 import 'ir.dart';
+import 'issue_collector.dart';
 import 'widget_registry.dart';
 
 /// Thrown when a widget is not found in the [WidgetRegistry].
@@ -24,10 +23,12 @@ class UnsupportedWidgetError implements Exception {
 class WidgetAstVisitor {
   final WidgetRegistry registry;
   final ExpressionConverter expressionConverter;
+  final IssueCollector? collector;
 
   WidgetAstVisitor({
     required this.registry,
     required this.expressionConverter,
+    this.collector,
   });
 
   /// Extract the widget tree from a function's return statement.
@@ -107,10 +108,10 @@ class WidgetAstVisitor {
             final value = expressionConverter.convert(arg);
             properties[mapping.positionalParam!] = value;
           } on UnsupportedExpressionError catch (e) {
-            developer.log(
-              'Skipping positional param "${mapping.positionalParam}" '
-              'on $widgetName: ${e.message}',
-              name: 'rfw_gen',
+            collector?.warning(
+              '$widgetName의 positional 파라미터 "${mapping.positionalParam}" 변환 실패: ${e.message}',
+              offset: e.offset,
+              suggestion: _suggestFor(e.message),
             );
           }
         }
@@ -187,9 +188,10 @@ class WidgetAstVisitor {
       try {
         properties[paramName] = expressionConverter.convertHandler(expression);
       } on UnsupportedExpressionError catch (e) {
-        developer.log(
-          'Skipping handler "$paramName" on ${mapping.rfwName}: ${e.message}',
-          name: 'rfw_gen',
+        collector?.warning(
+          '${mapping.rfwName}의 핸들러 "$paramName" 변환 실패: ${e.message}',
+          offset: e.offset,
+          suggestion: _suggestFor(e.message),
         );
       }
       return;
@@ -205,10 +207,9 @@ class WidgetAstVisitor {
             .toList();
         properties[paramName] = IrListValue(children);
       } else if (isList) {
-        developer.log(
-          'Warning: named slot list "$paramName" on ${mapping.rfwName} is not a '
-          'ListLiteral (got ${expression.runtimeType}). Slot will be missing.',
-          name: 'rfw_gen',
+        collector?.warning(
+          '${mapping.rfwName}의 named slot "$paramName"이 리스트가 아닙니다 (${expression.runtimeType})',
+          suggestion: '리스트 슬롯에는 리스트 리터럴 [...]을 사용하세요',
         );
       } else {
         properties[paramName] = _convertWidgetOrSpecial(expression);
@@ -231,11 +232,9 @@ class WidgetAstVisitor {
                 .toList();
             properties[paramName] = IrListValue(children);
           } else {
-            developer.log(
-              'Warning: children parameter on ${mapping.rfwName} is not a '
-              'ListLiteral (got ${expression.runtimeType}). '
-              'Children will be missing.',
-              name: 'rfw_gen',
+            collector?.warning(
+              '${mapping.rfwName}의 children 파라미터가 리스트가 아닙니다 (${expression.runtimeType})',
+              suggestion: 'children 파라미터에는 리스트 리터럴 [...]을 사용하세요',
             );
           }
         case ChildType.none:
@@ -252,9 +251,10 @@ class WidgetAstVisitor {
         final paramMapping = mapping.params[paramName]!;
         properties[paramMapping.rfwName] = value;
       } on UnsupportedExpressionError catch (e) {
-        developer.log(
-          'Skipping param "$paramName" on ${mapping.rfwName}: ${e.message}',
-          name: 'rfw_gen',
+        collector?.warning(
+          '${mapping.rfwName}의 "$paramName" 파라미터 변환 실패: ${e.message}',
+          offset: e.offset,
+          suggestion: _suggestFor(e.message),
         );
       }
       return;
@@ -275,11 +275,38 @@ class WidgetAstVisitor {
       final value = expressionConverter.convert(expression);
       properties[paramName] = value;
     } on UnsupportedExpressionError catch (e) {
-      developer.log(
-        'Skipping unknown param "$paramName": ${e.message}',
-        name: 'rfw_gen',
+      collector?.warning(
+        '알 수 없는 파라미터 "$paramName" 변환 실패: ${e.message}',
+        offset: e.offset,
+        suggestion: _suggestFor(e.message),
       );
     }
+  }
+
+  /// Returns a suggestion string based on the error message pattern.
+  String? _suggestFor(String errorMessage) {
+    if (errorMessage.contains('ConditionalExpression')) {
+      return '삼항연산자 대신 RfwSwitch를 사용하세요';
+    }
+    if (errorMessage.contains('FunctionExpressionInvocation')) {
+      return '함수 호출 결과는 지원되지 않습니다. const 값을 직접 사용하세요';
+    }
+    if (errorMessage.contains('Unsupported EdgeInsets constructor')) {
+      return '지원되는 생성자: .all, .symmetric, .only, .fromLTRB';
+    }
+    if (errorMessage.contains('Unsupported BorderRadius constructor')) {
+      return '지원되는 생성자: .circular, .all, .only';
+    }
+    if (errorMessage.contains('Alignment') && errorMessage.contains('constant')) {
+      return '지원되는 값: topLeft, topCenter, topRight, centerLeft, center, centerRight, bottomLeft, bottomCenter, bottomRight';
+    }
+    if (errorMessage.contains('Unsupported method invocation')) {
+      return '지원되지 않는 메서드입니다. 지원 목록: Color, EdgeInsets, TextStyle 등';
+    }
+    if (errorMessage.contains('Unsupported const constructor')) {
+      return '지원되지 않는 생성자입니다';
+    }
+    return null;
   }
 
   IrForLoop _convertRfwFor(MethodInvocation expr) {

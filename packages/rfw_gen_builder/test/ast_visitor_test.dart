@@ -1,9 +1,11 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:rfw_gen/rfw_gen.dart';
 import 'package:rfw_gen_builder/rfw_gen_builder.dart';
 import 'package:rfw_gen_builder/src/ast_visitor.dart';
 import 'package:rfw_gen_builder/src/expression_converter.dart';
 import 'package:rfw_gen_builder/src/ir.dart';
+import 'package:rfw_gen_builder/src/issue_collector.dart';
 import 'package:test/test.dart';
 
 FunctionDeclaration parseFunction(String source) {
@@ -882,6 +884,73 @@ Widget build() {
       final child = node.properties['child'] as IrWidgetNode;
       expect(child.name, 'Text');
       expect((child.properties['text'] as IrStringValue).value, 'Safe');
+    });
+  });
+
+  group('IssueCollector integration', () {
+    test('unsupported expression collects warning instead of silent skip', () {
+      final source = '''
+Widget build() {
+  return Container(
+    color: someFunction(),
+  );
+}
+''';
+      final fn = parseFunction(source);
+      final collector = IssueCollector(source);
+      final visitor = WidgetAstVisitor(
+        registry: registry,
+        expressionConverter: expressionConverter,
+        collector: collector,
+      );
+
+      final node = visitor.extractWidgetTree(fn);
+      expect(node.properties.containsKey('color'), isFalse);
+      expect(collector.issues, hasLength(1));
+      expect(collector.issues.first.severity, RfwGenSeverity.warning);
+      expect(collector.issues.first.message, contains('color'));
+    });
+
+    test('multiple unsupported params collect multiple warnings', () {
+      final source = '''
+Widget build() {
+  return Container(
+    color: someFunction(),
+    width: anotherFunction(),
+  );
+}
+''';
+      final fn = parseFunction(source);
+      final collector = IssueCollector(source);
+      final visitor = WidgetAstVisitor(
+        registry: registry,
+        expressionConverter: expressionConverter,
+        collector: collector,
+      );
+
+      visitor.extractWidgetTree(fn);
+      expect(collector.issues, hasLength(2));
+    });
+
+    test('suggestion is provided for ternary expression', () {
+      final source = '''
+Widget build() {
+  return Container(
+    color: true ? Color(0xFF000000) : Color(0xFFFFFFFF),
+  );
+}
+''';
+      final fn = parseFunction(source);
+      final collector = IssueCollector(source);
+      final visitor = WidgetAstVisitor(
+        registry: registry,
+        expressionConverter: expressionConverter,
+        collector: collector,
+      );
+
+      visitor.extractWidgetTree(fn);
+      expect(collector.issues, hasLength(1));
+      expect(collector.issues.first.suggestion, contains('RfwSwitch'));
     });
   });
 }

@@ -51,6 +51,18 @@ void main() {
       final child = v['data'];
       expect(child, isA<LoopVar>());
     });
+
+    test('supports integer index', () {
+      const item = LoopVar('item');
+      final first = item[0];
+      expect(first.name, equals('item.0'));
+    });
+
+    test('chained string and integer index', () {
+      const item = LoopVar('item');
+      final result = item['addresses'][0]['city'];
+      expect(result.name, equals('item.addresses.0.city'));
+    });
   });
 
   group('RfwConcat', () {

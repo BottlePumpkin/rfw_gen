@@ -29,7 +29,7 @@ class StateRef {
 class LoopVar {
   final String name;
   const LoopVar(this.name);
-  LoopVar operator [](String path) => LoopVar('$name.$path');
+  LoopVar operator [](Object path) => LoopVar('$name.$path');
 }
 
 /// String concatenation: `["Hello, ", data.name, "!"]`.

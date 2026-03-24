@@ -80,6 +80,26 @@ void main() {
       );
       expect(issue.toString(), isNot(contains('(line')));
     });
+
+    test('toString includes column when provided', () {
+      const issue = RfwGenIssue(
+        severity: RfwGenSeverity.fatal,
+        message: 'Error here',
+        line: 12,
+        column: 8,
+      );
+      expect(issue.toString(), contains('line 12, col 8'));
+    });
+
+    test('toString shows only line when column is null', () {
+      const issue = RfwGenIssue(
+        severity: RfwGenSeverity.fatal,
+        message: 'Error here',
+        line: 12,
+      );
+      expect(issue.toString(), contains('(line 12)'));
+      expect(issue.toString(), isNot(contains('col')));
+    });
   });
 
   group('RfwGenException', () {

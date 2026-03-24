@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Add `column` field to `RfwGenIssue` for precise error location reporting
+
 ## 0.1.0
 
 - Initial release

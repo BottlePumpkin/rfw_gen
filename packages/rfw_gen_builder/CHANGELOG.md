@@ -1,3 +1,12 @@
+## 0.2.0
+
+- **Breaking**: `RfwConverter.convertFromSource()` and `convertFromAst()` now return `ConvertResult` instead of `String`
+- Add `IssueCollector` for accumulating conversion errors with line:column info
+- Replace silent `developer.log` with build-visible `log.warning`/`log.severe`
+- Add suggestion messages for common unsupported patterns (ternary → RfwSwitch, etc.)
+- Add `parseLibraryFile()` validation step for generated rfwtxt
+- Fix missing offset in 7 `UnsupportedExpressionError` throw sites
+
 ## 0.1.0
 
 - Initial release

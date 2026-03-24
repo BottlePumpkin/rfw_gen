@@ -67,7 +67,7 @@ class RfwWidgetBuilder implements Builder {
 
     for (final function in annotatedFunctions) {
       try {
-        parts.add(converter.convertFromAst(function));
+        parts.add(converter.convertFromAst(function).rfwtxt);
       } catch (e) {
         log.severe('Failed to convert ${function.name.lexeme}: $e');
       }

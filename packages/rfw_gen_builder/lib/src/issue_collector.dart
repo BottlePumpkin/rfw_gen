@@ -16,7 +16,8 @@ class IssueCollector {
   ///
   /// If [offset] is provided and valid, it is converted to a line and column.
   void warning(String message, {int? offset, String? suggestion}) {
-    _add(RfwGenSeverity.warning, message, offset: offset, suggestion: suggestion);
+    _add(RfwGenSeverity.warning, message,
+        offset: offset, suggestion: suggestion);
   }
 
   /// Records a [RfwGenSeverity.fatal] issue.

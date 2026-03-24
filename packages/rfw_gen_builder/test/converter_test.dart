@@ -134,7 +134,9 @@ Widget buildBad() {
   });
 
   group('ConvertResult', () {
-    test('convertFromSource returns ConvertResult with no issues for valid input', () {
+    test(
+        'convertFromSource returns ConvertResult with no issues for valid input',
+        () {
       const input = "Widget buildGreeting() { return Text('Hello'); }";
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('widget greeting'));
@@ -222,7 +224,8 @@ Widget toggle() {
 """;
       final converter = RfwConverter(registry: WidgetRegistry.core());
       final result = converter.convertFromSource(source);
-      expect(result.rfwtxt, contains('widget toggle { down: false } = SizedBox('));
+      expect(
+          result.rfwtxt, contains('widget toggle { down: false } = SizedBox('));
     });
   });
 

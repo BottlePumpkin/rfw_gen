@@ -297,7 +297,8 @@ class WidgetAstVisitor {
     if (errorMessage.contains('Unsupported BorderRadius constructor')) {
       return '지원되는 생성자: .circular, .all, .only';
     }
-    if (errorMessage.contains('Alignment') && errorMessage.contains('constant')) {
+    if (errorMessage.contains('Alignment') &&
+        errorMessage.contains('constant')) {
       return '지원되는 값: topLeft, topCenter, topRight, centerLeft, center, centerRight, bottomLeft, bottomCenter, bottomRight';
     }
     if (errorMessage.contains('Unsupported method invocation')) {

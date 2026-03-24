@@ -1,0 +1,3 @@
+tags:
+  golden:
+    description: "Golden image comparison tests (Linux CI only)"

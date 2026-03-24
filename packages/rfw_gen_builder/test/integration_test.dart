@@ -583,6 +583,72 @@ Widget buildFeed() {
     });
   });
 
+  group('error reporting', () {
+    test('unsupported expressions produce warnings with line info', () {
+      const input = '''
+Widget buildTest() {
+  return Container(
+    color: someFunc(),
+    child: Text('hello'),
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.rfwtxt, contains('widget test'));
+      expect(result.rfwtxt, contains('Text'));
+      // color should be skipped but Text child preserved
+      expect(result.rfwtxt, isNot(contains('color:')));
+      // should have exactly one warning
+      expect(result.issues, hasLength(1));
+      expect(result.issues.first.line, isNotNull);
+      expect(result.issues.first.column, isNotNull);
+      expect(result.issues.first.message, contains('color'));
+    });
+
+    test('suggestion is provided for ternary expressions', () {
+      const input = '''
+Widget buildTest() {
+  return Container(
+    color: true ? Color(0xFF000000) : Color(0xFFFFFFFF),
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.issues, hasLength(1));
+      expect(result.issues.first.suggestion, contains('RfwSwitch'));
+    });
+
+    test('multiple warnings collected in single conversion', () {
+      const input = '''
+Widget buildTest() {
+  return Container(
+    color: fn1(),
+    width: fn2(),
+    child: Text('ok'),
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.issues, hasLength(2));
+      // Text child should still be in output
+      expect(result.rfwtxt, contains('text: "ok"'));
+    });
+
+    test('valid widget produces no issues', () {
+      const input = '''
+Widget buildTest() {
+  return Container(
+    color: Color(0xFF000000),
+    child: Text('hello'),
+  );
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.issues, isEmpty);
+      expect(result.rfwtxt, contains('widget test'));
+    });
+  });
+
   group('custom widget support', () {
     late RfwConverter converter;
 

@@ -6,6 +6,9 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:build/build.dart';
 import 'package:yaml/yaml.dart';
 
+import 'package:rfw/formats.dart';
+
+import 'ast_visitor.dart';
 import 'converter.dart';
 import 'widget_registry.dart';
 
@@ -67,7 +70,18 @@ class RfwWidgetBuilder implements Builder {
 
     for (final function in annotatedFunctions) {
       try {
-        parts.add(converter.convertFromAst(function).rfwtxt);
+        final result = converter.convertFromAst(function, source: source);
+        parts.add(result.rfwtxt);
+        for (final issue in result.issues) {
+          if (issue.isFatal) {
+            log.severe(issue.toString());
+          } else {
+            log.warning(issue.toString());
+          }
+        }
+      } on UnsupportedWidgetError catch (e) {
+        log.severe('${function.name.lexeme}: $e\n'
+            '  Suggestion: rfw_gen.yaml에 위젯을 등록하거나 지원 위젯 목록을 확인하세요');
       } catch (e) {
         log.severe('Failed to convert ${function.name.lexeme}: $e');
       }
@@ -79,6 +93,17 @@ class RfwWidgetBuilder implements Builder {
     // Merge them into a single valid rfwtxt file: collect imports once at the
     // top, then all widget declarations below.
     final combined = _mergeRfwtxtParts(parts);
+
+    // Validate generated rfwtxt
+    try {
+      parseLibraryFile(combined);
+    } catch (e) {
+      log.severe(
+        'Generated rfwtxt is invalid (possible rfw_gen bug): $e\n'
+        'Generated content:\n$combined',
+      );
+      return;
+    }
 
     // Write .rfwtxt text output.
     await buildStep.writeAsString(

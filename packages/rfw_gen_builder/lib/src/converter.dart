@@ -5,8 +5,10 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:rfw/formats.dart';
 
 import 'ast_visitor.dart';
+import 'convert_result.dart';
 import 'expression_converter.dart';
 import 'ir.dart';
+import 'issue_collector.dart';
 import 'rfwtxt_emitter.dart';
 import 'widget_registry.dart';
 
@@ -22,13 +24,13 @@ class RfwConverter {
   RfwConverter({required this.registry});
 
   /// Converts a Dart source string containing a widget-building function
-  /// to an rfwtxt string.
+  /// to a [ConvertResult] containing the rfwtxt string and any diagnostic issues.
   ///
   /// Parses the source, finds the first [FunctionDeclaration], and
   /// delegates to [convertFromAst].
   ///
   /// Throws [StateError] if no [FunctionDeclaration] is found.
-  String convertFromSource(String dartSource) {
+  ConvertResult convertFromSource(String dartSource) {
     final parseResult = parseString(content: dartSource);
     final unit = parseResult.unit;
 
@@ -44,38 +46,51 @@ class RfwConverter {
       throw StateError('No FunctionDeclaration found in source');
     }
 
-    return convertFromAst(function);
+    return convertFromAst(function, source: dartSource);
   }
 
-  /// Converts a parsed [FunctionDeclaration] AST node to an rfwtxt string.
+  /// Converts a parsed [FunctionDeclaration] AST node to a [ConvertResult].
   ///
   /// Extracts the widget name from an `@RfwWidget('name')` annotation or
   /// falls back to deriving it from the function name. Then uses
   /// [WidgetAstVisitor] to extract the IR widget tree and [RfwtxtEmitter]
   /// to emit the rfwtxt output.
-  String convertFromAst(FunctionDeclaration function) {
+  ///
+  /// Any diagnostic issues (e.g. unsupported state initialiser expressions)
+  /// are collected in [ConvertResult.issues] rather than thrown.
+  ConvertResult convertFromAst(FunctionDeclaration function, {String? source}) {
+    final collector = IssueCollector(source ?? '');
     final widgetName = _extractWidgetName(function);
-    final stateDecl = _extractStateDecl(function);
+    final stateDecl = _extractStateDecl(function, collector);
 
     final visitor = WidgetAstVisitor(
       registry: registry,
       expressionConverter: ExpressionConverter(),
+      collector: collector,
     );
     final irTree = visitor.extractWidgetTree(function);
 
     final imports = _collectImports(irTree);
     final emitter = RfwtxtEmitter();
-    return emitter.emit(
+    final rfwtxt = emitter.emit(
       widgetName: widgetName,
       root: irTree,
       imports: imports,
       stateDecl: stateDecl,
     );
+
+    return ConvertResult(rfwtxt: rfwtxt, issues: collector.issues);
   }
 
   /// Extracts the state declaration map from the `@RfwWidget` annotation,
   /// if a `state` named argument is present.
-  Map<String, IrValue>? _extractStateDecl(FunctionDeclaration function) {
+  ///
+  /// Entries whose values cannot be converted are skipped and a
+  /// [RfwGenSeverity.warning] is added to [collector].
+  Map<String, IrValue>? _extractStateDecl(
+    FunctionDeclaration function,
+    IssueCollector collector,
+  ) {
     for (final annotation in function.metadata) {
       if (annotation.name.name == 'RfwWidget') {
         final arguments = annotation.arguments;
@@ -89,7 +104,15 @@ class RfwConverter {
               for (final entry in map.elements) {
                 if (entry is MapLiteralEntry) {
                   final key = (entry.key as SimpleStringLiteral).value;
-                  entries[key] = exprConverter.convert(entry.value);
+                  try {
+                    entries[key] = exprConverter.convert(entry.value);
+                  } on UnsupportedExpressionError catch (e) {
+                    collector.warning(
+                      'state 필드 "$key" 값을 변환할 수 없습니다: ${e.message}',
+                      offset: e.offset,
+                      suggestion: '상태 초기값은 리터럴(문자열, 숫자, 불리언)만 지원됩니다',
+                    );
+                  }
                 }
               }
               return entries;

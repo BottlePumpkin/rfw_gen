@@ -1563,4 +1563,40 @@ void main() {
       expect(map.containsKey('side'), isTrue);
     });
   });
+
+  group('offset presence in UnsupportedExpressionError', () {
+    test('unsupported EdgeInsets constructor includes offset', () {
+      final expr = parseExpression(
+          'EdgeInsets.lerp(EdgeInsets.zero, EdgeInsets.zero, 0.5)');
+      expect(
+        () => converter.convert(expr),
+        throwsA(
+          isA<UnsupportedExpressionError>()
+              .having((e) => e.offset, 'offset', isNotNull),
+        ),
+      );
+    });
+
+    test('unsupported BorderRadius constructor includes offset', () {
+      final expr = parseExpression('BorderRadius.lerp(null, null, 0.5)');
+      expect(
+        () => converter.convert(expr),
+        throwsA(
+          isA<UnsupportedExpressionError>()
+              .having((e) => e.offset, 'offset', isNotNull),
+        ),
+      );
+    });
+
+    test('unknown Alignment constant includes offset', () {
+      final expr = parseExpression('Alignment.customValue');
+      expect(
+        () => converter.convert(expr),
+        throwsA(
+          isA<UnsupportedExpressionError>()
+              .having((e) => e.offset, 'offset', isNotNull),
+        ),
+      );
+    });
+  });
 }

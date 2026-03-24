@@ -21,12 +21,16 @@ class RfwGenIssue {
   /// Optional source line number where the issue was detected.
   final int? line;
 
+  /// Optional source column number where the issue was detected.
+  final int? column;
+
   /// Creates a diagnostic issue with the given [severity] and [message].
   const RfwGenIssue({
     required this.severity,
     required this.message,
     this.suggestion,
     this.line,
+    this.column,
   });
 
   /// Whether this issue is fatal and blocks code generation.
@@ -36,7 +40,13 @@ class RfwGenIssue {
   String toString() {
     final buffer = StringBuffer('[rfw_gen] ');
     buffer.write(isFatal ? 'Error' : 'Warning');
-    if (line != null) buffer.write(' (line $line)');
+    if (line != null) {
+      if (column != null) {
+        buffer.write(' (line $line, col $column)');
+      } else {
+        buffer.write(' (line $line)');
+      }
+    }
     buffer.write(': $message');
     if (suggestion != null) buffer.write('\n  Suggestion: $suggestion');
     return buffer.toString();

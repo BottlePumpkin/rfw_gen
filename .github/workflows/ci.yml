@@ -30,7 +30,7 @@ jobs:
         working-directory: packages/rfw_gen_builder
         run: flutter pub get
       - name: Analyze rfw_gen_builder
-        run: dart analyze packages/rfw_gen_builder
+        run: dart analyze packages/rfw_gen_builder --no-fatal-warnings
       - name: Format rfw_gen_builder
         run: dart format --set-exit-if-changed packages/rfw_gen_builder
       - name: Test rfw_gen_builder

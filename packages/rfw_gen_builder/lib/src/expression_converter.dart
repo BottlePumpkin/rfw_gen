@@ -118,10 +118,12 @@ class ExpressionConverter {
 
     // Color.fromARGB / Color.fromRGBO — parses as MethodInvocation with target 'Color'
     if (target is SimpleIdentifier && target.name == 'Color') {
-      if (methodName == 'fromARGB')
+      if (methodName == 'fromARGB') {
         return _convertColorFromARGB(expr.argumentList);
-      if (methodName == 'fromRGBO')
+      }
+      if (methodName == 'fromRGBO') {
         return _convertColorFromRGBO(expr.argumentList);
+      }
     }
 
     // Color(0xFFxxxxxx) — parses as MethodInvocation with no target

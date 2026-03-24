@@ -471,6 +471,16 @@ Widget buildFeed() {
           'child_type': 'optionalChild',
           'handlers': ['onTap'],
         },
+        'CustomTile': {
+          'import': 'custom.widgets',
+          'child_type': 'namedSlots',
+          'named_child_slots': {
+            'leading': false,
+            'title': false,
+            'subtitle': false,
+          },
+          'handlers': ['onTap'],
+        },
       });
       converter = RfwConverter(registry: registry);
     });
@@ -544,6 +554,29 @@ Widget build() {
       final rfwtxt = converter.convertFromSource(input);
       expect(rfwtxt, contains('import mystique.widgets;'));
       expect(rfwtxt, isNot(contains('import core.widgets;')));
+      parseLibraryFile(rfwtxt);
+    });
+
+    test('custom namedSlots widget with slots and handler', () {
+      const input = '''
+Widget build() {
+  return CustomTile(
+    leading: Icon(icon: RfwIcon.star),
+    title: MystiqueText(text: 'Title'),
+    subtitle: Text('Subtitle'),
+    onTap: RfwHandler.event('tile.tap', {}),
+  );
+}
+''';
+      final rfwtxt = converter.convertFromSource(input);
+      expect(rfwtxt, contains('CustomTile('));
+      expect(rfwtxt, contains('leading: Icon('));
+      expect(rfwtxt, contains('title: MystiqueText('));
+      expect(rfwtxt, contains('subtitle: Text('));
+      expect(rfwtxt, contains('onTap: event "tile.tap"'));
+      expect(rfwtxt, contains('import custom.widgets;'));
+      expect(rfwtxt, contains('import core.widgets;'));
+      expect(rfwtxt, contains('import mystique.widgets;'));
       parseLibraryFile(rfwtxt);
     });
   });

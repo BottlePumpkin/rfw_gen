@@ -538,28 +538,22 @@ widget iconDemo = Row(
   mainAxisAlignment: "spaceEvenly",
   children: [
     Icon(
-      iconData: {
-        icon: 0x0000E318,
-        fontFamily: "MaterialIcons"
-      },
       size: 32.0,
-      color: 0xFF2196F3
+      color: 0xFF2196F3,
+      icon: 0x0000E318,
+      fontFamily: "MaterialIcons"
     ),
     Icon(
-      iconData: {
-        icon: 0x0000E25B,
-        fontFamily: "MaterialIcons"
-      },
       size: 32.0,
-      color: 0xFFE91E63
+      color: 0xFFE91E63,
+      icon: 0x0000E25B,
+      fontFamily: "MaterialIcons"
     ),
     Icon(
-      iconData: {
-        icon: 0x0000E5F9,
-        fontFamily: "MaterialIcons"
-      },
       size: 32.0,
-      color: 0xFFFF9800
+      color: 0xFFFF9800,
+      icon: 0x0000E5F9,
+      fontFamily: "MaterialIcons"
     )
   ]
 );
@@ -573,35 +567,27 @@ widget iconThemeDemo = IconTheme(
     mainAxisAlignment: "spaceEvenly",
     children: [
       Icon(
-        iconData: {
-          icon: 0x0000E5F9,
-          fontFamily: "MaterialIcons"
-        }
+        icon: 0x0000E5F9,
+        fontFamily: "MaterialIcons"
       ),
       Icon(
-        iconData: {
-          icon: 0x0000E25B,
-          fontFamily: "MaterialIcons"
-        }
+        icon: 0x0000E25B,
+        fontFamily: "MaterialIcons"
       ),
       Icon(
-        iconData: {
-          icon: 0x0000E12E,
-          fontFamily: "MaterialIcons"
-        }
+        icon: 0x0000E12E,
+        fontFamily: "MaterialIcons"
       )
     ]
   )
 );
 
 widget imageDemo = Image(
-  image: {
-    source: "https://picsum.photos/seed/rfw/300/200",
-    scale: 1.0
-  },
   width: 300.0,
   height: 200.0,
-  fit: "cover"
+  fit: "cover",
+  source: "https://picsum.photos/seed/rfw/300/200",
+  scale: 1.0
 );
 
 widget textDemo = Column(
@@ -836,10 +822,8 @@ widget scaffoldDemo = Scaffold(
   floatingActionButton: FloatingActionButton(
     onPressed: event "fab.pressed" {},
     child: Icon(
-      iconData: {
-        icon: 0x0000E047,
-        fontFamily: "MaterialIcons"
-      }
+      icon: 0x0000E047,
+      fontFamily: "MaterialIcons"
     )
   )
 );
@@ -910,12 +894,10 @@ widget listTileDemo = Column(
   children: [
     ListTile(
       leading: Icon(
-        iconData: {
-          icon: 0x0000E22A,
-          fontFamily: "MaterialIcons"
-        },
         size: 40.0,
-        color: 0xFF2196F3
+        color: 0xFF2196F3,
+        icon: 0x0000E22A,
+        fontFamily: "MaterialIcons"
       ),
       title: Text(
         text: "List Tile Title"
@@ -924,10 +906,8 @@ widget listTileDemo = Column(
         text: "Subtitle text here"
       ),
       trailing: Icon(
-        iconData: {
-          icon: 0x0000E15E,
-          fontFamily: "MaterialIcons"
-        }
+        icon: 0x0000E15E,
+        fontFamily: "MaterialIcons"
       ),
       onTap: event "listTile.tap" {}
     ),
@@ -935,12 +915,10 @@ widget listTileDemo = Column(
     ),
     ListTile(
       leading: Icon(
-        iconData: {
-          icon: 0x0000E57F,
-          fontFamily: "MaterialIcons"
-        },
         size: 40.0,
-        color: 0xFF757575
+        color: 0xFF757575,
+        icon: 0x0000E57F,
+        fontFamily: "MaterialIcons"
       ),
       title: Text(
         text: "Settings"
@@ -977,10 +955,8 @@ widget drawerDemo = Scaffold(
       children: [
         ListTile(
           leading: Icon(
-            iconData: {
-              icon: 0x0000E318,
-              fontFamily: "MaterialIcons"
-            }
+            icon: 0x0000E318,
+            fontFamily: "MaterialIcons"
           ),
           title: Text(
             text: "Home"
@@ -989,10 +965,8 @@ widget drawerDemo = Scaffold(
         ),
         ListTile(
           leading: Icon(
-            iconData: {
-              icon: 0x0000E57F,
-              fontFamily: "MaterialIcons"
-            }
+            icon: 0x0000E57F,
+            fontFamily: "MaterialIcons"
           ),
           title: Text(
             text: "Settings"

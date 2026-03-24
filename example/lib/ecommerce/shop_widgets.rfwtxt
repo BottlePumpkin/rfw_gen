@@ -69,9 +69,10 @@ widget shopHome = SingleChildScrollView(
                 child: Column(
                   children: [
                     Icon(
-                      iconData: cat.icon,
                       size: 32.0,
-                      color: 0xFF2196F3
+                      color: 0xFF2196F3,
+                      icon: cat.icon.icon,
+                      fontFamily: cat.icon.fontFamily
                     ),
                     SizedBox(
                       height: 4.0
@@ -122,7 +123,9 @@ widget shopHome = SingleChildScrollView(
                         child: Image(
                           width: 140.0,
                           height: 100.0,
-                          fit: "cover"
+                          fit: "cover",
+                          source: product.image,
+                          scale: 1.0
                         )
                       ),
                       SizedBox(
@@ -189,7 +192,9 @@ widget productList = Column(
                         child: Image(
                           width: 80.0,
                           height: 80.0,
-                          fit: "cover"
+                          fit: "cover",
+                          source: item.image,
+                          scale: 1.0
                         )
                       ),
                       SizedBox(
@@ -257,7 +262,9 @@ widget productDetail { quantity: 0x00000001 } = SingleChildScrollView(
       Image(
         width: 400.0,
         height: 300.0,
-        fit: "cover"
+        fit: "cover",
+        source: data.product.image,
+        scale: 1.0
       ),
       Padding(
         padding: [16.0],
@@ -391,11 +398,9 @@ widget cart = Column(
                     GestureDetector(
                       onTap: event "cart.decrease" { id: cartItem.id },
                       child: Icon(
-                        iconData: {
-                          icon: 0x0000E4F7,
-                          fontFamily: "MaterialIcons"
-                        },
-                        color: 0xFF757575
+                        color: 0xFF757575,
+                        icon: 0x0000E4F7,
+                        fontFamily: "MaterialIcons"
                       )
                     ),
                     Padding(
@@ -411,11 +416,9 @@ widget cart = Column(
                     GestureDetector(
                       onTap: event "cart.increase" { id: cartItem.id },
                       child: Icon(
-                        iconData: {
-                          icon: 0x0000E047,
-                          fontFamily: "MaterialIcons"
-                        },
-                        color: 0xFF2196F3
+                        color: 0xFF2196F3,
+                        icon: 0x0000E047,
+                        fontFamily: "MaterialIcons"
                       )
                     )
                   ]
@@ -472,12 +475,10 @@ widget orderComplete = Center(
       mainAxisAlignment: "center",
       children: [
         Icon(
-          iconData: {
-            icon: 0x0000E156,
-            fontFamily: "MaterialIcons"
-          },
           size: 80.0,
-          color: 0xFF4CAF50
+          color: 0xFF4CAF50,
+          icon: 0x0000E156,
+          fontFamily: "MaterialIcons"
         ),
         SizedBox(
           height: 24.0

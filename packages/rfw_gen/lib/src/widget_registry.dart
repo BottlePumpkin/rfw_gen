@@ -498,6 +498,7 @@ class WidgetRegistry {
           childType: ChildType.optionalChild,
           childParam: 'child',
           params: {
+            'image': ParamMapping('imageProvider', transformer: 'imageProvider'),
             'imageProvider': ParamMapping.direct('imageProvider'),
             'semanticLabel': ParamMapping.direct('semanticLabel'),
             'width': ParamMapping.direct('width'),

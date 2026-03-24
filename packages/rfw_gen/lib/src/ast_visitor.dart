@@ -118,7 +118,55 @@ class WidgetAstVisitor {
       }
     }
 
+    // Post-process: spread iconData and imageProvider maps to root level.
+    // RFW runtime reads icon/fontFamily and source/scale at root, not nested.
+    _spreadIconData(properties);
+    _spreadImageProvider(properties);
+
     return IrWidgetNode(name: widgetName, properties: properties);
+  }
+
+  /// Spreads `iconData` map entries to root level for RFW Icon compatibility.
+  ///
+  /// RFW runtime reads `source.v<int>(['icon'])` at root level, not nested
+  /// under `iconData`. For data references, creates sub-references
+  /// (e.g., `cat.icon` → `cat.icon.icon` + `cat.icon.fontFamily`).
+  void _spreadIconData(Map<String, IrValue> properties) {
+    final iconData = properties.remove('iconData');
+    if (iconData == null) return;
+
+    if (iconData is IrMapValue) {
+      // Hardcoded icon: spread {icon: ..., fontFamily: ...} to root.
+      properties.addAll(iconData.entries);
+    } else if (iconData is IrLoopVarRef) {
+      properties['icon'] = IrLoopVarRef('${iconData.path}.icon');
+      properties['fontFamily'] = IrLoopVarRef('${iconData.path}.fontFamily');
+    } else if (iconData is IrDataRef) {
+      properties['icon'] = IrDataRef('${iconData.path}.icon');
+      properties['fontFamily'] = IrDataRef('${iconData.path}.fontFamily');
+    } else if (iconData is IrArgsRef) {
+      properties['icon'] = IrArgsRef('${iconData.path}.icon');
+      properties['fontFamily'] = IrArgsRef('${iconData.path}.fontFamily');
+    } else {
+      // Unknown type — keep as-is under original key.
+      properties['iconData'] = iconData;
+    }
+  }
+
+  /// Spreads `imageProvider` map entries to root level for RFW Image compatibility.
+  ///
+  /// RFW runtime reads `source.v<String>(['source'])` at root level.
+  void _spreadImageProvider(Map<String, IrValue> properties) {
+    final imageProvider = properties.remove('imageProvider');
+    if (imageProvider == null) return;
+
+    if (imageProvider is IrMapValue) {
+      // Hardcoded image: spread {source: ..., scale: ...} to root.
+      properties.addAll(imageProvider.entries);
+    } else {
+      // Unknown type — keep as-is.
+      properties['imageProvider'] = imageProvider;
+    }
   }
 
   /// Processes a named argument, handling handler params, named child slots,

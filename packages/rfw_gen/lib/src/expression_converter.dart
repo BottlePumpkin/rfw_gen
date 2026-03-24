@@ -498,23 +498,26 @@ class ExpressionConverter {
   }
 
   IrMapValue _convertImageProviderFromArgs(ArgumentList argList) {
-    String? source;
+    IrValue? source;
     double scale = 1.0;
     for (final arg in argList.arguments) {
       if (arg is SimpleStringLiteral) {
-        source = arg.value;
+        source = IrStringValue(arg.value);
       } else if (arg is NamedExpression && arg.name.label.name == 'scale') {
         scale = _toDouble(arg.expression);
+      } else if (arg is! NamedExpression && source == null) {
+        // Dynamic source (e.g., product['image'] → LoopVarRef/DataRef).
+        source = convert(arg);
       }
     }
     if (source == null) {
       throw UnsupportedExpressionError(
-        'ImageProvider requires a string argument',
+        'ImageProvider requires a source argument',
         offset: argList.offset,
       );
     }
     return IrMapValue({
-      'source': IrStringValue(source),
+      'source': source,
       'scale': IrNumberValue(scale),
     });
   }

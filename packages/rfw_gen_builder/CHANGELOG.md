@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Widen `analyzer` constraint from `^9.0.0` to `>=7.4.5 <10.0.0` for Flutter 3.32+ compatibility
+
 ## 0.2.0
 
 - **Breaking**: `RfwConverter.convertFromSource()` and `convertFromAst()` now return `ConvertResult` instead of `String`

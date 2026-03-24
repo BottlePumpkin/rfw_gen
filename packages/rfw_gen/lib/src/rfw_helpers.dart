@@ -1,18 +1,33 @@
 /// Reference to `data.path` in rfwtxt.
+///
+/// Use this to bind a widget parameter to dynamic data provided at runtime.
 class DataRef {
+  /// Dot-separated path into the data model (e.g. `'user.name'`).
   final String path;
+
+  /// Creates a data reference to [path].
   const DataRef(this.path);
 }
 
 /// Reference to `args.path` in rfwtxt.
+///
+/// Use this to forward constructor arguments through to the widget tree.
 class ArgsRef {
+  /// Dot-separated path into the widget's constructor arguments.
   final String path;
+
+  /// Creates an args reference to [path].
   const ArgsRef(this.path);
 }
 
 /// Reference to `state.path` in rfwtxt.
+///
+/// Use this to read widget-local state declared via [RfwWidget.state].
 class StateRef {
+  /// Dot-separated path into the widget's local state.
   final String path;
+
+  /// Creates a state reference to [path].
   const StateRef(this.path);
 }
 
@@ -27,23 +42,41 @@ class StateRef {
 /// )
 /// ```
 class LoopVar {
+  /// The dot-separated variable path (e.g. `'item'` or `'item.name'`).
   final String name;
+
+  /// Creates a loop variable with the given [name].
   const LoopVar(this.name);
+
+  /// Accesses a nested property, returning a new [LoopVar] with the extended path.
   LoopVar operator [](Object path) => LoopVar('$name.$path');
 }
 
 /// String concatenation: `["Hello, ", data.name, "!"]`.
+///
+/// Each element in [parts] can be a literal string or a reference (e.g. [DataRef]).
 class RfwConcat {
+  /// The ordered list of string literals and references to concatenate.
   final List<Object> parts;
+
+  /// Creates a concatenation from the given [parts].
   const RfwConcat(this.parts);
 }
 
 /// Switch expression for widget positions (children, child).
+///
+/// Use when the widget itself varies based on a condition.
 class RfwSwitch {
+  /// The expression to switch on (typically a [StateRef] or [DataRef]).
   final Object value;
+
+  /// Map of case values to widget results.
   final Map<Object, Object> cases;
+
+  /// Fallback widget when no case matches.
   final Object? defaultCase;
 
+  /// Creates a switch expression over [value] with the given [cases].
   const RfwSwitch({
     required this.value,
     required this.cases,
@@ -52,11 +85,19 @@ class RfwSwitch {
 }
 
 /// Switch expression for value positions (padding, color, etc.).
+///
+/// Use when a scalar parameter varies based on a condition.
 class RfwSwitchValue<T> {
+  /// The expression to switch on (typically a [StateRef] or [DataRef]).
   final Object value;
+
+  /// Map of case values to typed results.
   final Map<Object, T> cases;
+
+  /// Fallback value when no case matches.
   final T? defaultCase;
 
+  /// Creates a switch expression over [value] with the given [cases].
   const RfwSwitchValue({
     required this.value,
     required this.cases,
@@ -65,11 +106,19 @@ class RfwSwitchValue<T> {
 }
 
 /// For loop: `...for itemName in items: builder(itemName)`.
+///
+/// Generates a list spread in rfwtxt that iterates over [items].
 class RfwFor {
+  /// The collection to iterate (typically a [DataRef]).
   final Object items;
+
+  /// The loop variable name used in the generated rfwtxt.
   final String itemName;
+
+  /// Builder that receives a [LoopVar] and returns the widget for each item.
   final Object Function(LoopVar) builder;
 
+  /// Creates a for-loop spread over [items].
   const RfwFor({
     required this.items,
     required this.itemName,

@@ -3,6 +3,7 @@
 ///
 /// These classes exist solely for build-time AST parsing by rfw_gen.
 /// They are never instantiated at runtime.
+library;
 
 /// RFW equivalent of `SizedBox.shrink()`. Constrains child to 0x0.
 class SizedBoxShrink {

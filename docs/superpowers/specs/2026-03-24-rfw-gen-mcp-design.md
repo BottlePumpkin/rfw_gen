@@ -1,7 +1,7 @@
 # rfw_gen_mcp — MCP Server Design Spec
 
 **Date**: 2026-03-24
-**Status**: Draft
+**Status**: Approved
 
 ## Problem
 
@@ -36,12 +36,36 @@ rfw_gen/
 
 ```
 rfw_gen_mcp
-├── rfw_gen_builder  (WidgetRegistry, RfwConverter)
+├── rfw_gen_builder  (WidgetRegistry, RfwConverter, ConvertResult)
+├── rfw_gen          (RfwGenIssue, RfwGenException — error types)
 ├── rfw              (parseLibraryFile for validation)
 └── mcp_dart         (MCP protocol handling)
 ```
 
-`rfw_gen` (런타임 패키지)에 직접 의존하지 않는다. `rfw_gen_builder`가 이미 `rfw_gen`을 re-export하므로 필요한 타입은 builder를 통해 접근 가능.
+`rfw_gen`에도 직접 의존한다. `ConvertResult.issues`가 `List<RfwGenIssue>`를 반환하는데, `RfwGenIssue`는 `rfw_gen` 패키지에 정의되어 있다. `rfw_gen_builder`는 `rfw_gen`을 re-export하지 않으므로 별도 의존성이 필요.
+
+### pubspec.yaml
+
+```yaml
+name: rfw_gen_mcp
+description: MCP server exposing rfw_gen widget registry, code conversion, and rfwtxt validation.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  mcp_dart: ^1.3.0
+  rfw: ^1.0.0
+  rfw_gen:
+    path: ../rfw_gen
+  rfw_gen_builder:
+    path: ../rfw_gen_builder
+
+dev_dependencies:
+  test: ^1.25.0
+```
 
 ### Technology Choice: mcp_dart
 
@@ -93,23 +117,34 @@ void main() => runRfwGenMcpServer();
 
 ```dart
 // lib/src/server.dart
+import 'package:mcp_dart/mcp_dart.dart';
+import 'package:rfw_gen_builder/rfw_gen_builder.dart';
+
 Future<void> runRfwGenMcpServer() async {
   final registry = WidgetRegistry.core();
   final converter = RfwConverter(registry: registry);
 
   final server = McpServer(
-    name: 'rfw_gen',
-    version: '0.1.0',
+    Implementation(name: 'rfw_gen', version: '0.1.0'),
   );
 
-  server.addTool(listWidgetsTool(registry));
-  server.addTool(getWidgetInfoTool(registry));
-  server.addTool(convertToRfwtxtTool(converter));
-  server.addTool(validateRfwtxtTool());
+  registerListWidgetsTool(server, registry);
+  registerGetWidgetInfoTool(server, registry);
+  registerConvertToRfwtxtTool(server, converter);
+  registerValidateRfwtxtTool(server);
 
-  await server.start(StdioTransport());
+  final transport = StdioServerTransport();
+  await server.connect(transport);
 }
 ```
+
+`mcp_dart` API:
+- `McpServer(Implementation(...))` — Implementation 객체로 서버 생성
+- `server.registerTool(name, callback:, inputSchema:)` — 도구 등록 (addTool 아님)
+- `StdioServerTransport()` — stdio transport (StdioTransport 아님)
+- `server.connect(transport)` — 서버 시작 (start 아님)
+
+각 도구 파일은 `void registerXxxTool(McpServer server, ...)` 함수를 export.
 
 `WidgetRegistry.core()`와 `RfwConverter`는 서버 시작 시 한 번 생성, 모든 도구 호출에서 재사용.
 
@@ -154,7 +189,7 @@ Future<void> runRfwGenMcpServer() async {
 }
 ```
 
-**Implementation:** `registry.allWidgets`를 순회, category가 지정되면 `mapping.import`로 필터링.
+**Implementation:** `registry.supportedWidgets` (Map<String, WidgetMapping>)를 순회, category가 지정되면 `mapping.import`로 필터링.
 
 ### Tool 2: `get_widget_info`
 
@@ -206,7 +241,7 @@ Future<void> runRfwGenMcpServer() async {
 
 MCP `isError: true`로 반환.
 
-**Implementation:** `registry.getMapping(name)` 호출, null이면 에러 응답.
+**Implementation:** `registry.supportedWidgets[name]` 조회, null이면 에러 응답. `registry.isSupported(name)`으로 존재 확인도 가능.
 
 ### Tool 3: `convert_to_rfwtxt`
 
@@ -251,7 +286,12 @@ Flutter Dart 소스 코드를 rfwtxt로 변환.
 
 비즈니스 로직 실패이므로 MCP `isError: false`, 응답 내 `success: false`로 구분.
 
-**Implementation:** `converter.convertFromSource(source)` 호출. `RfwGenException`을 catch하여 issues를 구조화된 에러로 변환. `ConvertResult.warnings`가 있으면 warnings에 포함.
+**Implementation:** `converter.convertFromSource(source)` 호출. 반환값은 `ConvertResult` 객체.
+- `result.hasErrors`가 true이면 `success: false`, `result.issues`에서 fatal 이슈를 errors로 매핑
+- `result.hasWarnings`이면 non-fatal 이슈를 warnings로 매핑 (`result.issues.where((i) => !i.isFatal)`)
+- 각 `RfwGenIssue`는 `message`, `line` (nullable), `suggestion` (nullable) 필드를 가짐
+- `StateError`를 catch하여 "no @RfwWidget function found" 에러 처리
+- `RfwGenException`은 thrown되지 않음 — 이슈는 `ConvertResult.issues`에 수집됨
 
 ### Tool 4: `validate_rfwtxt`
 
@@ -290,7 +330,11 @@ rfwtxt 문자열의 문법 유효성 검사.
 
 MCP `isError: false`, 응답 내 `valid: false`로 구분.
 
-**Implementation:** `parseLibraryFile(rfwtxt)` 호출 (`package:rfw/formats.dart`). 성공 시 결과에서 위젯 수와 import 목록 추출. `FormatException`을 catch하여 에러 메시지 반환.
+**Implementation:** `parseLibraryFile(rfwtxt)` 호출 (`package:rfw/formats.dart`). 반환값은 `RemoteWidgetLibrary` 객체.
+- `library.widgets`의 length로 widgetCount 계산
+- `library.imports`에서 import 목록 추출 (각 `LibraryName`을 dot-joined 문자열로 변환)
+- `FormatException`을 catch하여 파싱 에러 메시지 반환
+- 빈 문자열 입력 시 별도 에러 처리
 
 ## Error Handling Model
 
@@ -379,5 +423,5 @@ MCP `isError: false`, 응답 내 `valid: false`로 구분.
 6. `validate_rfwtxt.dart` + 테스트
 7. `server_test.dart` — 통합 테스트
 8. `bin/rfw_gen_mcp.dart` 진입점 + 수동 검증
-9. melos.yaml 업데이트
+9. melos.yaml 업데이트 — 현재 `packages: - packages/*` 글로브 사용 중이므로 자동 인식됨. `melos bootstrap` 후 path dependency 해결 확인
 10. CI 업데이트 (ci.yml에 rfw_gen_mcp job 추가)

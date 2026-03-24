@@ -711,6 +711,18 @@ void main() {
       expect(mapping.params.containsKey('textBaseline'), isTrue);
     });
 
+    test('Column has textDirection param', () {
+      final mapping = registry.supportedWidgets['Column']!;
+      expect(mapping.params.containsKey('textDirection'), isTrue);
+      expect(mapping.params['textDirection']!.transformer, equals('enum'));
+    });
+
+    test('Row has textDirection param', () {
+      final mapping = registry.supportedWidgets['Row']!;
+      expect(mapping.params.containsKey('textDirection'), isTrue);
+      expect(mapping.params['textDirection']!.transformer, equals('enum'));
+    });
+
     test('Container has additional params', () {
       final mapping = registry.supportedWidgets['Container']!;
       expect(mapping.params.containsKey('foregroundDecoration'), isTrue);

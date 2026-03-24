@@ -222,6 +222,7 @@ class WidgetRegistry {
             'verticalDirection':
                 ParamMapping('verticalDirection', transformer: 'enum'),
             'textBaseline': ParamMapping('textBaseline', transformer: 'enum'),
+            'textDirection': ParamMapping('textDirection', transformer: 'enum'),
           },
         ),
         'Row': WidgetMapping(
@@ -238,6 +239,7 @@ class WidgetRegistry {
             'verticalDirection':
                 ParamMapping('verticalDirection', transformer: 'enum'),
             'textBaseline': ParamMapping('textBaseline', transformer: 'enum'),
+            'textDirection': ParamMapping('textDirection', transformer: 'enum'),
           },
         ),
         'Center': WidgetMapping(

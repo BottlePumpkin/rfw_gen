@@ -9,10 +9,9 @@ void main() {
       final process = await Process.start(
         'dart',
         ['run', 'bin/rfw_gen_mcp.dart'],
-        workingDirectory:
-            Directory.current.path.endsWith('test')
-                ? Directory.current.parent.path
-                : Directory.current.path,
+        workingDirectory: Directory.current.path.endsWith('test')
+            ? Directory.current.parent.path
+            : Directory.current.path,
       );
 
       // Give the server a moment to start up.
@@ -35,10 +34,9 @@ void main() {
       final process = await Process.start(
         'dart',
         ['run', 'bin/rfw_gen_mcp.dart'],
-        workingDirectory:
-            Directory.current.path.endsWith('test')
-                ? Directory.current.parent.path
-                : Directory.current.path,
+        workingDirectory: Directory.current.path.endsWith('test')
+            ? Directory.current.parent.path
+            : Directory.current.path,
       );
 
       // Collect stderr for diagnostics.

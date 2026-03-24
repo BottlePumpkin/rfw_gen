@@ -12,11 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
-      - name: Install melos
-        run: dart pub global activate melos
-      - name: Bootstrap
-        run: melos bootstrap
 
+      - name: Get dependencies (rfw_gen)
+        working-directory: packages/rfw_gen
+        run: dart pub get
       - name: Analyze rfw_gen
         run: dart analyze packages/rfw_gen
       - name: Format rfw_gen
@@ -25,6 +24,9 @@ jobs:
         working-directory: packages/rfw_gen
         run: dart test
 
+      - name: Get dependencies (rfw_gen_builder)
+        working-directory: packages/rfw_gen_builder
+        run: dart pub get
       - name: Analyze rfw_gen_builder
         run: dart analyze packages/rfw_gen_builder
       - name: Format rfw_gen_builder

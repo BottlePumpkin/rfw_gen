@@ -1,7 +1,13 @@
 name: rfw_gen_mcp
 description: MCP server exposing rfw_gen widget registry, code conversion, and rfwtxt validation.
-version: 0.1.0
-publish_to: none
+version: 0.2.1
+homepage: https://github.com/BottlePumpkin/rfw_gen
+repository: https://github.com/BottlePumpkin/rfw_gen
+topics:
+  - rfw
+  - remote-flutter-widgets
+  - mcp
+  - code-generation
 
 environment:
   sdk: ^3.6.0
@@ -11,10 +17,8 @@ resolution: workspace
 dependencies:
   mcp_dart: ^1.3.0
   rfw: ^1.0.0
-  rfw_gen:
-    path: ../rfw_gen
-  rfw_gen_builder:
-    path: ../rfw_gen_builder
+  rfw_gen: ^0.2.1
+  rfw_gen_builder: ^0.2.1
 
 dev_dependencies:
   test: ^1.25.0

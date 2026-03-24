@@ -3,15 +3,24 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+String _findPackageDir() {
+  var dir = Directory.current;
+  // Walk up until we find packages/rfw_gen_mcp or are at rfw_gen_mcp itself.
+  if (File('${dir.path}/bin/rfw_gen_mcp.dart').existsSync()) return dir.path;
+  final candidate = '${dir.path}/packages/rfw_gen_mcp';
+  if (File('$candidate/bin/rfw_gen_mcp.dart').existsSync()) return candidate;
+  // Fallback: test/ inside the package.
+  if (dir.path.endsWith('test')) return dir.parent.path;
+  return dir.path;
+}
+
 void main() {
   group('MCP server integration', () {
     test('server starts without crashing', () async {
       final process = await Process.start(
         'dart',
         ['run', 'bin/rfw_gen_mcp.dart'],
-        workingDirectory: Directory.current.path.endsWith('test')
-            ? Directory.current.parent.path
-            : Directory.current.path,
+        workingDirectory: _findPackageDir(),
       );
 
       // Give the server a moment to start up.
@@ -34,9 +43,7 @@ void main() {
       final process = await Process.start(
         'dart',
         ['run', 'bin/rfw_gen_mcp.dart'],
-        workingDirectory: Directory.current.path.endsWith('test')
-            ? Directory.current.parent.path
-            : Directory.current.path,
+        workingDirectory: _findPackageDir(),
       );
 
       // Collect stderr for diagnostics.

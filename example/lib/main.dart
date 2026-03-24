@@ -1,10 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:marionette_flutter/marionette_flutter.dart';
 import 'package:rfw/rfw.dart';
 
 import 'data/mock_data.dart';
 
 void main() {
+  if (kDebugMode) {
+    MarionetteBinding.ensureInitialized();
+  }
   runApp(const RfwGenExampleApp());
 }
 

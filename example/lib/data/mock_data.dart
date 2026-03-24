@@ -31,10 +31,10 @@ class MockData {
 
     data.update('categories', <String, Object>{
       'items': <Object>[
-        <String, Object>{'name': '의류', 'icon': 0xe14f},
-        <String, Object>{'name': '전자기기', 'icon': 0xe1e3},
-        <String, Object>{'name': '식품', 'icon': 0xe532},
-        <String, Object>{'name': '도서', 'icon': 0xe02d},
+        <String, Object>{'name': '의류', 'icon': <String, Object>{'icon': 0xe14f, 'fontFamily': 'MaterialIcons'}},
+        <String, Object>{'name': '전자기기', 'icon': <String, Object>{'icon': 0xe1e3, 'fontFamily': 'MaterialIcons'}},
+        <String, Object>{'name': '식품', 'icon': <String, Object>{'icon': 0xe532, 'fontFamily': 'MaterialIcons'}},
+        <String, Object>{'name': '도서', 'icon': <String, Object>{'icon': 0xe02d, 'fontFamily': 'MaterialIcons'}},
       ],
     });
 

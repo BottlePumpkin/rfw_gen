@@ -1487,4 +1487,78 @@ void main() {
       expect((map['vertical'] as IrNumberValue).value, 0.0);
     });
   });
+
+  group('ShapeBorder', () {
+    test('converts RoundedRectangleBorder() with no args', () {
+      final expr = parseExpression('RoundedRectangleBorder()');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'rounded');
+    });
+
+    test('converts RoundedRectangleBorder with borderRadius', () {
+      final expr = parseExpression(
+        'RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0))',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'rounded');
+      expect(map.containsKey('borderRadius'), isTrue);
+      expect(map['borderRadius'], isA<IrListValue>());
+    });
+
+    test('converts RoundedRectangleBorder with side and borderRadius', () {
+      final expr = parseExpression(
+        'RoundedRectangleBorder('
+        '  side: BorderSide(color: Color(0xFF000000), width: 2.0),'
+        '  borderRadius: BorderRadius.circular(12.0),'
+        ')',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'rounded');
+      expect(map.containsKey('side'), isTrue);
+      final side = (map['side'] as IrMapValue).entries;
+      expect((side['color'] as IrIntValue).value, 0xFF000000);
+      expect((side['width'] as IrNumberValue).value, 2.0);
+      expect(map.containsKey('borderRadius'), isTrue);
+    });
+
+    test('converts CircleBorder() with no args', () {
+      final expr = parseExpression('CircleBorder()');
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'circle');
+    });
+
+    test('converts CircleBorder with side', () {
+      final expr = parseExpression(
+        'CircleBorder(side: BorderSide(color: Color(0xFFFF0000), width: 1.0))',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'circle');
+      expect(map.containsKey('side'), isTrue);
+      final side = (map['side'] as IrMapValue).entries;
+      expect((side['color'] as IrIntValue).value, 0xFFFF0000);
+    });
+
+    test('converts StadiumBorder() with no args', () {
+      final expr = parseExpression('StadiumBorder()');
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'stadium');
+    });
+
+    test('converts StadiumBorder with side', () {
+      final expr = parseExpression(
+        'StadiumBorder(side: BorderSide(color: Color(0xFF0000FF), width: 3.0))',
+      );
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['type'] as IrStringValue).value, 'stadium');
+      expect(map.containsKey('side'), isTrue);
+    });
+  });
 }

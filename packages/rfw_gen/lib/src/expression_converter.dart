@@ -226,6 +226,11 @@ class ExpressionConverter {
       return _convertVisualDensity(expr.argumentList);
     }
 
+    // RoundedRectangleBorder/CircleBorder/StadiumBorder(...) — ShapeBorder types
+    if (target == null && const {'RoundedRectangleBorder', 'CircleBorder', 'StadiumBorder'}.contains(methodName)) {
+      return _convertShapeBorder(methodName, expr.argumentList);
+    }
+
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
@@ -293,6 +298,9 @@ class ExpressionConverter {
       'BorderSide' => _convertBorderSide(argList),
       'Border' => _convertBorder(argList),
       'VisualDensity' => _convertVisualDensity(argList),
+      'RoundedRectangleBorder' => _convertShapeBorder(className, argList),
+      'CircleBorder' => _convertShapeBorder(className, argList),
+      'StadiumBorder' => _convertShapeBorder(className, argList),
       _ when _knownGridDelegates.contains(className) =>
         _convertGridDelegateFromArgs(argList),
       _ => throw UnsupportedExpressionError(
@@ -1273,6 +1281,33 @@ class ExpressionConverter {
         sides['left'] ?? defaultSide,
       ]),
     });
+  }
+
+  /// Converts `RoundedRectangleBorder(side: ..., borderRadius: ...)`,
+  /// `CircleBorder(side: ...)`, and `StadiumBorder(side: ...)`.
+  IrMapValue _convertShapeBorder(String className, ArgumentList argList) {
+    final type = switch (className) {
+      'RoundedRectangleBorder' => 'rounded',
+      'CircleBorder' => 'circle',
+      'StadiumBorder' => 'stadium',
+      _ => throw UnsupportedExpressionError(
+          'Unsupported ShapeBorder: $className',
+          offset: argList.offset,
+        ),
+    };
+    final entries = <String, IrValue>{'type': IrStringValue(type)};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'side':
+            entries[name] = convert(arg.expression);
+          case 'borderRadius':
+            entries[name] = convert(arg.expression);
+        }
+      }
+    }
+    return IrMapValue(entries);
   }
 
   /// Extracts a double value from a numeric expression.

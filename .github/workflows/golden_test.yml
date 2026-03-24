@@ -1,0 +1,51 @@
+name: Golden Tests
+
+on:
+  pull_request:
+    paths:
+      - 'packages/rfw_gen/**'
+      - 'example/**'
+  workflow_dispatch:
+
+jobs:
+  golden:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.32.0'
+      - name: Install dependencies
+        run: cd example && flutter pub get
+      - name: Verify .rfw assets exist
+        run: |
+          test -f example/assets/catalog_widgets.rfw || (echo "Missing catalog_widgets.rfw - run build_runner first" && exit 1)
+          test -f example/assets/shop_widgets.rfw || (echo "Missing shop_widgets.rfw - run build_runner first" && exit 1)
+          test -f example/assets/custom_widgets.rfw || (echo "Missing custom_widgets.rfw - run build_runner first" && exit 1)
+      - name: Run golden tests
+        run: cd example && flutter test --tags golden
+
+  update-goldens:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.32.0'
+      - name: Install dependencies
+        run: cd example && flutter pub get
+      - name: Verify .rfw assets exist
+        run: |
+          test -f example/assets/catalog_widgets.rfw || (echo "Missing catalog_widgets.rfw" && exit 1)
+          test -f example/assets/shop_widgets.rfw || (echo "Missing shop_widgets.rfw" && exit 1)
+          test -f example/assets/custom_widgets.rfw || (echo "Missing custom_widgets.rfw" && exit 1)
+      - name: Update golden images
+        run: cd example && flutter test --tags golden --update-goldens
+      - uses: actions/upload-artifact@v4
+        with:
+          name: golden-images
+          path: example/test/goldens/

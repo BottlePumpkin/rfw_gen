@@ -386,6 +386,14 @@ class ExpressionConverter {
       return _convertRfwIcon(identifier);
     }
 
+    if (prefix == 'Alignment') {
+      return _convertAlignmentConstant(identifier);
+    }
+
+    if (prefix == 'AlignmentDirectional') {
+      return _convertAlignmentDirectionalConstant(identifier);
+    }
+
     throw UnsupportedExpressionError(
       'Unknown prefixed identifier: $prefix.$identifier',
       offset: expr.offset,
@@ -401,6 +409,54 @@ class ExpressionConverter {
       'icon': IrIntValue(codepoint),
       'fontFamily': IrStringValue('MaterialIcons'),
     });
+  }
+
+  static const _alignmentConstants = <String, List<double>>{
+    'topLeft': [-1.0, -1.0],
+    'topCenter': [0.0, -1.0],
+    'topRight': [1.0, -1.0],
+    'centerLeft': [-1.0, 0.0],
+    'center': [0.0, 0.0],
+    'centerRight': [1.0, 0.0],
+    'bottomLeft': [-1.0, 1.0],
+    'bottomCenter': [0.0, 1.0],
+    'bottomRight': [1.0, 1.0],
+  };
+
+  IrMapValue _convertAlignmentConstant(String name) {
+    final values = _alignmentConstants[name];
+    if (values != null) {
+      return IrMapValue({
+        'x': IrNumberValue(values[0]),
+        'y': IrNumberValue(values[1]),
+      });
+    }
+    throw UnsupportedExpressionError('Unknown Alignment constant: $name');
+  }
+
+  static const _alignmentDirectionalConstants = <String, List<double>>{
+    'topStart': [-1.0, -1.0],
+    'topCenter': [0.0, -1.0],
+    'topEnd': [1.0, -1.0],
+    'centerStart': [-1.0, 0.0],
+    'center': [0.0, 0.0],
+    'centerEnd': [1.0, 0.0],
+    'bottomStart': [-1.0, 1.0],
+    'bottomCenter': [0.0, 1.0],
+    'bottomEnd': [1.0, 1.0],
+  };
+
+  IrMapValue _convertAlignmentDirectionalConstant(String name) {
+    final values = _alignmentDirectionalConstants[name];
+    if (values != null) {
+      return IrMapValue({
+        'start': IrNumberValue(values[0]),
+        'y': IrNumberValue(values[1]),
+      });
+    }
+    throw UnsupportedExpressionError(
+      'Unknown AlignmentDirectional constant: $name',
+    );
   }
 
   IrIntValue _convertDuration(MethodInvocation expr) {

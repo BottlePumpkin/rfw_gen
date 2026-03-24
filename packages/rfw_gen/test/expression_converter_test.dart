@@ -1029,4 +1029,49 @@ void main() {
       expect((map.entries['crossAxisCount'] as IrIntValue).value, equals(2));
     });
   });
+
+  group('Alignment constants', () {
+    test('converts Alignment.center to map', () {
+      final expr = parseExpression('Alignment.center');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['x'] as IrNumberValue).value, 0.0);
+      expect((map['y'] as IrNumberValue).value, 0.0);
+    });
+
+    test('converts Alignment.topLeft to map', () {
+      final expr = parseExpression('Alignment.topLeft');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['x'] as IrNumberValue).value, -1.0);
+      expect((map['y'] as IrNumberValue).value, -1.0);
+    });
+
+    test('converts Alignment.bottomRight to map', () {
+      final expr = parseExpression('Alignment.bottomRight');
+      final result = converter.convert(expr);
+      final map = (result as IrMapValue).entries;
+      expect((map['x'] as IrNumberValue).value, 1.0);
+      expect((map['y'] as IrNumberValue).value, 1.0);
+    });
+
+    test('converts AlignmentDirectional.centerStart to map', () {
+      final expr = parseExpression('AlignmentDirectional.centerStart');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect((map['start'] as IrNumberValue).value, -1.0);
+      expect((map['y'] as IrNumberValue).value, 0.0);
+    });
+
+    test('throws for unknown Alignment constant', () {
+      final expr = parseExpression('Alignment.unknownName');
+      expect(
+        () => converter.convert(expr),
+        throwsA(isA<UnsupportedExpressionError>()),
+      );
+    });
+  });
 }

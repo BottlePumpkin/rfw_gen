@@ -123,7 +123,10 @@ class WidgetAstVisitor {
     _spreadIconData(properties);
     _spreadImageProvider(properties);
 
-    return IrWidgetNode(name: widgetName, properties: properties);
+    // Use the RFW widget name (e.g., 'core.Padding' → 'Padding')
+    // so animated aliases map to their RFW equivalents in output.
+    final rfwWidgetName = mapping.rfwName.split('.').last;
+    return IrWidgetNode(name: rfwWidgetName, properties: properties);
   }
 
   /// Spreads `iconData` map entries to root level for RFW Icon compatibility.

@@ -387,7 +387,7 @@ Widget build() {
 ''';
       final rfwtxt = converter.convertFromSource(input);
       expect(rfwtxt, contains('import core.widgets;'));
-      expect(rfwtxt, contains('AnimatedPadding('));
+      expect(rfwtxt, contains('Padding('));
       expect(rfwtxt, contains('padding:'));
       expect(rfwtxt, contains('duration: 300'));
       final library = parseLibraryFile(rfwtxt);
@@ -406,7 +406,7 @@ Widget build() {
 ''';
       final rfwtxt = converter.convertFromSource(input);
       expect(rfwtxt, contains('import core.widgets;'));
-      expect(rfwtxt, contains('AnimatedOpacity('));
+      expect(rfwtxt, contains('Opacity('));
       expect(rfwtxt, contains('opacity: 0.5'));
       expect(rfwtxt, contains('duration: 300'));
       final library = parseLibraryFile(rfwtxt);
@@ -429,7 +429,7 @@ Widget build() {
 ''';
       final rfwtxt = converter.convertFromSource(input);
       expect(rfwtxt, contains('import core.widgets;'));
-      expect(rfwtxt, contains('PositionedDirectional('));
+      expect(rfwtxt, contains('Positioned('));
       expect(rfwtxt, contains('end: 20.0'));
       final library = parseLibraryFile(rfwtxt);
       expect(library.widgets, isNotEmpty);

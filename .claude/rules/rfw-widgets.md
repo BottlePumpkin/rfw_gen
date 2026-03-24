@@ -84,7 +84,7 @@
 | **FloatingActionButton** | tooltip, backgroundColor, elevation, mini | child | onPressed |
 | **InkWell** | splashColor, highlightColor, borderRadius | optionalChild | onTap, onDoubleTap, onLongPress |
 | **LinearProgressIndicator** | value, color, backgroundColor | — | — |
-| **ListTile** | dense, enabled, selected, contentPadding | leading(opt), title(opt), subtitle(opt), trailing(opt) | onTap, onLongPress |
+| **ListTile** | dense, enabled, selected, contentPadding, visualDensity | leading(opt), title(opt), subtitle(opt), trailing(opt) | onTap, onLongPress |
 | **Material** | type, elevation, color, shadowColor | child | — |
 | **OutlinedButton** | autofocus, clipBehavior | child | onPressed, onLongPress |
 | **OverflowBar** | spacing, alignment, overflowSpacing | childList(children) | — |

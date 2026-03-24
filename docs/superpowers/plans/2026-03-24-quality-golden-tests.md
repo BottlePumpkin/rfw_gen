@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 카탈로그 41~43개 위젯 + 이커머스 5개 화면에 대한 골든 테스트 체계를 구축하여 RFW 변환의 시각적 정확성을 검증한다.
+**Goal:** 카탈로그 56개 위젯(7 카테고리 43개 + Custom 13개) + 이커머스 5개 화면에 대한 골든 테스트 체계를 구축하여 RFW 변환의 시각적 정확성을 검증한다.
 
 **Architecture:** GoldenTestHelper가 RFW Runtime을 초기화하고 RemoteWidget을 고정 뷰포트(400x800)에서 렌더링. Roboto 폰트 번들링으로 Ahem 기본 폰트를 대체. HttpOverrides로 네트워크 이미지 처리. Linux CI에서만 골든 생성/비교.
 
@@ -13,7 +13,7 @@
 **선행 조건:**
 1. example app 미커밋 작업 완료 및 커밋
 2. `cd example && dart run build_runner build` 실행하여 .rfw 바이너리 생성
-3. `assets/catalog_widgets.rfw`, `assets/shop_widgets.rfw` 파일 존재 확인
+3. `assets/catalog_widgets.rfw`, `assets/shop_widgets.rfw`, `assets/custom_widgets.rfw` 파일 존재 확인
 
 ---
 
@@ -28,7 +28,8 @@
 - `example/test/golden_catalog_transform_test.dart` — Transform 카테고리 골든 테스트 (3개)
 - `example/test/golden_catalog_interaction_test.dart` — Interaction 카테고리 골든 테스트 (2개)
 - `example/test/golden_catalog_material_test.dart` — Material 카테고리 골든 테스트 (10개)
-- `example/test/golden_catalog_other_test.dart` — Other 카테고리 골든 테스트 (3~5개)
+- `example/test/golden_catalog_other_test.dart` — Other 카테고리 골든 테스트 (3개)
+- `example/test/golden_catalog_custom_test.dart` — Custom 카테고리 골든 테스트 (13개)
 - `example/test/golden_ecommerce_test.dart` — 이커머스 화면 골든 테스트 (5개)
 - `example/test/fonts/Roboto-Regular.ttf` — Roboto Regular 폰트 파일
 - `example/test/fonts/Roboto-Bold.ttf` — Roboto Bold 폰트 파일
@@ -301,9 +302,16 @@ class GoldenTestHelper {
       createMaterialWidgets(),
     );
 
+    // Custom local widget library 등록 (main.dart와 동일)
+    runtime.update(
+      const LibraryName(<String>['custom', 'widgets']),
+      LocalWidgetLibrary(_buildCustomWidgets()),
+    );
+
     // .rfw 바이너리 파일 시스템에서 직접 로드
     final catalogBlob = File('assets/catalog_widgets.rfw').readAsBytesSync();
     final shopBlob = File('assets/shop_widgets.rfw').readAsBytesSync();
+    final customBlob = File('assets/custom_widgets.rfw').readAsBytesSync();
     runtime.update(
       const LibraryName(<String>['catalog']),
       decodeLibraryBlob(catalogBlob),
@@ -311,6 +319,10 @@ class GoldenTestHelper {
     runtime.update(
       const LibraryName(<String>['shop']),
       decodeLibraryBlob(shopBlob),
+    );
+    runtime.update(
+      const LibraryName(<String>['customdemo']),
+      decodeLibraryBlob(customBlob),
     );
 
     // Mock data
@@ -365,6 +377,138 @@ class GoldenTestHelper {
   void dispose() {
     runtime.dispose();
     data = DynamicContent();
+  }
+
+  /// Custom local widget builders (main.dart와 동일).
+  /// Custom 카테고리 골든 테스트에서 customdemo 라이브러리의 위젯 렌더링에 필수.
+  static Map<String, LocalWidgetBuilder> _buildCustomWidgets() {
+    return <String, LocalWidgetBuilder>{
+      'CustomText': (BuildContext context, DataSource source) {
+        final text = source.v<String>(['text']) ?? '';
+        final fontType = source.v<String>(['fontType']) ?? 'body';
+        final color = Color(source.v<int>(['color']) ?? 0xFF000000);
+        final maxLines = source.v<int>(['maxLines']);
+        final style = switch (fontType) {
+          'heading' => TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color),
+          'button' => TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: color),
+          'caption' => TextStyle(fontSize: 12, color: color),
+          _ => TextStyle(fontSize: 14, color: color),
+        };
+        return Text(text, style: style, maxLines: maxLines);
+      },
+      'CustomBounceTapper': (BuildContext context, DataSource source) {
+        return GestureDetector(
+          onTap: source.voidHandler(['onTap']),
+          child: source.optionalChild(['child']),
+        );
+      },
+      'NullConditionalWidget': (BuildContext context, DataSource source) {
+        final child = source.optionalChild(['child']);
+        final nullChild = source.optionalChild(['nullChild']);
+        return child ?? nullChild ?? const SizedBox.shrink();
+      },
+      'CustomButton': (BuildContext context, DataSource source) {
+        return ElevatedButton(
+          onPressed: source.voidHandler(['onPressed']),
+          onLongPress: source.voidHandler(['onLongPress']),
+          child: source.child(['child']),
+        );
+      },
+      'CustomBadge': (BuildContext context, DataSource source) {
+        final label = source.v<String>(['label']) ?? '';
+        final count = source.v<int>(['count']) ?? 0;
+        final bg = Color(source.v<int>(['backgroundColor']) ?? 0xFF9E9E9E);
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12)),
+          child: Text('$label${count > 0 ? ' ($count)' : ''}',
+              style: const TextStyle(color: Colors.white, fontSize: 12)),
+        );
+      },
+      'CustomProgressBar': (BuildContext context, DataSource source) {
+        final value = source.v<double>(['value']) ?? 0.0;
+        final color = Color(source.v<int>(['color']) ?? 0xFF2196F3);
+        final shape = source.v<String>(['shape']) ?? 'rounded';
+        final height = source.v<double>(['height']) ?? 4.0;
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(shape == 'rounded' ? height / 2 : 0),
+          child: LinearProgressIndicator(value: value, color: color, minHeight: height),
+        );
+      },
+      'CustomColumn': (BuildContext context, DataSource source) {
+        final spacing = source.v<double>(['spacing']) ?? 0.0;
+        final dividerColor = Color(source.v<int>(['dividerColor']) ?? 0x00000000);
+        final children = <Widget>[];
+        for (var i = 0; i < source.length(['children']); i++) {
+          if (i > 0) {
+            if (spacing > 0) children.add(SizedBox(height: spacing));
+            if (dividerColor.alpha > 0) children.add(Divider(color: dividerColor, height: 1));
+          }
+          children.add(source.child(['children', i]));
+        }
+        return Column(children: children);
+      },
+      'SkeletonContainer': (BuildContext context, DataSource source) {
+        final isLoading = source.v<bool>(['isLoading']) ?? false;
+        final child = source.optionalChild(['child']);
+        if (isLoading) {
+          return Container(
+            height: 48, color: Colors.grey[300],
+            child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          );
+        }
+        return child ?? const SizedBox.shrink();
+      },
+      'CompareWidget': (BuildContext context, DataSource source) {
+        final child = source.optionalChild(['child']);
+        final trueChild = source.optionalChild(['trueChild']);
+        final falseChild = source.optionalChild(['falseChild']);
+        return Column(children: [
+          if (child != null) child,
+          if (trueChild != null) trueChild,
+          if (falseChild != null) falseChild,
+        ]);
+      },
+      'PvContainer': (BuildContext context, DataSource source) {
+        final onPv = source.voidHandler(['onPv']);
+        WidgetsBinding.instance.addPostFrameCallback((_) => onPv?.call());
+        return source.optionalChild(['child']) ?? const SizedBox.shrink();
+      },
+      'CustomCard': (BuildContext context, DataSource source) {
+        final elevation = source.v<double>(['elevation']) ?? 1.0;
+        final borderRadius = source.v<double>(['borderRadius']) ?? 8.0;
+        return GestureDetector(
+          onTap: source.voidHandler(['onTap']),
+          child: Card(
+            elevation: elevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            child: source.child(['child']),
+          ),
+        );
+      },
+      'CustomTile': (BuildContext context, DataSource source) {
+        return ListTile(
+          leading: source.optionalChild(['leading']),
+          title: source.optionalChild(['title']),
+          subtitle: source.optionalChild(['subtitle']),
+          trailing: source.optionalChild(['trailing']),
+          onTap: source.voidHandler(['onTap']),
+        );
+      },
+      'CustomAppBar': (BuildContext context, DataSource source) {
+        final actions = <Widget>[];
+        for (var i = 0; i < source.length(['actions']); i++) {
+          actions.add(source.child(['actions', i]));
+        }
+        return AppBar(
+          title: source.optionalChild(['title']),
+          actions: actions.isEmpty ? null : actions,
+          backgroundColor: const Color(0xFF2196F3),
+        );
+      },
+    };
   }
 }
 ```
@@ -566,12 +710,12 @@ git commit -m "test(example): add golden tests for Scrolling category (4 widgets
 
 ---
 
-### Task 5: Styling 카테고리 골든 테스트 (10개)
+### Task 5: Styling 카테고리 골든 테스트 (11개)
 
 **Files:**
 - Create: `example/test/golden_catalog_styling_test.dart`
 
-위젯: containerDemo, paddingOpacityDemo, clipRRectDemo, defaultTextStyleDemo, directionalityDemo, iconDemo, iconThemeDemo, imageDemo, textDemo, coloredBoxDemo
+위젯: containerDemo, paddingOpacityDemo, clipRRectDemo, defaultTextStyleDemo, directionalityDemo, iconDemo, iconThemeDemo, imageDemo, textDemo, coloredBoxDemo, borderDemo
 
 - [ ] **Step 1: 테스트 파일 작성**
 
@@ -593,14 +737,14 @@ flutter test test/golden_catalog_styling_test.dart --update-goldens --tags golde
 flutter test test/golden_catalog_styling_test.dart --tags golden
 ```
 
-Expected: 10 tests passed
+Expected: 11 tests passed
 
 - [ ] **Step 4: 커밋**
 
 ```bash
 cd /Users/byeonghopark-jobis/dev/rfw_gen
 git add example/test/golden_catalog_styling_test.dart example/test/goldens/catalog/styling/
-git commit -m "test(example): add golden tests for Styling category (10 widgets)"
+git commit -m "test(example): add golden tests for Styling category (11 widgets)"
 ```
 
 ---
@@ -671,12 +815,12 @@ git commit -m "test(example): add golden tests for Interaction category (2 widge
 
 ---
 
-### Task 8: Material 카테고리 골든 테스트 (10개)
+### Task 8: Material 카테고리 골든 테스트 (11개)
 
 **Files:**
 - Create: `example/test/golden_catalog_material_test.dart`
 
-위젯: scaffoldDemo, materialDemo, cardDemo, buttonDemo, listTileDemo, sliderDemo, drawerDemo, dividerDemo, progressDemo, overflowBarDemo
+위젯: scaffoldDemo, materialDemo, cardDemo, buttonDemo, listTileDemo, sliderDemo, drawerDemo, dividerDemo, progressDemo, overflowBarDemo, visualDensityDemo
 
 **참고**:
 - `sliderDemo`는 stateful (`state: {'value': 50.0}`). 초기 상태만 검증.
@@ -696,7 +840,7 @@ flutter test test/golden_catalog_material_test.dart --update-goldens --tags gold
 flutter test test/golden_catalog_material_test.dart --tags golden
 ```
 
-Expected: 10 tests passed
+Expected: 11 tests passed
 
 - [ ] **Step 3: 에지 케이스 확인**
 
@@ -704,30 +848,26 @@ Expected: 10 tests passed
 - `scaffoldDemo`: AppBar가 정상 렌더링되는지
 - `sliderDemo`: Slider가 초기값 50.0에 위치하는지
 - `drawerDemo`: Drawer가 closed 상태인지
+- `visualDensityDemo`: VisualDensity가 적용된 ListTile 등 렌더링 확인
 
 - [ ] **Step 4: 커밋**
 
 ```bash
 cd /Users/byeonghopark-jobis/dev/rfw_gen
 git add example/test/golden_catalog_material_test.dart example/test/goldens/catalog/material/
-git commit -m "test(example): add golden tests for Material category (10 widgets)"
+git commit -m "test(example): add golden tests for Material category (11 widgets)"
 ```
 
 ---
 
-### Task 9: Other 카테고리 골든 테스트 (3~5개)
+### Task 9: Other 카테고리 골든 테스트 (3개)
 
 **Files:**
 - Create: `example/test/golden_catalog_other_test.dart`
 
-확정 위젯: animationDefaultsDemo, safeAreaDemo, argsPatternDemo
-잠정 위젯: compositionDemo, customWidgetDemo (example app에 존재하면 포함)
+위젯: animationDefaultsDemo, safeAreaDemo, argsPatternDemo
 
-- [ ] **Step 1: 현재 main.dart의 Other 카테고리 위젯 확인**
-
-`example/lib/main.dart`의 `_catalogWidgets['Other']` 리스트를 확인하여 최종 위젯 목록 결정.
-
-- [ ] **Step 2: 테스트 파일 작성**
+- [ ] **Step 1: 테스트 파일 작성**
 
 동일 패턴. 골든 파일 경로: `goldens/catalog/other/{widget_name}.png`
 
@@ -747,12 +887,95 @@ flutter test test/golden_catalog_other_test.dart --tags golden
 ```bash
 cd /Users/byeonghopark-jobis/dev/rfw_gen
 git add example/test/golden_catalog_other_test.dart example/test/goldens/catalog/other/
-git commit -m "test(example): add golden tests for Other category (3-5 widgets)"
+git commit -m "test(example): add golden tests for Other category (3 widgets)"
 ```
 
 ---
 
-### Task 10: 이커머스 화면 골든 테스트 (5개)
+### Task 10: Custom 카테고리 골든 테스트 (13개)
+
+**Files:**
+- Create: `example/test/golden_catalog_custom_test.dart`
+
+위젯: customTextDemo, customBounceTapperDemo, nullConditionalDemo, customButtonDemo, customBadgeDemo, customProgressBarDemo, customColumnDemo, skeletonContainerDemo, compareWidgetDemo, pvContainerDemo, customCardDemo, customTileDemo, customAppBarDemo
+
+**참고**:
+- Custom 위젯은 `customdemo` 라이브러리에서 렌더링 (catalog과 다름)
+- `pumpWidget(tester, library: 'customdemo', widget: '...')` 형태로 호출
+- custom local widget library가 GoldenTestHelper에 등록되어 있어야 함
+
+- [ ] **Step 1: 테스트 파일 작성**
+
+```dart
+// example/test/golden_catalog_custom_test.dart
+@Tags(['golden'])
+library;
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rfw/rfw.dart';
+
+import 'helpers/golden_test_helper.dart';
+
+void main() {
+  late GoldenTestHelper helper;
+
+  setUpAll(() async {
+    await loadTestFonts();
+    goldenFileComparator = TolerantGoldenFileComparator(
+      Uri.parse('test/golden_stub'),
+      tolerance: 0.005,
+    );
+  });
+
+  setUp(() async {
+    helper = GoldenTestHelper();
+    await helper.setUp();
+  });
+
+  tearDown(() => helper.dispose());
+
+  for (final widget in [
+    'customTextDemo', 'customBounceTapperDemo', 'nullConditionalDemo',
+    'customButtonDemo', 'customBadgeDemo', 'customProgressBarDemo',
+    'customColumnDemo', 'skeletonContainerDemo', 'compareWidgetDemo',
+    'pvContainerDemo', 'customCardDemo', 'customTileDemo', 'customAppBarDemo',
+  ]) {
+    testWidgets('$widget golden', (tester) async {
+      await helper.pumpWidget(tester, library: 'customdemo', widget: widget);
+      final snakeCase = widget.replaceAllMapped(
+        RegExp(r'[A-Z]'), (m) => '_${m.group(0)!.toLowerCase()}',
+      );
+      await expectLater(
+        find.byType(RemoteWidget),
+        matchesGoldenFile('goldens/catalog/custom/$snakeCase.png'),
+      );
+    });
+  }
+}
+```
+
+- [ ] **Step 2: 골든 이미지 생성 + 테스트 실행**
+
+```bash
+cd /Users/byeonghopark-jobis/dev/rfw_gen/example
+mkdir -p test/goldens/catalog/custom
+flutter test test/golden_catalog_custom_test.dart --update-goldens --tags golden
+flutter test test/golden_catalog_custom_test.dart --tags golden
+```
+
+Expected: 13 tests passed
+
+- [ ] **Step 3: 커밋**
+
+```bash
+cd /Users/byeonghopark-jobis/dev/rfw_gen
+git add example/test/golden_catalog_custom_test.dart example/test/goldens/catalog/custom/
+git commit -m "test(example): add golden tests for Custom category (13 widgets)"
+```
+
+---
+
+### Task 11: 이커머스 화면 골든 테스트 (5개)
 
 **Files:**
 - Create: `example/test/golden_ecommerce_test.dart`
@@ -871,7 +1094,7 @@ git commit -m "test(example): add golden tests for e-commerce screens (5 screens
 
 ---
 
-### Task 11: 전체 골든 테스트 통합 실행 + 에지 케이스 수정
+### Task 12: 전체 골든 테스트 통합 실행 + 에지 케이스 수정
 
 **Files:**
 - 필요시 수정: `example/test/helpers/golden_test_helper.dart`
@@ -884,7 +1107,7 @@ cd /Users/byeonghopark-jobis/dev/rfw_gen/example
 flutter test --tags golden
 ```
 
-Expected: 46~48 tests passed (위젯 수에 따라)
+Expected: 61 tests passed (Layout 9 + Scrolling 4 + Styling 11 + Transform 3 + Interaction 2 + Material 11 + Other 3 + Custom 13 + Ecommerce 5)
 
 - [ ] **Step 2: 실패 테스트 확인 및 수정**
 
@@ -913,7 +1136,7 @@ git commit -m "fix(example): resolve golden test edge cases"
 
 ---
 
-### Task 12: GitHub Actions CI 워크플로우
+### Task 13: GitHub Actions CI 워크플로우
 
 **Files:**
 - Create: `.github/workflows/golden_test.yml`
@@ -947,6 +1170,7 @@ jobs:
         run: |
           test -f example/assets/catalog_widgets.rfw || (echo "Missing catalog_widgets.rfw - run build_runner first" && exit 1)
           test -f example/assets/shop_widgets.rfw || (echo "Missing shop_widgets.rfw - run build_runner first" && exit 1)
+          test -f example/assets/custom_widgets.rfw || (echo "Missing custom_widgets.rfw - run build_runner first" && exit 1)
       - name: Run golden tests
         run: cd example && flutter test --tags golden
 
@@ -984,7 +1208,7 @@ git commit -m "ci: add GitHub Actions workflow for golden tests"
 
 ---
 
-### Task 13: .claude/ 가이드 업데이트
+### Task 14: .claude/ 가이드 업데이트
 
 **Files:**
 - Create: `.claude/agents/golden-test-writer.md`
@@ -1079,14 +1303,15 @@ git commit -m "docs: add golden test agent, skill, and update development rules"
 | 2 | GoldenTestHelper 인프라 | — |
 | 3 | Layout 골든 | 9 |
 | 4 | Scrolling 골든 | 4 |
-| 5 | Styling 골든 | 10 |
+| 5 | Styling 골든 | 11 |
 | 6 | Transform 골든 | 3 |
 | 7 | Interaction 골든 | 2 |
-| 8 | Material 골든 | 10 |
-| 9 | Other 골든 | 3~5 |
-| 10 | 이커머스 골든 | 5 |
-| 11 | 통합 실행 + 에지 케이스 | — |
-| 12 | CI 워크플로우 | — |
-| 13 | .claude/ 가이드 | — |
+| 8 | Material 골든 | 11 |
+| 9 | Other 골든 | 3 |
+| 10 | Custom 골든 | 13 |
+| 11 | 이커머스 골든 | 5 |
+| 12 | 통합 실행 + 에지 케이스 | — |
+| 13 | CI 워크플로우 | — |
+| 14 | .claude/ 가이드 | — |
 
-**총 골든 테스트**: 46~48개
+**총 골든 테스트**: 61개

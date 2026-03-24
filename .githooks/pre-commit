@@ -1,0 +1,10 @@
+#!/bin/sh
+
+branch=$(git branch --show-current)
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+  echo ""
+  echo "ERROR: main 브랜치에 직접 커밋할 수 없습니다."
+  echo "브랜치를 만드세요: git checkout -b feat/your-feature"
+  echo ""
+  exit 1
+fi

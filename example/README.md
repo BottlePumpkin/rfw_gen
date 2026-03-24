@@ -67,3 +67,4 @@ lib/
 - `RfwHandler.setState` / `setStateFromArg` / `event` — 이벤트 핸들링
 - 암시적 애니메이션 (`duration` / `curve`)
 - Navigator.push 기반 화면 이동 (이벤트 → 호스트 앱)
+

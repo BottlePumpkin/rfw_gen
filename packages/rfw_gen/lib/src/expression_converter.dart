@@ -989,9 +989,13 @@ class ExpressionConverter {
     final entries = <String, IrValue>{};
     for (final element in expr.elements) {
       if (element is MapLiteralEntry) {
-        final key = (element.key as SimpleStringLiteral).value;
-        entries[key] = convert(element.value);
+        final key = element.key;
+        final keyStr = key is SimpleStringLiteral
+            ? key.value
+            : key.toString();
+        entries[keyStr] = convert(element.value);
       }
+      // Non-MapLiteralEntry elements (Set literals) are skipped safely
     }
     return IrMapValue(entries);
   }

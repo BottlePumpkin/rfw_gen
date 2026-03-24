@@ -1279,4 +1279,30 @@ void main() {
       expect((result as IrBoolValue).value, isTrue);
     });
   });
+
+  group('Map literal safety', () {
+    test('map literal with string keys works normally', () {
+      final expr = parseExpression("{'name': 'test', 'value': 42}");
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect(map.containsKey('name'), isTrue);
+      expect(map.containsKey('value'), isTrue);
+    });
+
+    test('set literal does not crash', () {
+      final expr = parseExpression('{1, 2, 3}');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      expect((result as IrMapValue).entries, isEmpty);
+    });
+
+    test('map literal with non-string keys does not crash', () {
+      final expr = parseExpression('{1: "one", 2: "two"}');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = (result as IrMapValue).entries;
+      expect(map.length, equals(2));
+    });
+  });
 }

@@ -27,3 +27,7 @@ dev_dependencies:
     path: ../packages/rfw_gen_builder
   flutter_test:
     sdk: flutter
+
+dependency_overrides:
+  rfw_gen:
+    path: ../packages/rfw_gen

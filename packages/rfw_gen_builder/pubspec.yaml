@@ -19,8 +19,7 @@ dependencies:
   build: ^4.0.0
   rfw: ^1.0.0
   yaml: ^3.1.0
-  rfw_gen:
-    path: ../rfw_gen
+  rfw_gen: ^0.2.1
 
 dev_dependencies:
   build_runner: ^2.4.0

@@ -137,6 +137,35 @@ class WidgetRegistry {
               .toSet() ??
           const <String>{};
 
+      // Validate named_child_slots
+      final rawSlots = config['named_child_slots'] as Map?;
+      if (childType == ChildType.namedSlots &&
+          (rawSlots == null || rawSlots.isEmpty)) {
+        throw ArgumentError(
+          'Widget "$name" with child_type "namedSlots" '
+          'requires "named_child_slots" with at least one entry',
+        );
+      }
+      if (childType != ChildType.namedSlots && rawSlots != null) {
+        throw ArgumentError(
+          'Widget "$name" has "named_child_slots" which is '
+          'only valid when child_type is "namedSlots"',
+        );
+      }
+      final namedChildSlots = <String, bool>{};
+      if (rawSlots != null) {
+        for (final e in rawSlots.entries) {
+          if (e.value is! bool) {
+            throw ArgumentError(
+              'Widget "$name" named_child_slots["${e.key}"] '
+              'must be a bool (true=list slot, false=single slot), '
+              'got ${e.value.runtimeType}',
+            );
+          }
+          namedChildSlots[e.key as String] = e.value as bool;
+        }
+      }
+
       final childParam = config['child_param'] as String? ??
           (childType == ChildType.child ||
                   childType == ChildType.optionalChild
@@ -154,6 +183,7 @@ class WidgetRegistry {
           childParam: childParam,
           params: const {},
           handlerParams: handlers,
+          namedChildSlots: namedChildSlots,
         ),
       );
     }
@@ -163,9 +193,7 @@ class WidgetRegistry {
         'child' => ChildType.child,
         'optionalChild' => ChildType.optionalChild,
         'childList' => ChildType.childList,
-        'namedSlots' => throw ArgumentError(
-            'namedSlots is not supported for custom widgets in rfw_gen.yaml',
-          ),
+        'namedSlots' => ChildType.namedSlots,
         _ => ChildType.none,
       };
 

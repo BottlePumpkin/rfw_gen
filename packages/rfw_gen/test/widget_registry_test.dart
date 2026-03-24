@@ -888,7 +888,38 @@ void main() {
       );
     });
 
-    test('throws when namedSlots is used', () {
+    test('registers namedSlots widget with named_child_slots', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'MyTile': {
+          'import': 'custom.widgets',
+          'child_type': 'namedSlots',
+          'named_child_slots': {'title': false, 'actions': true},
+        },
+      });
+      final mapping = registry.supportedWidgets['MyTile']!;
+      expect(mapping.childType, ChildType.namedSlots);
+      expect(mapping.childParam, isNull);
+      expect(mapping.namedChildSlots, {'title': false, 'actions': true});
+    });
+
+    test('namedSlots with handlers', () {
+      final registry = WidgetRegistry();
+      registry.registerFromConfig({
+        'MyTile': {
+          'import': 'custom.widgets',
+          'child_type': 'namedSlots',
+          'named_child_slots': {'leading': false, 'title': false},
+          'handlers': ['onTap'],
+        },
+      });
+      final mapping = registry.supportedWidgets['MyTile']!;
+      expect(mapping.childType, ChildType.namedSlots);
+      expect(mapping.namedChildSlots, {'leading': false, 'title': false});
+      expect(mapping.handlerParams, {'onTap'});
+    });
+
+    test('throws when namedSlots without named_child_slots', () {
       final registry = WidgetRegistry();
       expect(
         () => registry.registerFromConfig({
@@ -897,7 +928,61 @@ void main() {
         throwsA(isA<ArgumentError>().having(
           (e) => e.message,
           'message',
-          contains('namedSlots is not supported'),
+          contains('requires "named_child_slots"'),
+        )),
+      );
+    });
+
+    test('throws when namedSlots with empty named_child_slots', () {
+      final registry = WidgetRegistry();
+      expect(
+        () => registry.registerFromConfig({
+          'Bad': {
+            'import': 'x',
+            'child_type': 'namedSlots',
+            'named_child_slots': <String, dynamic>{},
+          },
+        }),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('requires "named_child_slots"'),
+        )),
+      );
+    });
+
+    test('throws when named_child_slots provided with non-namedSlots child_type', () {
+      final registry = WidgetRegistry();
+      expect(
+        () => registry.registerFromConfig({
+          'Bad': {
+            'import': 'x',
+            'child_type': 'child',
+            'named_child_slots': {'title': false},
+          },
+        }),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('only valid when child_type is "namedSlots"'),
+        )),
+      );
+    });
+
+    test('throws when named_child_slots has non-bool value', () {
+      final registry = WidgetRegistry();
+      expect(
+        () => registry.registerFromConfig({
+          'Bad': {
+            'import': 'x',
+            'child_type': 'namedSlots',
+            'named_child_slots': {'title': 'yes'},
+          },
+        }),
+        throwsA(isA<ArgumentError>().having(
+          (e) => e.message,
+          'message',
+          contains('must be a bool'),
         )),
       );
     });

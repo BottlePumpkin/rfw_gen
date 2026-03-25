@@ -22,7 +22,7 @@ import 'tools/validate_rfwtxt.dart';
 /// into the registry.
 Future<void> runRfwGenMcpServer() async {
   final server = McpServer(
-    const Implementation(name: 'rfw_gen', version: '0.3.0'),
+    const Implementation(name: 'rfw_gen', version: '0.4.0'),
     options: const McpServerOptions(
       capabilities: ServerCapabilities(
         tools: ServerCapabilitiesTools(),

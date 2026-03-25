@@ -1,3 +1,8 @@
+## 0.4.0
+
+- **Breaking**: Remove `rfw_gen.yaml` custom widget configuration
+- Custom widgets are now auto-detected from `@RfwWidget` functions via Dart analyzer
+
 ## 0.3.0
 
 - No changes (version bump to match rfw_gen_mcp)
@@ -18,7 +23,7 @@
 
 - Initial release
 - Support 65 widgets (Core + Material)
-- Custom widget support via `rfw_gen.yaml`
+- Custom widget support via `rfw_gen.yaml` (removed in 0.4.0)
 - Dynamic features: `DataRef`, `ArgsRef`, `StateRef`, `RfwFor`, `RfwSwitch`, `RfwConcat`
 - Event handlers: `RfwHandler` (`setState`, `setStateFromArg`, `event`)
 - RFW-only widget aliases: `SizedBoxExpand`, `SizedBoxShrink`, `Rotation`, `Scale`, `AnimationDefaults`

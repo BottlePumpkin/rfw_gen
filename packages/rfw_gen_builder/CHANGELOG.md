@@ -1,3 +1,11 @@
+## 0.4.0
+
+- **Breaking**: Remove `rfw_gen.yaml` support and `yaml` dependency
+- Add `WidgetResolver` for Resolver-based custom widget analysis
+- Add `LocalWidgetBuilderGenerator` — auto-generates `LocalWidgetBuilder` maps
+- Generate `.rfw_library.dart` and `.rfw_meta.json` per source file
+- Require `analyzer >=9.0.0` for Resolver API compatibility
+
 ## 0.3.0
 
 - No changes (version bump to match rfw_gen_mcp)
@@ -25,4 +33,4 @@
 - `build_runner` integration for rfw_gen
 - Generates `.rfwtxt` (text) and `.rfw` (binary) output
 - 65 built-in widget mappings (Core + Material)
-- Custom widget support via `rfw_gen.yaml`
+- Custom widget support via `rfw_gen.yaml` (removed in 0.4.0)

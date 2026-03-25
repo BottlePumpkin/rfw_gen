@@ -1,3 +1,7 @@
+## 0.4.0
+
+- **Breaking**: Read `.rfw_meta.json` instead of `rfw_gen.yaml` for custom widget metadata
+
 ## 0.3.0
 
 - Auto-load `rfw_gen.yaml` from cwd to register custom widgets in MCP server

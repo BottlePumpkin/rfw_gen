@@ -9,3 +9,4 @@ build/
 .idea/
 melos_*.iml
 .worktrees/
+example2/

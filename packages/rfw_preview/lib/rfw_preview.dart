@@ -15,5 +15,14 @@ export 'package:rfw/rfw.dart'
         LocalWidgetLibrary,
         Runtime;
 
+export 'src/editor/rfw_editor_app.dart' show RfwEditorApp, RfwEditor;
+export 'src/editor/rfw_editor_controller.dart'
+    show
+        RfwEditorController,
+        RfwSnippet,
+        RfwEvent,
+        DeviceFrame,
+        PreviewBackground,
+        BottomPanelTab;
 export 'src/rfw_preview_widget.dart';
 export 'src/rfw_source.dart';

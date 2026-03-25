@@ -40,6 +40,13 @@ jobs:
         run: dart pub publish --directory packages/rfw_gen_mcp --force
         continue-on-error: true
 
+      - name: Wait for pub.dev indexing
+        run: sleep 60
+
+      - name: Publish rfw_preview
+        run: dart pub publish --directory packages/rfw_preview --force
+        continue-on-error: true
+
       - name: Create GitHub Release
         run: gh release create ${{ github.ref_name }} --generate-notes --title "${{ github.ref_name }}"
         env:

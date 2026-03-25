@@ -47,3 +47,11 @@ jobs:
       - name: Test rfw_gen_mcp
         working-directory: packages/rfw_gen_mcp
         run: dart test
+
+      - name: Get dependencies (rfw_preview)
+        working-directory: packages/rfw_preview
+        run: flutter pub get
+      - name: Analyze rfw_preview
+        run: dart analyze packages/rfw_preview
+      - name: Format rfw_preview
+        run: dart format --set-exit-if-changed packages/rfw_preview

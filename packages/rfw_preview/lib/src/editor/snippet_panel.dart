@@ -99,8 +99,7 @@ class SnippetPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = controller.isDarkTheme;
     final bgColor = isDark ? EditorColors.darkBg : EditorColors.pageBg;
-    final textColor =
-        isDark ? EditorColors.darkText : EditorColors.szsGray100;
+    final textColor = isDark ? EditorColors.darkText : EditorColors.szsGray100;
     final subTextColor =
         isDark ? EditorColors.darkTextDim : EditorColors.szsGray50;
 

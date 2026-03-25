@@ -50,12 +50,14 @@ class SnippetStorage {
 
   static Future<void> _persist(List<RfwSnippet> snippets) async {
     final prefs = await SharedPreferences.getInstance();
-    final json = jsonEncode(snippets.map((s) => {
-      'name': s.name,
-      'rfwtxt': s.rfwtxt,
-      'widgetName': s.widgetName,
-      if (s.data != null) 'data': s.data,
-    }).toList());
+    final json = jsonEncode(snippets
+        .map((s) => {
+              'name': s.name,
+              'rfwtxt': s.rfwtxt,
+              'widgetName': s.widgetName,
+              if (s.data != null) 'data': s.data,
+            })
+        .toList());
     await prefs.setString(_key, json);
   }
 }

@@ -166,8 +166,7 @@ class _RfwEditorState extends State<RfwEditor> {
   @override
   void initState() {
     super.initState();
-    _libraryName =
-        widget.libraryName ?? const LibraryName(<String>['preview']);
+    _libraryName = widget.libraryName ?? const LibraryName(<String>['preview']);
     _controller = RfwEditorController(
       initialRfwtxt: widget.initialRfwtxt,
       initialData: widget.initialData,
@@ -241,7 +240,8 @@ class _RfwEditorState extends State<RfwEditor> {
                     : _controller.availableWidgets.first,
                 isDense: true,
                 style: TextStyle(fontSize: 13, color: textColor),
-                dropdownColor: isDark ? EditorColors.darkSurface : EditorColors.cardBg,
+                dropdownColor:
+                    isDark ? EditorColors.darkSurface : EditorColors.cardBg,
                 items: _controller.availableWidgets.map((name) {
                   return DropdownMenuItem(value: name, child: Text(name));
                 }).toList(),
@@ -252,7 +252,11 @@ class _RfwEditorState extends State<RfwEditor> {
             )
           else
             Text('(no widgets)',
-                style: TextStyle(fontSize: 12, color: isDark ? EditorColors.darkTextDim : EditorColors.szsGray50)),
+                style: TextStyle(
+                    fontSize: 12,
+                    color: isDark
+                        ? EditorColors.darkTextDim
+                        : EditorColors.szsGray50)),
           const Spacer(),
           // Theme toggle
           IconButton(

@@ -8,6 +8,7 @@ Monorepo structure:
 - `packages/rfw_gen/` — Core: annotations (@RfwWidget) + conversion engine (RfwConverter) + widget mapping (WidgetRegistry)
 - `packages/rfw_gen_builder/` — build_runner generator
 - `packages/rfw_gen_mcp/` — MCP server for widget registry, conversion, and validation
+- `packages/rfw_preview/` — Dev preview widget with live editor
 - `example/` — Example app + Widgetbook debugging
 
 ## Branch Rules
@@ -21,7 +22,7 @@ Monorepo structure:
 
 ## Release Rules
 
-- `rfw_gen`, `rfw_gen_builder`, `rfw_gen_mcp` versions must always stay in sync
+- `rfw_gen`, `rfw_gen_builder`, `rfw_gen_mcp`, `rfw_preview` versions must always stay in sync
 - Follow semver: breaking change → major, new feature → minor, bug fix → patch
 - Release process: `release/x.y.z` branch → CHANGELOG + version bump → PR → main → tag → pub.dev
 - Hotfixes also use `release/x.y.z` branches (patch version)

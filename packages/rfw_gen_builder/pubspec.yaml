@@ -1,6 +1,6 @@
 name: rfw_gen_builder
 description: build_runner code generator for rfw_gen. Converts @RfwWidget-annotated Flutter functions to RFW format.
-version: 0.2.2
+version: 0.3.0
 homepage: https://github.com/BottlePumpkin/rfw_gen
 repository: https://github.com/BottlePumpkin/rfw_gen
 topics:
@@ -19,7 +19,7 @@ dependencies:
   build: ^4.0.0
   rfw: ^1.0.0
   yaml: ^3.1.0
-  rfw_gen: ^0.2.2
+  rfw_gen: ^0.3.0
 
 dev_dependencies:
   build_runner: ^2.4.0

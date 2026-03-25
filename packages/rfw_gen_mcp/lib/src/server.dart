@@ -21,7 +21,7 @@ import 'tools/validate_rfwtxt.dart';
 /// if present, registering custom widgets into the registry.
 Future<void> runRfwGenMcpServer() async {
   final server = McpServer(
-    const Implementation(name: 'rfw_gen', version: '0.2.2'),
+    const Implementation(name: 'rfw_gen', version: '0.3.0'),
     options: const McpServerOptions(
       capabilities: ServerCapabilities(
         tools: ServerCapabilitiesTools(),

@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Auto-load `rfw_gen.yaml` from cwd to register custom widgets in MCP server
+
 ## 0.2.2
 
 - Support `dart pub global activate` for use in external projects

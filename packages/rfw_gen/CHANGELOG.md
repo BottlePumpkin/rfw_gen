@@ -1,3 +1,7 @@
+## 0.3.0
+
+- No changes (version bump to match rfw_gen_mcp)
+
 ## 0.2.2
 
 - No changes (version bump to match rfw_gen_mcp)

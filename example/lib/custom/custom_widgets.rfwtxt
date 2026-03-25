@@ -1,6 +1,6 @@
 import core.widgets;
-import custom.widgets;
 import material;
+import rfw_gen_example;
 
 widget customTextDemo = Column(
   children: [

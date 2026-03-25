@@ -6,7 +6,7 @@ import '../custom/custom_widget_builders.dart';
 /// Default rfwtxt snippet for the editor.
 const _defaultRfwtxt = '''import core.widgets;
 import material;
-import custom.widgets;
+import rfw_gen_example;
 
 widget customTextDemo = Column(
   children: [

@@ -177,7 +177,8 @@ class WidgetResolver {
     }
 
     // Determine rfwName and import
-    final rfwName = '$packageName:${classElement.name}';
+    // rfwName is just the class name — the import statement handles library scoping.
+    final rfwName = classElement.name!;
     final importName = packageName;
 
     final widgetMapping = WidgetMapping(

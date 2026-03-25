@@ -1,0 +1,179 @@
+{
+  "widgets": {
+    "CustomText": {
+      "import": "rfw_gen_example",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "text",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "fontType",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "color",
+          "type": "int",
+          "required": false
+        },
+        {
+          "name": "maxLines",
+          "type": "int",
+          "required": false
+        }
+      ]
+    },
+    "CustomBounceTapper": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [
+        "onTap"
+      ],
+      "params": []
+    },
+    "NullConditionalWidget": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [],
+      "params": []
+    },
+    "CustomButton": {
+      "import": "rfw_gen_example",
+      "childType": "child",
+      "handlers": [
+        "onPressed",
+        "onLongPress"
+      ],
+      "params": []
+    },
+    "CustomBadge": {
+      "import": "rfw_gen_example",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "label",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "count",
+          "type": "int",
+          "required": false
+        },
+        {
+          "name": "backgroundColor",
+          "type": "int",
+          "required": false
+        }
+      ]
+    },
+    "CustomProgressBar": {
+      "import": "rfw_gen_example",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "value",
+          "type": "double",
+          "required": false
+        },
+        {
+          "name": "color",
+          "type": "int",
+          "required": false
+        },
+        {
+          "name": "shape",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "height",
+          "type": "double",
+          "required": false
+        }
+      ]
+    },
+    "CustomColumn": {
+      "import": "rfw_gen_example",
+      "childType": "childList",
+      "handlers": [],
+      "params": [
+        {
+          "name": "spacing",
+          "type": "double",
+          "required": false
+        },
+        {
+          "name": "dividerColor",
+          "type": "int",
+          "required": false
+        }
+      ]
+    },
+    "SkeletonContainer": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [],
+      "params": [
+        {
+          "name": "isLoading",
+          "type": "bool",
+          "required": false
+        }
+      ]
+    },
+    "CompareWidget": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [],
+      "params": []
+    },
+    "PvContainer": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [
+        "onPv"
+      ],
+      "params": []
+    },
+    "CustomCard": {
+      "import": "rfw_gen_example",
+      "childType": "child",
+      "handlers": [
+        "onTap"
+      ],
+      "params": [
+        {
+          "name": "elevation",
+          "type": "double",
+          "required": false
+        },
+        {
+          "name": "borderRadius",
+          "type": "double",
+          "required": false
+        }
+      ]
+    },
+    "CustomTile": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [
+        "onTap"
+      ],
+      "params": []
+    },
+    "CustomAppBar": {
+      "import": "rfw_gen_example",
+      "childType": "optionalChild",
+      "handlers": [],
+      "params": []
+    }
+  }
+}

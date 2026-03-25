@@ -1,4 +1,6 @@
-// ignore_for_file: argument_type_not_assignable, undefined_function, undefined_class, undefined_named_parameter, not_enough_positional_arguments
+// ignore_for_file: argument_type_not_assignable, undefined_function, undefined_named_parameter, not_enough_positional_arguments
+
+import 'custom_widget_classes.dart';
 import 'package:flutter/material.dart';
 import 'package:rfw_gen/rfw_gen.dart';
 

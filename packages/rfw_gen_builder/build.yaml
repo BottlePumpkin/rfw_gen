@@ -5,3 +5,9 @@ builders:
     build_extensions: {".dart": [".rfwtxt", ".rfw"]}
     auto_apply: dependents
     build_to: source
+  rfw_local_widget_builder:
+    import: "package:rfw_gen_builder/builder.dart"
+    builder_factories: ["rfwLocalWidgetBuilder"]
+    build_extensions: {".dart": [".rfw_library.dart", ".rfw_meta.json"]}
+    auto_apply: dependents
+    build_to: source

@@ -654,28 +654,50 @@ Widget buildTest() {
 
     setUp(() {
       final registry = WidgetRegistry.core();
-      registry.registerFromConfig({
-        'MystiqueText': {'import': 'mystique.widgets'},
-        'NullConditionalWidget': {
-          'import': 'custom.widgets',
-          'child_type': 'optionalChild',
-        },
-        'SZSBounceTapper': {
-          'import': 'custom.widgets',
-          'child_type': 'optionalChild',
-          'handlers': ['onTap'],
-        },
-        'CustomTile': {
-          'import': 'custom.widgets',
-          'child_type': 'namedSlots',
-          'named_child_slots': {
+      registry.register(
+        'MystiqueText',
+        const WidgetMapping(
+          rfwName: 'MystiqueText',
+          import: 'mystique.widgets',
+          params: {},
+        ),
+      );
+      registry.register(
+        'NullConditionalWidget',
+        const WidgetMapping(
+          rfwName: 'NullConditionalWidget',
+          import: 'custom.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {},
+        ),
+      );
+      registry.register(
+        'SZSBounceTapper',
+        const WidgetMapping(
+          rfwName: 'SZSBounceTapper',
+          import: 'custom.widgets',
+          childType: ChildType.optionalChild,
+          childParam: 'child',
+          params: {},
+          handlerParams: {'onTap'},
+        ),
+      );
+      registry.register(
+        'CustomTile',
+        const WidgetMapping(
+          rfwName: 'CustomTile',
+          import: 'custom.widgets',
+          childType: ChildType.namedSlots,
+          params: {},
+          handlerParams: {'onTap'},
+          namedChildSlots: {
             'leading': false,
             'title': false,
             'subtitle': false,
           },
-          'handlers': ['onTap'],
-        },
-      });
+        ),
+      );
       converter = RfwConverter(registry: registry);
     });
 

@@ -87,8 +87,7 @@ void main() {
       expect(count, equals(1));
       expect(
         output,
-        contains(
-            "import 'package:myapp/shared.dart' show WidgetA, WidgetB;"),
+        contains("import 'package:myapp/shared.dart' show WidgetA, WidgetB;"),
       );
     });
 

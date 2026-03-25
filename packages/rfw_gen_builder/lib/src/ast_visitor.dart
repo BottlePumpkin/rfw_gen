@@ -92,7 +92,11 @@ class WidgetAstVisitor {
     final widgetName = expr.methodName.name;
 
     const helperNames = {
-      'DataRef', 'ArgsRef', 'StateRef', 'RfwConcat', 'RfwSwitchValue',
+      'DataRef',
+      'ArgsRef',
+      'StateRef',
+      'RfwConcat',
+      'RfwSwitchValue',
     };
     if (helperNames.contains(widgetName)) {
       throw UnsupportedWidgetError(

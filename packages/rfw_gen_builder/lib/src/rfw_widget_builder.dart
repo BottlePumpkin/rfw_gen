@@ -87,9 +87,8 @@ class RfwWidgetBuilder implements Builder {
         }
       } on UnsupportedWidgetError catch (e) {
         final hasGuidance = e.message != null;
-        final suggestion = hasGuidance
-            ? ''
-            : '\n  Suggestion: 위젯 클래스가 import 되어 있는지 확인하세요';
+        final suggestion =
+            hasGuidance ? '' : '\n  Suggestion: 위젯 클래스가 import 되어 있는지 확인하세요';
         log.severe('${function.name.lexeme}: $e$suggestion');
       } catch (e) {
         log.severe('Failed to convert ${function.name.lexeme}: $e');

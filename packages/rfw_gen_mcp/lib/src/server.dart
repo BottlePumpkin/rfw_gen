@@ -1,8 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:mcp_dart/mcp_dart.dart';
 import 'package:rfw_gen_builder/rfw_gen_builder.dart';
-import 'package:yaml/yaml.dart';
 
 import 'tools/convert_to_rfwtxt.dart';
 import 'tools/get_widget_info.dart';
@@ -17,8 +17,9 @@ import 'tools/validate_rfwtxt.dart';
 /// - `convert_to_rfwtxt` — Dart source to rfwtxt conversion
 /// - `validate_rfwtxt` — rfwtxt syntax validation
 ///
-/// Automatically loads `rfw_gen.yaml` from the current working directory
-/// if present, registering custom widgets into the registry.
+/// Automatically searches for `.rfw_meta.json` files in the current working
+/// directory and `lib/` subdirectories. If found, custom widgets are registered
+/// into the registry.
 Future<void> runRfwGenMcpServer() async {
   final server = McpServer(
     const Implementation(name: 'rfw_gen', version: '0.3.0'),
@@ -30,7 +31,7 @@ Future<void> runRfwGenMcpServer() async {
   );
 
   final registry = WidgetRegistry.core();
-  _loadCustomWidgets(registry);
+  _loadCustomWidgetsFromMeta(registry);
   final converter = RfwConverter(registry: registry);
 
   registerListWidgetsTool(server, registry);
@@ -41,31 +42,91 @@ Future<void> runRfwGenMcpServer() async {
   server.connect(StdioServerTransport());
 }
 
-/// Loads custom widgets from `rfw_gen.yaml` in the current working directory.
-void _loadCustomWidgets(WidgetRegistry registry) {
-  final configFile = File('rfw_gen.yaml');
-  if (!configFile.existsSync()) return;
+/// Searches for `.rfw_meta.json` files in the current directory and `lib/`
+/// subdirectories, then registers custom widgets into the [registry].
+///
+/// Falls back to core widgets only if no meta files are found.
+void _loadCustomWidgetsFromMeta(WidgetRegistry registry) {
+  final metaFiles = <File>[];
 
-  try {
-    final yamlContent = configFile.readAsStringSync();
-    final yaml = loadYaml(yamlContent);
-    if (yaml is! YamlMap) return;
+  // Check current directory for .rfw_meta.json files.
+  final currentDir = Directory.current;
+  for (final entity in currentDir.listSync()) {
+    if (entity is File && entity.path.endsWith('.rfw_meta.json')) {
+      metaFiles.add(entity);
+    }
+  }
 
-    final widgets = yaml['widgets'];
-    if (widgets is! YamlMap) return;
-
-    final widgetsConfig = <String, dynamic>{};
-    for (final entry in widgets.entries) {
-      final key = entry.key.toString();
-      if (entry.value is YamlMap) {
-        widgetsConfig[key] = Map<String, dynamic>.from(entry.value as YamlMap);
-      } else {
-        widgetsConfig[key] = <String, dynamic>{};
+  // Recursively search lib/ subdirectories.
+  final libDir = Directory('${currentDir.path}/lib');
+  if (libDir.existsSync()) {
+    for (final entity in libDir.listSync(recursive: true)) {
+      if (entity is File && entity.path.endsWith('.rfw_meta.json')) {
+        metaFiles.add(entity);
       }
     }
-
-    registry.registerFromConfig(widgetsConfig);
-  } catch (_) {
-    // Silently ignore config errors — fall back to core widgets only
   }
+
+  if (metaFiles.isEmpty) return;
+
+  for (final file in metaFiles) {
+    try {
+      final content = file.readAsStringSync();
+      final json = jsonDecode(content) as Map<String, dynamic>;
+      final widgets = json['widgets'] as Map<String, dynamic>?;
+      if (widgets == null) continue;
+
+      for (final entry in widgets.entries) {
+        final name = entry.key;
+        final config = entry.value as Map<String, dynamic>;
+
+        final importName = config['import'] as String? ?? '';
+        final childTypeStr = config['childType'] as String? ?? 'none';
+        final handlers = (config['handlers'] as List<dynamic>?)
+                ?.map((e) => e.toString())
+                .toSet() ??
+            const <String>{};
+        final params = <String, ParamMapping>{};
+        final paramsList = config['params'] as List<dynamic>?;
+        if (paramsList != null) {
+          for (final p in paramsList) {
+            final paramMap = p as Map<String, dynamic>;
+            final paramName = paramMap['name'] as String;
+            params[paramName] = ParamMapping.direct(paramName);
+          }
+        }
+
+        final childType = _parseChildType(childTypeStr);
+        final childParam = switch (childType) {
+          ChildType.child || ChildType.optionalChild => 'child',
+          ChildType.childList => 'children',
+          _ => null,
+        };
+
+        registry.register(
+          name,
+          WidgetMapping(
+            rfwName: name,
+            params: params,
+            import: importName,
+            childType: childType,
+            childParam: childParam,
+            handlerParams: handlers,
+          ),
+        );
+      }
+    } catch (_) {
+      // Silently ignore parse errors — skip malformed meta files.
+    }
+  }
+}
+
+ChildType _parseChildType(String value) {
+  return switch (value) {
+    'child' => ChildType.child,
+    'optionalChild' => ChildType.optionalChild,
+    'childList' => ChildType.childList,
+    'namedSlots' => ChildType.namedSlots,
+    _ => ChildType.none,
+  };
 }

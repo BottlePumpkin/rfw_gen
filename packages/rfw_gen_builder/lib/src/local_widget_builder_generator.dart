@@ -88,8 +88,7 @@ class LocalWidgetBuilderGenerator {
         widget.params.where((p) => p.type == ResolvedParamType.widgetList);
 
     for (final param in widgetListParams) {
-      buffer.writeln(
-          '    final ${param.name} = <Widget>[];');
+      buffer.writeln('    final ${param.name} = <Widget>[];');
       buffer.writeln(
           "    for (var i = 0; i < source.length(['${param.name}']); i++) {");
       buffer.writeln(
@@ -228,8 +227,8 @@ class LocalWidgetBuilderGenerator {
     }
 
     // Required Widget child
-    final requiredChild = widgetParams.where(
-        (p) => p.type == ResolvedParamType.widget && p.name == 'child');
+    final requiredChild = widgetParams
+        .where((p) => p.type == ResolvedParamType.widget && p.name == 'child');
     if (requiredChild.isNotEmpty) return 'child';
 
     // Single optional Widget? named 'child' with no other widget params

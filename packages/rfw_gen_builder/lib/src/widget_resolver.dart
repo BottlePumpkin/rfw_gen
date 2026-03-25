@@ -385,7 +385,8 @@ class WidgetResolver {
         .toList();
 
     if (allNonListWidgetParams.length >= 2 ||
-        (optionalChildParam.isNotEmpty && otherNonListWidgetParams.isNotEmpty)) {
+        (optionalChildParam.isNotEmpty &&
+            otherNonListWidgetParams.isNotEmpty)) {
       return _ChildTypeResult(
         ChildType.namedSlots,
         null,

@@ -57,8 +57,7 @@ class LocalWidgetBuilderBuilder implements Builder {
       var result = resolver.resolveFromLibrary(inputLibrary, name);
       if (result == null) {
         // Walk imported libraries via the library fragment.
-        for (final libImport
-            in inputLibrary.firstFragment.libraryImports) {
+        for (final libImport in inputLibrary.firstFragment.libraryImports) {
           final imported = libImport.importedLibrary;
           if (imported == null) continue;
           result = resolver.resolveFromLibrary(imported, name);

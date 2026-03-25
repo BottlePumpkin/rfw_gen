@@ -352,7 +352,8 @@ void main() {
 
   group('WidgetResolver', () {
     test('primitives only → ChildType.none', () async {
-      final lib = await getWidgetLibrary('package:widgets_pkg/primitive_widget');
+      final lib =
+          await getWidgetLibrary('package:widgets_pkg/primitive_widget');
       final result = resolver.resolveFromLibrary(lib, 'PrimitiveWidget');
 
       expect(result, isNotNull);
@@ -368,13 +369,11 @@ void main() {
       // Check resolved widget params
       final rw = result.resolvedWidget;
       expect(rw.className, 'PrimitiveWidget');
-      final titleParam =
-          rw.params.firstWhere((p) => p.name == 'title');
+      final titleParam = rw.params.firstWhere((p) => p.name == 'title');
       expect(titleParam.type, ResolvedParamType.string);
       expect(titleParam.isRequired, isTrue);
 
-      final countParam =
-          rw.params.firstWhere((p) => p.name == 'count');
+      final countParam = rw.params.firstWhere((p) => p.name == 'count');
       expect(countParam.type, ResolvedParamType.int);
       expect(countParam.isRequired, isFalse);
     });
@@ -435,8 +434,7 @@ void main() {
     });
 
     test('VoidCallback? → extracted as handler', () async {
-      final lib =
-          await getWidgetLibrary('package:widgets_pkg/handler_widget');
+      final lib = await getWidgetLibrary('package:widgets_pkg/handler_widget');
       final result = resolver.resolveFromLibrary(lib, 'HandlerWidget');
 
       expect(result, isNotNull);
@@ -450,16 +448,15 @@ void main() {
 
       // Check resolved param types
       final rw = result.resolvedWidget;
-      final onPressedParam =
-          rw.params.firstWhere((p) => p.name == 'onPressed');
+      final onPressedParam = rw.params.firstWhere((p) => p.name == 'onPressed');
       expect(onPressedParam.type, ResolvedParamType.voidCallback);
       expect(onPressedParam.isNullable, isTrue);
     });
 
-    test('mixed: Widget child + Widget? named slots → ChildType.child + namedSlots',
+    test(
+        'mixed: Widget child + Widget? named slots → ChildType.child + namedSlots',
         () async {
-      final lib =
-          await getWidgetLibrary('package:widgets_pkg/mixed_widget');
+      final lib = await getWidgetLibrary('package:widgets_pkg/mixed_widget');
       final result = resolver.resolveFromLibrary(lib, 'MixedWidget');
 
       expect(result, isNotNull);
@@ -490,8 +487,7 @@ void main() {
     });
 
     test('empty constructor → ChildType.none, no params', () async {
-      final lib =
-          await getWidgetLibrary('package:widgets_pkg/empty_widget');
+      final lib = await getWidgetLibrary('package:widgets_pkg/empty_widget');
       final result = resolver.resolveFromLibrary(lib, 'EmptyWidget');
 
       expect(result, isNotNull);
@@ -502,16 +498,14 @@ void main() {
     });
 
     test('non-widget class → returns null', () async {
-      final lib =
-          await getWidgetLibrary('package:widgets_pkg/non_widget');
+      final lib = await getWidgetLibrary('package:widgets_pkg/non_widget');
       final result = resolver.resolveFromLibrary(lib, 'NotAWidget');
 
       expect(result, isNull);
     });
 
     test('abstract class → returns null', () async {
-      final lib =
-          await getWidgetLibrary('package:widgets_pkg/abstract_widget');
+      final lib = await getWidgetLibrary('package:widgets_pkg/abstract_widget');
       final result = resolver.resolveFromLibrary(lib, 'AbstractWidget');
 
       expect(result, isNull);
@@ -523,8 +517,8 @@ void main() {
       final result = resolver.resolveFromLibrary(lib, 'PrimitiveWidget');
 
       expect(result, isNotNull);
-      expect(result!.resolvedWidget.dartImport,
-          contains('package:widgets_pkg/'));
+      expect(
+          result!.resolvedWidget.dartImport, contains('package:widgets_pkg/'));
     });
 
     test('void Function()? (raw, not typedef) → extracted as handler',
@@ -551,8 +545,8 @@ void main() {
 
       expect(results, contains('PrimitiveWidget'));
       expect(results, isNot(contains('NonExistentWidget')));
-      expect(results['PrimitiveWidget']!.widgetMapping.childType,
-          ChildType.none);
+      expect(
+          results['PrimitiveWidget']!.widgetMapping.childType, ChildType.none);
     });
   });
 }

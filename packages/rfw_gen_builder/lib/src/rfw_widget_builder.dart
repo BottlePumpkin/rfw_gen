@@ -51,11 +51,9 @@ class RfwWidgetBuilder implements Builder {
       );
       final resolver = WidgetResolver();
       for (final name in unknownNames) {
-        ResolveResult? result =
-            resolver.resolveFromLibrary(inputLibrary, name);
+        ResolveResult? result = resolver.resolveFromLibrary(inputLibrary, name);
         if (result == null) {
-          for (final libImport
-              in inputLibrary.firstFragment.libraryImports) {
+          for (final libImport in inputLibrary.firstFragment.libraryImports) {
             final imported = libImport.importedLibrary;
             if (imported == null) continue;
             result = resolver.resolveFromLibrary(imported, name);

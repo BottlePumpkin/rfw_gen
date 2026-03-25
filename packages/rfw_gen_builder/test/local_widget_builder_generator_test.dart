@@ -112,8 +112,7 @@ void main() {
         ],
       );
       final output = gen.generate({'MyWidget': widget});
-      expect(
-          output, contains("label: source.v<String>(['label']) ?? 'Hello'"));
+      expect(output, contains("label: source.v<String>(['label']) ?? 'Hello'"));
     });
 
     test('int required param → source.v<int> with 0 fallback', () {
@@ -134,8 +133,7 @@ void main() {
         ],
       );
       final output = gen.generate({'MyWidget': widget});
-      expect(
-          output, contains("color: source.v<int>(['color']) ?? 0xFF000000"));
+      expect(output, contains("color: source.v<int>(['color']) ?? 0xFF000000"));
     });
 
     test('double required param → source.v<double> with 0.0 fallback', () {
@@ -179,8 +177,7 @@ void main() {
         ],
       );
       final output = gen.generate({'MyWidget': widget});
-      expect(
-          output, contains("visible: source.v<bool>(['visible']) ?? true"));
+      expect(output, contains("visible: source.v<bool>(['visible']) ?? true"));
     });
 
     test('optional primitive without default → no fallback suffix', () {
@@ -342,9 +339,8 @@ void main() {
       );
       final meta = gen.generateMeta({'CouponCard': widget});
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
-      final coupon =
-          (decoded['widgets'] as Map<String, dynamic>)['CouponCard']!
-              as Map<String, dynamic>;
+      final coupon = (decoded['widgets'] as Map<String, dynamic>)['CouponCard']!
+          as Map<String, dynamic>;
       expect(coupon['import'], equals('mystique'));
     });
 
@@ -451,8 +447,8 @@ void main() {
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
       final w = (decoded['widgets'] as Map<String, dynamic>)['MyWidget']!
           as Map<String, dynamic>;
-      final params = (w['params'] as List<dynamic>)
-          .cast<Map<String, dynamic>>();
+      final params =
+          (w['params'] as List<dynamic>).cast<Map<String, dynamic>>();
 
       final titleParam = params.firstWhere((p) => p['name'] == 'title');
       final subtitleParam = params.firstWhere((p) => p['name'] == 'subtitle');
@@ -474,8 +470,8 @@ void main() {
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
       final w = (decoded['widgets'] as Map<String, dynamic>)['MyWidget']!
           as Map<String, dynamic>;
-      final params = (w['params'] as List<dynamic>)
-          .cast<Map<String, dynamic>>();
+      final params =
+          (w['params'] as List<dynamic>).cast<Map<String, dynamic>>();
 
       final typeMap = {for (final p in params) p['name'] as String: p['type']};
       expect(typeMap['name'], equals('String'));
@@ -485,10 +481,10 @@ void main() {
     });
 
     test('multiple widgets → all entries in JSON', () {
-      final w1 = makeWidget(
-          className: 'WidgetA', dartImport: 'package:app/a.dart');
-      final w2 = makeWidget(
-          className: 'WidgetB', dartImport: 'package:app/b.dart');
+      final w1 =
+          makeWidget(className: 'WidgetA', dartImport: 'package:app/a.dart');
+      final w2 =
+          makeWidget(className: 'WidgetB', dartImport: 'package:app/b.dart');
 
       final meta = gen.generateMeta({'WidgetA': w1, 'WidgetB': w2});
       final decoded = jsonDecode(meta) as Map<String, dynamic>;

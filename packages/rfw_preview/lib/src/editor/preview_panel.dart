@@ -128,7 +128,8 @@ class _PreviewPanelState extends State<PreviewPanel> {
               value: ctrl.deviceFrame,
               isDense: true,
               style: TextStyle(fontSize: 12, color: textColor),
-              dropdownColor: isDark ? EditorColors.darkSurface : EditorColors.cardBg,
+              dropdownColor:
+                  isDark ? EditorColors.darkSurface : EditorColors.cardBg,
               items: DeviceFrame.values.map((frame) {
                 return DropdownMenuItem(
                   value: frame,
@@ -177,9 +178,8 @@ class _PreviewPanelState extends State<PreviewPanel> {
   }
 
   Widget _buildPreviewArea(RfwEditorController ctrl) {
-    final rfwtxt = ctrl.error != null
-        ? ctrl.lastSuccessfulRfwtxt
-        : _lastRenderedRfwtxt;
+    final rfwtxt =
+        ctrl.error != null ? ctrl.lastSuccessfulRfwtxt : _lastRenderedRfwtxt;
     final widgetName = ctrl.error != null
         ? (_lastRenderedWidget ?? ctrl.selectedWidget)
         : ctrl.selectedWidget;
@@ -285,7 +285,8 @@ class _BackgroundToggle extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.format_color_fill, size: 16,
+          Icon(Icons.format_color_fill,
+              size: 16,
               color: isDark ? EditorColors.darkText : EditorColors.szsGray70),
           const SizedBox(width: 4),
           Text(
@@ -342,8 +343,7 @@ class _CheckerPainter extends CustomPainter {
 
     for (var y = 0.0; y < size.height; y += cellSize) {
       for (var x = 0.0; x < size.width; x += cellSize) {
-        final isEven =
-            ((x ~/ cellSize) + (y ~/ cellSize)) % 2 == 0;
+        final isEven = ((x ~/ cellSize) + (y ~/ cellSize)) % 2 == 0;
         canvas.drawRect(
           Rect.fromLTWH(x, y, cellSize, cellSize),
           isEven ? light : dark,

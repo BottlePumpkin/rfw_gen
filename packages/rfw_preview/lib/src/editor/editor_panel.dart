@@ -152,18 +152,22 @@ class RfwtxtEditingController extends TextEditingController {
         !word.contains('.');
   }
 
-  static bool _isDigit(String c) => c.codeUnitAt(0) >= 48 && c.codeUnitAt(0) <= 57;
+  static bool _isDigit(String c) =>
+      c.codeUnitAt(0) >= 48 && c.codeUnitAt(0) <= 57;
   static bool _isHexDigit(String c) {
     final code = c.codeUnitAt(0);
     return (code >= 48 && code <= 57) ||
         (code >= 65 && code <= 70) ||
         (code >= 97 && code <= 102);
   }
+
   static bool _isAlpha(String c) {
     final code = c.codeUnitAt(0);
     return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
   }
-  static bool _isAlphaNumeric(String c) => _isAlpha(c) || _isDigit(c) || c == '_';
+
+  static bool _isAlphaNumeric(String c) =>
+      _isAlpha(c) || _isDigit(c) || c == '_';
 }
 
 /// The code editor panel with line numbers, syntax highlighting,
@@ -264,10 +268,10 @@ class _EditorPanelState extends State<EditorPanel> {
   Widget build(BuildContext context) {
     final isDark = widget.controller.isDarkTheme;
     final bgColor = isDark ? EditorColors.darkBg : EditorColors.cardBg;
-    final gutterColor = isDark ? EditorColors.darkSurface : EditorColors.sectionBg;
-    final lineNumColor = isDark
-        ? EditorColors.szsGray50
-        : EditorColors.szsGray50;
+    final gutterColor =
+        isDark ? EditorColors.darkSurface : EditorColors.sectionBg;
+    final lineNumColor =
+        isDark ? EditorColors.szsGray50 : EditorColors.szsGray50;
     final errorColor = EditorColors.szsRed50;
 
     final lineCount = '\n'.allMatches(_textController.text).length + 1;
@@ -293,8 +297,7 @@ class _EditorPanelState extends State<EditorPanel> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (_, i) {
                       final lineNum = i + 1;
-                      final isError =
-                          widget.controller.errorLine == lineNum;
+                      final isError = widget.controller.errorLine == lineNum;
                       return SizedBox(
                         height: 20,
                         child: Align(
@@ -308,8 +311,9 @@ class _EditorPanelState extends State<EditorPanel> {
                                 fontSize: 13,
                                 height: 1.0,
                                 color: isError ? errorColor : lineNumColor,
-                                fontWeight:
-                                    isError ? FontWeight.bold : FontWeight.normal,
+                                fontWeight: isError
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
                             ),
                           ),

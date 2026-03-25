@@ -13,6 +13,12 @@ conversion, and rfwtxt validation as tools for AI agents and IDE integrations.
 | `convert_to_rfwtxt` | Convert Dart source with `@RfwWidget` to rfwtxt |
 | `validate_rfwtxt` | Validate rfwtxt syntax |
 
+## Installation
+
+```bash
+dart pub global activate rfw_gen_mcp
+```
+
 ## Usage
 
 ### Claude Code
@@ -23,8 +29,7 @@ Add to your `settings.json`:
 {
   "mcpServers": {
     "rfw_gen": {
-      "command": "dart",
-      "args": ["run", "rfw_gen_mcp"]
+      "command": "rfw_gen_mcp"
     }
   }
 }
@@ -38,8 +43,7 @@ Add to `.cursor/mcp.json`:
 {
   "mcpServers": {
     "rfw_gen": {
-      "command": "dart",
-      "args": ["run", "rfw_gen_mcp"]
+      "command": "rfw_gen_mcp"
     }
   }
 }
@@ -48,7 +52,7 @@ Add to `.cursor/mcp.json`:
 ### Standalone
 
 ```bash
-dart run rfw_gen_mcp
+rfw_gen_mcp
 ```
 
 The server communicates over stdio using the MCP JSON-RPC protocol.

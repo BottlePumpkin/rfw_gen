@@ -12,6 +12,9 @@ topics:
 environment:
   sdk: ^3.6.0
 
+executables:
+  rfw_gen_mcp: rfw_gen_mcp
+
 resolution: workspace
 
 dependencies:

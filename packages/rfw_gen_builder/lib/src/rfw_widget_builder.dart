@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:build/build.dart';
-import 'package:yaml/yaml.dart';
 
 import 'package:rfw/formats.dart';
 
 import 'ast_visitor.dart';
 import 'converter.dart';
 import 'widget_registry.dart';
+import 'widget_resolver.dart';
 
 /// A custom [Builder] that finds `@RfwWidget`-annotated top-level functions
 /// and generates `.rfwtxt` (text) and `.rfw` (binary) output files.
@@ -42,25 +42,33 @@ class RfwWidgetBuilder implements Builder {
 
     if (annotatedFunctions.isEmpty) return;
 
-    // Build registry: core + custom widgets from rfw_gen.yaml.
+    // Build registry: core + custom widgets discovered via Resolver.
     final registry = WidgetRegistry.core();
-    final configId = AssetId(buildStep.inputId.package, 'rfw_gen.yaml');
-    String? yamlStr;
-    if (await buildStep.canRead(configId)) {
-      yamlStr = await buildStep.readAsString(configId);
-    } else {
-      // Fallback: read from filesystem for root-level files not in build graph.
-      final file = File('rfw_gen.yaml');
-      if (file.existsSync()) {
-        yamlStr = file.readAsStringSync();
-      }
-    }
-    if (yamlStr != null) {
-      final yaml = loadYaml(yamlStr);
-      if (yaml is Map) {
-        final widgets = yaml['widgets'];
-        if (widgets is Map) {
-          registry.registerFromConfig(Map<String, dynamic>.from(widgets));
+    final unknownNames = _collectUnknownWidgetNames(parseResult.unit, registry);
+    if (unknownNames.isNotEmpty) {
+      final inputLibrary = await buildStep.resolver.libraryFor(
+        buildStep.inputId,
+      );
+      final resolver = WidgetResolver();
+      for (final name in unknownNames) {
+        ResolveResult? result =
+            resolver.resolveFromLibrary(inputLibrary, name);
+        if (result == null) {
+          for (final libImport
+              in inputLibrary.firstFragment.libraryImports) {
+            final imported = libImport.importedLibrary;
+            if (imported == null) continue;
+            result = resolver.resolveFromLibrary(imported, name);
+            if (result != null) break;
+            for (final reExported in imported.exportedLibraries) {
+              result = resolver.resolveFromLibrary(reExported, name);
+              if (result != null) break;
+            }
+            if (result != null) break;
+          }
+        }
+        if (result != null) {
+          registry.register(name, result.widgetMapping);
         }
       }
     }
@@ -81,7 +89,7 @@ class RfwWidgetBuilder implements Builder {
         }
       } on UnsupportedWidgetError catch (e) {
         log.severe('${function.name.lexeme}: $e\n'
-            '  Suggestion: rfw_gen.yaml에 위젯을 등록하거나 지원 위젯 목록을 확인하세요');
+            '  Suggestion: 위젯 클래스가 import 되어 있는지 확인하세요');
       } catch (e) {
         log.severe('Failed to convert ${function.name.lexeme}: $e');
       }
@@ -164,5 +172,39 @@ class RfwWidgetBuilder implements Builder {
     buffer.writeln(widgetDeclarations.join('\n\n'));
 
     return buffer.toString();
+  }
+}
+
+/// Collects widget names from the AST that are not in the core registry.
+Set<String> _collectUnknownWidgetNames(
+  CompilationUnit unit,
+  WidgetRegistry registry,
+) {
+  final collector = _WidgetNameCollector(registry);
+  unit.accept(collector);
+  return collector.unknownNames;
+}
+
+/// Visits all [MethodInvocation] nodes recursively and collects names
+/// that look like widget constructors (uppercase first letter) but are
+/// not registered in the core [WidgetRegistry].
+class _WidgetNameCollector extends RecursiveAstVisitor<void> {
+  final WidgetRegistry registry;
+  final Set<String> unknownNames = {};
+
+  _WidgetNameCollector(this.registry);
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.target == null) {
+      final name = node.methodName.name;
+      // Uppercase first letter = likely a widget constructor call.
+      if (name.isNotEmpty &&
+          name[0] == name[0].toUpperCase() &&
+          !registry.isSupported(name)) {
+        unknownNames.add(name);
+      }
+    }
+    super.visitMethodInvocation(node);
   }
 }

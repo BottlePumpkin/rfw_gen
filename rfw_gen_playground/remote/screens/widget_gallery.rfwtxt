@@ -1,0 +1,308 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        padding: [32.0],
+        decoration: {
+          type: "box",
+          color: 0xFFF1F8FF,
+          borderRadius: [
+            {
+              x: 16.0
+            }
+          ]
+        },
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "Widget Gallery",
+              style: {
+                fontSize: 28.0,
+                fontWeight: "w800",
+                color: 0xFF141618
+              }
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "All widgets supported by RFW, organized by category.",
+              style: {
+                fontSize: 16.0,
+                color: 0xFF49515A
+              }
+            )
+          ]
+        )
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Layout",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Widgets for arranging children in rows, columns, and stacks.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["Column", "mainAxisAlignment, crossAxisAlignment, mainAxisSize", "childList(children)"],
+          ["Row", "mainAxisAlignment, crossAxisAlignment, mainAxisSize", "childList(children)"],
+          ["Wrap", "direction, spacing, runSpacing, alignment", "childList(children)"],
+          ["Stack", "alignment, fit, clipBehavior", "childList(children)"],
+          ["Expanded", "flex", "child"],
+          ["Flexible", "flex, fit", "child"],
+          ["SizedBox", "width, height", "optionalChild"],
+          ["SizedBoxExpand", "(none)", "optionalChild"],
+          ["SizedBoxShrink", "(none)", "optionalChild"],
+          ["Spacer", "flex", "(none)"],
+          ["Align", "alignment, widthFactor, heightFactor", "optionalChild"],
+          ["Center", "widthFactor, heightFactor", "optionalChild"],
+          ["AspectRatio", "aspectRatio", "optionalChild"],
+          ["FittedBox", "fit, alignment, clipBehavior", "optionalChild"],
+          ["FractionallySizedBox", "alignment, widthFactor, heightFactor", "child"],
+          ["IntrinsicHeight", "(none)", "optionalChild"],
+          ["IntrinsicWidth", "width, height", "optionalChild"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Material",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Material Design widgets: buttons, cards, scaffolds, and more.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["Scaffold", "backgroundColor, resizeToAvoidBottomInset", "appBar, body, floatingActionButton, drawer"],
+          ["AppBar", "backgroundColor, elevation, centerTitle", "leading, title, actions"],
+          ["Card", "color, elevation, shape, margin", "optionalChild"],
+          ["ElevatedButton", "autofocus, clipBehavior", "child (onPressed)"],
+          ["TextButton", "autofocus, clipBehavior", "child (onPressed)"],
+          ["OutlinedButton", "autofocus, clipBehavior", "child (onPressed)"],
+          ["FloatingActionButton", "tooltip, backgroundColor, mini", "child (onPressed)"],
+          ["ListTile", "dense, enabled, selected", "leading, title, subtitle, trailing"],
+          ["InkWell", "splashColor, highlightColor", "optionalChild (onTap)"],
+          ["Slider", "min, max, value, divisions", "(none) (onChanged)"],
+          ["Divider", "height, thickness, indent, color", "(none)"],
+          ["VerticalDivider", "width, thickness, indent, color", "(none)"],
+          ["Material", "type, elevation, color", "child"],
+          ["OverflowBar", "spacing, alignment", "childList(children)"],
+          ["Drawer", "elevation", "optionalChild"],
+          ["CircularProgressIndicator", "value, color, strokeWidth", "(none)"],
+          ["LinearProgressIndicator", "value, color, backgroundColor", "(none)"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Styling & Visual",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Decoration, text styling, images, and visual effects.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["Container", "padding, color, decoration, width, height, margin", "optionalChild"],
+          ["Padding", "padding, duration, curve", "optionalChild"],
+          ["Opacity", "opacity, duration, curve", "optionalChild"],
+          ["ClipRRect", "borderRadius, clipBehavior", "optionalChild"],
+          ["ColoredBox", "color", "optionalChild"],
+          ["DefaultTextStyle", "style, textAlign, softWrap, maxLines", "child"],
+          ["Directionality", "textDirection", "child"],
+          ["Text", "text (positional), style, textAlign, maxLines", "(none)"],
+          ["Icon", "iconData, size, color, semanticLabel", "(none)"],
+          ["IconTheme", "iconThemeData", "child"],
+          ["Image", "imageProvider, width, height, fit", "optionalChild"],
+          ["Placeholder", "color, strokeWidth", "(none)"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Scrolling",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Scrollable containers for lists, grids, and overflow content.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["ListView", "scrollDirection, shrinkWrap, padding, itemExtent", "childList(children)"],
+          ["GridView", "scrollDirection, shrinkWrap, padding, gridDelegate", "childList(children)"],
+          ["SingleChildScrollView", "scrollDirection, padding, primary", "optionalChild"],
+          ["ListBody", "mainAxis, reverse", "childList(children)"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Transform",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Widgets for positioning, rotation, and scaling with implicit animation.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["Positioned", "start, top, end, bottom, width, height", "child"],
+          ["Rotation", "turns, alignment, duration, curve", "optionalChild"],
+          ["Scale", "scale, alignment, duration, curve", "optionalChild"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Interaction",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Gesture detection and user input handling.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["GestureDetector", "behavior", "optionalChild (onTap, onDoubleTap, onLongPress)"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Other",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Key Params", "Children"],
+        rows: [
+          ["AnimationDefaults", "duration, curve", "child"],
+          ["SafeArea", "left, top, right, bottom, minimum", "child"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Syntax Guide",
+        page: "syntax-guide"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      LinkText(
+        text: "API Reference",
+        page: "api-reference"
+      )
+    ]
+  )
+);

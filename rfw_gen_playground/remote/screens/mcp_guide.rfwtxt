@@ -1,0 +1,213 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        padding: [32.0],
+        decoration: {
+          type: "box",
+          color: 0xFFF3F0FF,
+          borderRadius: [
+            {
+              x: 16.0
+            }
+          ]
+        },
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "rfw_gen_mcp",
+              style: {
+                fontSize: 28.0,
+                fontWeight: "w800",
+                color: 0xFF141618
+              }
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "MCP Server for Widget Registry & Validation",
+              style: {
+                fontSize: 16.0,
+                color: 0xFF49515A
+              }
+            )
+          ]
+        )
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Overview",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfw_gen_mcp provides an MCP (Model Context Protocol) server that exposes the widget registry, rfwtxt conversion, and validation tools to AI assistants and editors.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Available Tools",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Tool", "Description"],
+        rows: [
+          ["list_widgets", "List all supported RFW widgets with their parameters"],
+          ["get_widget_info", "Get detailed info for a specific widget (params, children, handlers)"],
+          ["convert_to_rfwtxt", "Convert a Dart @RfwWidget function to rfwtxt format"],
+          ["validate_rfwtxt", "Validate rfwtxt syntax and report errors"],
+          ["get_widget_categories", "List widget categories (layout, styling, material, etc.)"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Setup",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Add rfw_gen_mcp to your dev_dependencies and configure your MCP client to connect to the server.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "dev_dependencies:  rfw_gen_mcp: ^0.4.0",
+        language: "yaml"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Running the Server",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Start the MCP server with the dart run command. It communicates over stdio using the MCP protocol.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "dart run rfw_gen_mcp",
+        language: "shell"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Tool Usage Example",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "The list_widgets tool returns all supported widgets. Use get_widget_info to drill into a specific widget.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Request", "Response"],
+        rows: [
+          ["list_widgets(category: \"layout\")", "Align, AspectRatio, Center, Column, Row, ..."],
+          ["get_widget_info(name: \"Container\")", "params: alignment, padding, color, ..."],
+          ["validate_rfwtxt(code: \"widget foo = ...\")", "Valid / Error at line N: message"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Claude Code Integration",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Add the server to your .mcp.json configuration file to enable AI-assisted RFW widget development.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "{ \"mcpServers\": { \"rfw_gen\": { \"command\": \"dart\", \"args\": [\"run\", \"rfw_gen_mcp\"] } } }",
+        language: "json"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Back to Home",
+        page: "home"
+      )
+    ]
+  )
+);

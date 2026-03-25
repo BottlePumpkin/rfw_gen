@@ -1,20 +1,124 @@
 {
-  "version": 1,
+  "version": 1774438394650,
   "baseUrl": "",
   "categories": [
-    { "id": "overview", "title": "Overview" },
-    { "id": "guides", "title": "Guides" },
-    { "id": "packages", "title": "Packages" },
-    { "id": "reference", "title": "Reference" }
+    {
+      "id": "overview",
+      "title": "Overview"
+    },
+    {
+      "id": "guides",
+      "title": "Guides"
+    },
+    {
+      "id": "packages",
+      "title": "Packages"
+    },
+    {
+      "id": "reference",
+      "title": "Reference"
+    }
   ],
   "screens": [
+    {
+      "id": "api_reference",
+      "title": "Api Reference",
+      "category": "reference",
+      "rfwtxt": "screens/api_reference.rfwtxt",
+      "keywords": [
+        "api",
+        "reference"
+      ]
+    },
+    {
+      "id": "builder_guide",
+      "title": "Builder Guide",
+      "category": "packages",
+      "rfwtxt": "screens/builder_guide.rfwtxt",
+      "keywords": [
+        "builder",
+        "guide"
+      ]
+    },
+    {
+      "id": "examples",
+      "title": "Examples",
+      "category": "reference",
+      "rfwtxt": "screens/examples.rfwtxt",
+      "keywords": [
+        "examples"
+      ]
+    },
+    {
+      "id": "getting_started",
+      "title": "Getting Started",
+      "category": "guides",
+      "rfwtxt": "screens/getting_started.rfwtxt",
+      "keywords": [
+        "getting",
+        "started"
+      ]
+    },
     {
       "id": "home",
       "title": "Home",
       "category": "overview",
       "rfwtxt": "screens/home.rfwtxt",
       "data": "data/home.json",
-      "keywords": ["introduction", "overview", "rfw_gen", "packages"]
+      "keywords": [
+        "home"
+      ]
+    },
+    {
+      "id": "mcp_guide",
+      "title": "Mcp Guide",
+      "category": "packages",
+      "rfwtxt": "screens/mcp_guide.rfwtxt",
+      "keywords": [
+        "mcp",
+        "guide"
+      ]
+    },
+    {
+      "id": "preview_guide",
+      "title": "Preview Guide",
+      "category": "packages",
+      "rfwtxt": "screens/preview_guide.rfwtxt",
+      "keywords": [
+        "preview",
+        "guide"
+      ]
+    },
+    {
+      "id": "rfw_gen_guide",
+      "title": "Rfw Gen Guide",
+      "category": "packages",
+      "rfwtxt": "screens/rfw_gen_guide.rfwtxt",
+      "keywords": [
+        "rfw",
+        "gen",
+        "guide"
+      ]
+    },
+    {
+      "id": "syntax_guide",
+      "title": "Syntax Guide",
+      "category": "packages",
+      "rfwtxt": "screens/syntax_guide.rfwtxt",
+      "keywords": [
+        "syntax",
+        "guide"
+      ]
+    },
+    {
+      "id": "widget_gallery",
+      "title": "Widget Gallery",
+      "category": "reference",
+      "rfwtxt": "screens/widget_gallery.rfwtxt",
+      "keywords": [
+        "widget",
+        "gallery"
+      ]
     }
   ]
 }

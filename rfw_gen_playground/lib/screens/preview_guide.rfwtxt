@@ -1,0 +1,224 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        padding: [32.0],
+        decoration: {
+          type: "box",
+          color: 0xFFF0FFF4,
+          borderRadius: [
+            {
+              x: 16.0
+            }
+          ]
+        },
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "rfw_preview",
+              style: {
+                fontSize: 28.0,
+                fontWeight: "w800",
+                color: 0xFF141618
+              }
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "Live Preview Widget with Built-in Editor",
+              style: {
+                fontSize: 16.0,
+                color: 0xFF49515A
+              }
+            )
+          ]
+        )
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Overview",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfw_preview provides RfwPreview and RfwEditor widgets for live rendering and editing of rfwtxt content during development.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Core Widgets",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Widget", "Purpose"],
+        rows: [
+          ["RfwPreview", "Renders rfwtxt content as live Flutter widgets"],
+          ["RfwEditor", "Side-by-side editor and preview with live reload"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "RfwSource Modes",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "RfwSource controls how rfwtxt content is loaded. Choose from three modes depending on your use case.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Mode", "Constructor", "Use Case"],
+        rows: [
+          ["Asset", "RfwSource.asset(path)", "Load rfwtxt from Flutter assets"],
+          ["Text", "RfwSource.text(rfwtxt)", "Provide rfwtxt as a string directly"],
+          ["Binary", "RfwSource.binary(bytes)", "Load pre-compiled binary data"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "RfwPreview Usage",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Use RfwPreview to render a remote widget from an RfwSource. Pass data via DynamicContent and handle events with handlers.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "RfwPreview(  source: RfwSource.asset(\"assets/my_widget.rfwtxt\"),  widgetName: \"myWidget\",  data: { \"title\": \"Hello\" },  onEvent: (name, args) => print(\"Event: $name\"),)",
+        language: "dart"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "RfwEditor Usage",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "RfwEditor provides a split-pane view: edit rfwtxt on the left, see live preview on the right. Changes update in real-time.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "RfwEditor(  initialSource: RfwSource.text(\"widget hello = Text(text: \\\"Hi\\\");\"),  widgetName: \"hello\",)",
+        language: "dart"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Key Features",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Feature", "Description"],
+        rows: [
+          ["Live Reload", "Preview updates instantly as you edit rfwtxt"],
+          ["Error Display", "Syntax errors shown inline with line numbers"],
+          ["Custom Widgets", "Register local widget libraries for preview"],
+          ["Data Binding", "Pass DynamicContent data to preview widgets"],
+          ["Event Handling", "Capture and debug widget events"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Setup",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "dependencies:  rfw_preview: ^0.4.0",
+        language: "yaml"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "View Examples",
+        page: "examples"
+      )
+    ]
+  )
+);

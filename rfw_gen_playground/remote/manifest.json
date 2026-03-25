@@ -1,5 +1,5 @@
 {
-  "version": 1774438394650,
+  "version": 1774482721563,
   "baseUrl": "",
   "categories": [
     {
@@ -17,6 +17,10 @@
     {
       "id": "reference",
       "title": "Reference"
+    },
+    {
+      "id": "gallery",
+      "title": "RFW Custom Widget Gallery"
     }
   ],
   "screens": [
@@ -47,6 +51,126 @@
       "rfwtxt": "screens/examples.rfwtxt",
       "keywords": [
         "examples"
+      ]
+    },
+    {
+      "id": "widget_detail_code_block",
+      "title": "Widget Detail Code Block",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_code_block.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "code",
+        "block"
+      ]
+    },
+    {
+      "id": "widget_detail_conditional",
+      "title": "Widget Detail Conditional",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_conditional.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "conditional"
+      ]
+    },
+    {
+      "id": "widget_detail_doc_table",
+      "title": "Widget Detail Doc Table",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_doc_table.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "doc",
+        "table"
+      ]
+    },
+    {
+      "id": "widget_detail_link_text",
+      "title": "Widget Detail Link Text",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_link_text.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "link",
+        "text"
+      ]
+    },
+    {
+      "id": "widget_detail_mystique_badge",
+      "title": "Widget Detail Mystique Badge",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_mystique_badge.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "mystique",
+        "badge"
+      ]
+    },
+    {
+      "id": "widget_detail_mystique_box_button",
+      "title": "Widget Detail Mystique Box Button",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_mystique_box_button.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "mystique",
+        "box",
+        "button"
+      ]
+    },
+    {
+      "id": "widget_detail_mystique_spinner",
+      "title": "Widget Detail Mystique Spinner",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_mystique_spinner.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "mystique",
+        "spinner"
+      ]
+    },
+    {
+      "id": "widget_detail_mystique_tag",
+      "title": "Widget Detail Mystique Tag",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_mystique_tag.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "mystique",
+        "tag"
+      ]
+    },
+    {
+      "id": "widget_detail_rich_text_row",
+      "title": "Widget Detail Rich Text Row",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_detail_rich_text_row.rfwtxt",
+      "keywords": [
+        "widget",
+        "detail",
+        "rich",
+        "text",
+        "row"
+      ]
+    },
+    {
+      "id": "widget_gallery_custom",
+      "title": "Widget Gallery Custom",
+      "category": "gallery",
+      "rfwtxt": "screens/widget_gallery_custom.rfwtxt",
+      "keywords": [
+        "widget",
+        "gallery",
+        "custom"
       ]
     },
     {
@@ -112,7 +236,7 @@
     },
     {
       "id": "widget_gallery",
-      "title": "Widget Gallery",
+      "title": "Supported Widgets",
       "category": "reference",
       "rfwtxt": "screens/widget_gallery.rfwtxt",
       "keywords": [

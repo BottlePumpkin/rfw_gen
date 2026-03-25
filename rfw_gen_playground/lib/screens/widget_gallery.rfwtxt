@@ -20,7 +20,7 @@ widget root = SingleChildScrollView(
           crossAxisAlignment: "start",
           children: [
             Text(
-              text: "Widget Gallery",
+              text: "Supported Widgets",
               style: {
                 fontSize: 28.0,
                 fontWeight: "w800",

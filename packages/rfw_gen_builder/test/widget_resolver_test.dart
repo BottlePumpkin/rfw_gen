@@ -21,7 +21,7 @@ Future<LibraryElement> resolveLibrary(
   final ctx = collection.contexts.first;
   final result = await ctx.currentSession.getResolvedLibrary(filePath);
   expect(result, isA<ResolvedLibraryResult>());
-  return (result as ResolvedLibraryResult).element2;
+  return (result as ResolvedLibraryResult).element;
 }
 
 /// Helper: find an imported library by URI substring.

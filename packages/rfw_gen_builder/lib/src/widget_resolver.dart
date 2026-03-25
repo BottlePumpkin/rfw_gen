@@ -270,7 +270,7 @@ class WidgetResolver {
     return false;
   }
 
-  /// Checks if a [DartType] is a List<Widget> type.
+  /// Checks if a [DartType] is a `List<Widget>` type.
   bool _isWidgetListType(DartType type) {
     if (type is InterfaceType && type.element.name == 'List') {
       if (type.typeArguments.length == 1) {

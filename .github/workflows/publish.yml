@@ -1,4 +1,5 @@
 name: Publish to pub.dev
+run-name: "Publish ${{ github.ref_name }}"
 
 on:
   push:

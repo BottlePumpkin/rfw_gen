@@ -1110,7 +1110,11 @@ class ExpressionConverter {
     }
 
     throw UnsupportedExpressionError(
-      'Unknown handler expression: $methodName',
+      'Unsupported handler expression: $methodName. '
+      'RFW handlers only support RfwHandler.setState, '
+      'RfwHandler.setStateFromArg, and RfwHandler.event. '
+      'RfwSwitchValue/RfwSwitch cannot be used in handler positions — '
+      'use RfwSwitch to swap entire widgets with different handlers instead.',
       offset: expr.offset,
     );
   }

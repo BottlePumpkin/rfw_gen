@@ -20,7 +20,7 @@ Widget buildWidgetGallery() {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Widget Gallery',
+              Text('Supported Widgets',
                   style: const TextStyle(
                       fontSize: 28.0,
                       fontWeight: FontWeight.w800,

@@ -20,7 +20,7 @@ void main() {
   final screens = <Map<String, dynamic>>[];
   var hasErrors = false;
 
-  for (final file in sourceDir.listSync()..sort((a, b) => a.path.compareTo(b.path))) {
+  for (final file in sourceDir.listSync(recursive: true)..sort((a, b) => a.path.compareTo(b.path))) {
     if (file is! File || !file.path.endsWith('.rfwtxt')) continue;
 
     final name = path.basename(file.path);
@@ -68,6 +68,7 @@ void main() {
       {'id': 'guides', 'title': 'Guides'},
       {'id': 'packages', 'title': 'Packages'},
       {'id': 'reference', 'title': 'Reference'},
+      {'id': 'gallery', 'title': 'RFW Custom Widget Gallery'},
     ],
     'screens': screens,
   };
@@ -78,6 +79,7 @@ void main() {
 }
 
 String _titleCase(String id) {
+  if (id == 'widget_gallery') return 'Supported Widgets';
   return id
       .replaceAll('_', ' ')
       .split(' ')
@@ -89,6 +91,7 @@ String _inferCategory(String id) {
   if (id == 'home') return 'overview';
   if (id == 'getting_started') return 'guides';
   if (id.endsWith('_guide')) return 'packages';
+  if (id.startsWith('widget_detail_') || id == 'widget_gallery_custom') return 'gallery';
   return 'reference';
 }
 

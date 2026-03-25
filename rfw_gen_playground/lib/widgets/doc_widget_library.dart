@@ -6,8 +6,8 @@ import 'doc_table.dart';
 import 'link_text.dart';
 import 'rich_text_row.dart';
 
-/// Library name for importing in rfwtxt: `import playground.docs;`
-const docWidgetsLibraryName = LibraryName(<String>['playground', 'docs']);
+/// Library name matching the rfwtxt import: `import rfw_gen_playground;`
+const docWidgetsLibraryName = LibraryName(<String>['rfw_gen_playground']);
 
 /// All doc widget builders for LocalWidgetLibrary registration.
 Map<String, LocalWidgetBuilder> get docWidgetBuilders => {

@@ -87,23 +87,23 @@ Topic examples: 투두 앱, 날씨 대시보드, SNS 피드, 레시피 북, 운�
 flutter create example2 --project-name dogfood_app
 ```
 
-Then update `example2/pubspec.yaml` dependencies:
+Then update `example2/pubspec.yaml` dependencies. **IMPORTANT: Check pub.dev for the latest versions of each package before writing the pubspec. Do not use the example versions below — always use the actual latest published versions.**
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  rfw: ^1.0.17
-  rfw_gen: ^0.4.1
+  rfw: ^<LATEST>
+  rfw_gen: ^<LATEST>
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.14
-  rfw_gen_builder: ^0.4.1
+  build_runner: ^<LATEST>
+  rfw_gen_builder: ^<LATEST>
 ```
 
-For the version numbers, check pub.dev for the latest versions of rfw_gen and rfw_gen_builder. Do not hardcode — always use the latest published versions.
+If the persona attempts to use `rfw_preview`, add it to dependencies as well.
 
 If `flutter create` fails, output the error and stop the cycle.
 
@@ -165,7 +165,7 @@ Compare each new issue title/keywords against existing ones. If a likely duplica
 
 ### Step 9: File GitHub Issues
 
-For each non-duplicate issue, create a GitHub Issue:
+For each non-duplicate issue, create a GitHub Issue. **Replace all `{...}` placeholders with actual values before running the command:**
 
 ```bash
 gh issue create \

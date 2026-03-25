@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   rfw: ^1.0.0
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

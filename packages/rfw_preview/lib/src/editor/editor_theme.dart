@@ -18,11 +18,16 @@ abstract final class EditorColors {
   // Status
   static const szsRed50 = Color(0xFFE53935);
 
+  // Divider & toast
+  static const divider = Color(0xFFE8EBED);
+  static const szsGray90 = Color(0xFF2B2F34);
+
   // Dark theme
   static const darkBg = Color(0xFF1E1E1E);
   static const darkSurface = Color(0xFF252526);
   static const darkBorder = Color(0xFF3C3C3C);
   static const darkText = Color(0xFFD4D4D4);
+  static const darkTextDim = Color(0xFF8E949A);
 }
 
 /// Corner radius tokens.

@@ -12,6 +12,7 @@ dependencies:
   rfw: ^1.0.0
   rfw_gen:
     path: ../packages/rfw_gen
+  path: ^1.9.0
   rfw_preview:
     path: ../packages/rfw_preview
 

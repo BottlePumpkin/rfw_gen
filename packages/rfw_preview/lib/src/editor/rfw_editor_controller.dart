@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:rfw/rfw.dart';
 
+import 'snippet_storage.dart';
+
 /// Device frame presets for the preview panel.
 enum DeviceFrame {
   /// iPhone SE / small phone: 375pt wide.
@@ -73,6 +75,7 @@ class RfwSnippet {
     required this.name,
     required this.rfwtxt,
     required this.widgetName,
+    this.category,
     this.data,
   });
 
@@ -85,8 +88,17 @@ class RfwSnippet {
   /// Default widget name to render.
   final String widgetName;
 
+  /// Optional category for grouping in the snippet browser.
+  final String? category;
+
   /// Optional data to load alongside the snippet.
   final Map<String, Object>? data;
+
+  /// All widget names parsed from this snippet's rfwtxt.
+  List<String> get widgetNames {
+    final matches = RegExp(r'widget\s+(\w+)').allMatches(rfwtxt);
+    return matches.map((m) => m.group(1)!).toList();
+  }
 }
 
 /// Manages all state for the RFW Editor.
@@ -349,6 +361,51 @@ widget preview = Center(
     _error = null;
     _errorLine = null;
     _parseWidgetNames();
+    notifyListeners();
+  }
+
+  // --- Snippet drawer ---
+
+  bool _isSnippetDrawerOpen = false;
+
+  /// Whether the snippet browser drawer is open.
+  bool get isSnippetDrawerOpen => _isSnippetDrawerOpen;
+
+  void toggleSnippetDrawer() {
+    _isSnippetDrawerOpen = !_isSnippetDrawerOpen;
+    notifyListeners();
+  }
+
+  // --- Saved snippets ---
+
+  List<RfwSnippet> _savedSnippets = [];
+
+  /// User-saved snippets (persisted via SharedPreferences).
+  List<RfwSnippet> get savedSnippets => List.unmodifiable(_savedSnippets);
+
+  /// Load saved snippets from storage. Call once on init.
+  Future<void> loadSavedSnippets() async {
+    _savedSnippets = await SnippetStorage.load();
+    notifyListeners();
+  }
+
+  /// Save the current editor content as a snippet.
+  Future<void> saveCurrentAsSnippet(String name) async {
+    final snippet = RfwSnippet(
+      name: name,
+      rfwtxt: _rfwtxt,
+      widgetName: _selectedWidget,
+      data: _jsonData.isNotEmpty ? Map<String, Object>.from(_jsonData) : null,
+    );
+    await SnippetStorage.save(snippet);
+    _savedSnippets = await SnippetStorage.load();
+    notifyListeners();
+  }
+
+  /// Delete a saved snippet by name.
+  Future<void> deleteSavedSnippet(String name) async {
+    await SnippetStorage.delete(name);
+    _savedSnippets = await SnippetStorage.load();
     notifyListeners();
   }
 

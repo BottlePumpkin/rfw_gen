@@ -7,6 +7,7 @@ import 'editor_theme.dart';
 import 'event_panel.dart';
 import 'preview_panel.dart';
 import 'rfw_editor_controller.dart';
+import 'snippet_panel.dart';
 
 /// Standalone RFW Editor app that wraps [MaterialApp] + [RfwEditor].
 ///
@@ -172,6 +173,7 @@ class _RfwEditorState extends State<RfwEditor> {
       initialData: widget.initialData,
     );
     _controller.addListener(_onControllerChanged);
+    _controller.loadSavedSnippets();
   }
 
   @override
@@ -182,12 +184,16 @@ class _RfwEditorState extends State<RfwEditor> {
   }
 
   void _onControllerChanged() {
-    // Propagate theme changes to MaterialApp wrapper if present.
-    final notifier = _ThemeNotifier.of(context);
-    if (notifier != null && notifier.isDark != _controller.isDarkTheme) {
-      notifier.onThemeChanged(_controller.isDarkTheme);
-    }
-    if (mounted) setState(() {});
+    // Defer UI updates to avoid setState during build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      // Propagate theme changes to MaterialApp wrapper if present.
+      final notifier = _ThemeNotifier.of(context);
+      if (notifier != null && notifier.isDark != _controller.isDarkTheme) {
+        notifier.onThemeChanged(_controller.isDarkTheme);
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -226,23 +232,27 @@ class _RfwEditorState extends State<RfwEditor> {
           ),
           const SizedBox(width: 24),
           // Widget selector dropdown
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _controller.availableWidgets
-                      .contains(_controller.selectedWidget)
-                  ? _controller.selectedWidget
-                  : _controller.availableWidgets.firstOrNull,
-              isDense: true,
-              style: TextStyle(fontSize: 13, color: textColor),
-              dropdownColor: isDark ? EditorColors.darkSurface : EditorColors.cardBg,
-              items: _controller.availableWidgets.map((name) {
-                return DropdownMenuItem(value: name, child: Text(name));
-              }).toList(),
-              onChanged: (v) {
-                if (v != null) _controller.selectedWidget = v;
-              },
-            ),
-          ),
+          if (_controller.availableWidgets.isNotEmpty)
+            DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _controller.availableWidgets
+                        .contains(_controller.selectedWidget)
+                    ? _controller.selectedWidget
+                    : _controller.availableWidgets.first,
+                isDense: true,
+                style: TextStyle(fontSize: 13, color: textColor),
+                dropdownColor: isDark ? EditorColors.darkSurface : EditorColors.cardBg,
+                items: _controller.availableWidgets.map((name) {
+                  return DropdownMenuItem(value: name, child: Text(name));
+                }).toList(),
+                onChanged: (v) {
+                  if (v != null) _controller.selectedWidget = v;
+                },
+              ),
+            )
+          else
+            Text('(no widgets)',
+                style: TextStyle(fontSize: 12, color: isDark ? EditorColors.darkTextDim : EditorColors.szsGray50)),
           const Spacer(),
           // Theme toggle
           IconButton(
@@ -269,20 +279,12 @@ class _RfwEditorState extends State<RfwEditor> {
             onTap: () =>
                 _controller.toggleBottomPanel(tab: BottomPanelTab.events),
           ),
-          // Snippet menu
-          if (widget.snippets != null && widget.snippets!.isNotEmpty)
-            PopupMenuButton<RfwSnippet>(
-              icon: Icon(Icons.snippet_folder_outlined, size: 20,
-                  color: isDark ? EditorColors.darkText : EditorColors.szsGray70),
-              tooltip: 'Load snippet',
-              onSelected: _controller.loadSnippet,
-              itemBuilder: (_) => widget.snippets!.map((snippet) {
-                return PopupMenuItem(
-                  value: snippet,
-                  child: Text(snippet.name),
-                );
-              }).toList(),
-            ),
+          // Snippet drawer toggle
+          _NavToggleButton(
+            label: 'Snippets',
+            isActive: _controller.isSnippetDrawerOpen,
+            onTap: _controller.toggleSnippetDrawer,
+          ),
         ],
       ),
     );
@@ -290,18 +292,16 @@ class _RfwEditorState extends State<RfwEditor> {
 
   Widget _buildMainArea() {
     final isWide = MediaQuery.of(context).size.width > 800;
+    final dividerColor = _controller.isDarkTheme
+        ? EditorColors.darkBorder
+        : EditorColors.sectionBg;
 
     Widget editorAndPreview;
     if (isWide) {
       editorAndPreview = Row(
         children: [
           Expanded(child: EditorPanel(controller: _controller)),
-          VerticalDivider(
-            width: 1,
-            color: _controller.isDarkTheme
-                ? EditorColors.darkBorder
-                : EditorColors.sectionBg,
-          ),
+          VerticalDivider(width: 1, color: dividerColor),
           Expanded(
             child: PreviewPanel(
               controller: _controller,
@@ -315,12 +315,7 @@ class _RfwEditorState extends State<RfwEditor> {
       editorAndPreview = Column(
         children: [
           Expanded(child: EditorPanel(controller: _controller)),
-          Divider(
-            height: 1,
-            color: _controller.isDarkTheme
-                ? EditorColors.darkBorder
-                : EditorColors.sectionBg,
-          ),
+          Divider(height: 1, color: dividerColor),
           Expanded(
             child: PreviewPanel(
               controller: _controller,
@@ -332,27 +327,40 @@ class _RfwEditorState extends State<RfwEditor> {
       );
     }
 
+    // Add bottom panel if expanded.
+    Widget mainContent;
     if (!_controller.isBottomPanelExpanded) {
-      return editorAndPreview;
+      mainContent = editorAndPreview;
+    } else {
+      mainContent = Column(
+        children: [
+          Expanded(flex: 3, child: editorAndPreview),
+          Divider(height: 1, color: dividerColor),
+          Expanded(
+            flex: 1,
+            child: _controller.bottomPanelTab == BottomPanelTab.data
+                ? DataPanel(controller: _controller)
+                : EventPanel(controller: _controller),
+          ),
+        ],
+      );
     }
 
-    return Column(
-      children: [
-        Expanded(flex: 3, child: editorAndPreview),
-        Divider(
-          height: 1,
-          color: _controller.isDarkTheme
-              ? EditorColors.darkBorder
-              : EditorColors.sectionBg,
-        ),
-        Expanded(
-          flex: 1,
-          child: _controller.bottomPanelTab == BottomPanelTab.data
-              ? DataPanel(controller: _controller)
-              : EventPanel(controller: _controller),
-        ),
-      ],
-    );
+    // Add snippet drawer if open.
+    if (_controller.isSnippetDrawerOpen) {
+      return Row(
+        children: [
+          SizedBox(
+            width: 220,
+            child: SnippetPanel(controller: _controller),
+          ),
+          VerticalDivider(width: 1, color: dividerColor),
+          Expanded(child: mainContent),
+        ],
+      );
+    }
+
+    return mainContent;
   }
 }
 

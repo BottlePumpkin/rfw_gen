@@ -7,5 +7,14 @@
     { "id": "packages", "title": "Packages" },
     { "id": "reference", "title": "Reference" }
   ],
-  "screens": []
+  "screens": [
+    {
+      "id": "home",
+      "title": "Home",
+      "category": "overview",
+      "rfwtxt": "screens/home.rfwtxt",
+      "data": "data/home.json",
+      "keywords": ["introduction", "overview", "rfw_gen", "packages"]
+    }
+  ]
 }

@@ -15,6 +15,7 @@ and `.rfw` files ready for server-driven UI.
 | [rfw_gen](packages/rfw_gen/) | Core: annotations, converter engine, widget registry | [![pub](https://img.shields.io/pub/v/rfw_gen.svg)](https://pub.dev/packages/rfw_gen) |
 | [rfw_gen_builder](packages/rfw_gen_builder/) | build_runner code generator | [![pub](https://img.shields.io/pub/v/rfw_gen_builder.svg)](https://pub.dev/packages/rfw_gen_builder) |
 | [rfw_gen_mcp](packages/rfw_gen_mcp/) | MCP server for widget registry, conversion, and validation | [![pub](https://img.shields.io/pub/v/rfw_gen_mcp.svg)](https://pub.dev/packages/rfw_gen_mcp) |
+| [rfw_preview](packages/rfw_preview/) | Dev preview widget with live editor | [![pub](https://img.shields.io/pub/v/rfw_preview.svg)](https://pub.dev/packages/rfw_preview) |
 
 ## Quick Start
 

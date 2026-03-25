@@ -54,9 +54,8 @@ class EventPanel extends StatelessWidget {
                 ),
                 const Spacer(),
                 TextButton(
-                  onPressed: controller.events.isEmpty
-                      ? null
-                      : controller.clearEvents,
+                  onPressed:
+                      controller.events.isEmpty ? null : controller.clearEvents,
                   style: TextButton.styleFrom(
                     minimumSize: const Size(48, 24),
                     padding: const EdgeInsets.symmetric(horizontal: 12),

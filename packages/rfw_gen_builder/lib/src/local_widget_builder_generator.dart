@@ -24,8 +24,12 @@ class LocalWidgetBuilderGenerator {
 
     buffer.writeln("import 'package:flutter/material.dart';");
     buffer.writeln("import 'package:rfw/rfw.dart';");
-    for (final import in imports) {
-      buffer.writeln("import '$import';");
+    final sortedImports = imports.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    for (final entry in sortedImports) {
+      final uri = entry.key;
+      final names = entry.value.join(', ');
+      buffer.writeln("import '$uri' show $names;");
     }
 
     buffer.writeln();
@@ -65,14 +69,22 @@ class LocalWidgetBuilderGenerator {
   // Private helpers — code generation
   // ---------------------------------------------------------------------------
 
-  /// Collects unique dart import URIs from all widgets.
-  List<String> _collectImports(Map<String, ResolvedWidget> widgets) {
-    final seen = <String>{};
-    final result = <String>[];
-    for (final widget in widgets.values) {
-      if (seen.add(widget.dartImport)) {
-        result.add(widget.dartImport);
-      }
+  /// Collects import URIs mapped to the widget class names they provide.
+  ///
+  /// Returns a map of `import URI → sorted list of widget class names`.
+  /// The class names within each entry are sorted alphabetically for
+  /// deterministic output.
+  Map<String, List<String>> _collectImports(
+      Map<String, ResolvedWidget> widgets) {
+    final result = <String, List<String>>{};
+    for (final entry in widgets.entries) {
+      result
+          .putIfAbsent(entry.value.dartImport, () => [])
+          .add(entry.value.className);
+    }
+    // Sort class names within each import for deterministic output.
+    for (final names in result.values) {
+      names.sort();
     }
     return result;
   }

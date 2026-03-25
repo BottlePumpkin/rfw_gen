@@ -22,10 +22,10 @@ and `.rfw` files ready for server-driven UI.
 
 ```yaml
 dependencies:
-  rfw_gen: ^0.3.0
+  rfw_gen: ^0.4.0
 
 dev_dependencies:
-  rfw_gen_builder: ^0.3.0
+  rfw_gen_builder: ^0.4.0
   build_runner: ^2.4.0
 ```
 
@@ -67,13 +67,16 @@ Flutter Widget Code
         ▼
   build_runner (rfw_gen_builder)
         │
-        ├──▶ .rfwtxt  (human-readable RFW text)
-        └──▶ .rfw     (binary for production)
+        ├──▶ .rfwtxt          (human-readable RFW text)
+        ├──▶ .rfw             (binary for production)
+        ├──▶ .rfw_library.dart (LocalWidgetBuilder map for custom widgets)
+        └──▶ .rfw_meta.json   (widget metadata for MCP/tooling)
 ```
 
 Core components in `packages/rfw_gen/`:
 - **RfwConverter** — traverses the Flutter widget tree and emits rfwtxt
 - **WidgetRegistry** — maps Flutter widgets to their RFW equivalents (65 widgets)
+- **WidgetResolver** — analyzes custom widget constructors via Dart analyzer
 - **Annotations** — `@RfwWidget`, `DataRef`, `StateRef`, `ArgsRef`, `RfwHandler`, etc.
 
 ## Development

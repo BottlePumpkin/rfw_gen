@@ -8,10 +8,10 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  rfw_gen: ^0.1.0
+  rfw_gen: ^0.4.0
 
 dev_dependencies:
-  rfw_gen_builder: ^0.1.0
+  rfw_gen_builder: ^0.4.0
   build_runner: ^2.4.0
 ```
 
@@ -34,7 +34,11 @@ Widget buildMyWidget() {
 dart run build_runner build
 ```
 
-This generates `.rfwtxt` (human-readable) and `.rfw` (binary) files.
+This generates:
+- `.rfwtxt` — human-readable RFW text
+- `.rfw` — binary format for production
+- `.rfw_library.dart` — `LocalWidgetBuilder` map for custom widgets
+- `.rfw_meta.json` — widget metadata for MCP/tooling
 
 ## Documentation
 

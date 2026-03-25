@@ -12,10 +12,10 @@ to your dev dependencies:
 
 ```yaml
 dependencies:
-  rfw_gen: ^0.1.0
+  rfw_gen: ^0.4.0
 
 dev_dependencies:
-  rfw_gen_builder: ^0.1.0
+  rfw_gen_builder: ^0.4.0
   build_runner: ^2.4.0
 ```
 
@@ -173,22 +173,56 @@ Generates: `onTap: event "cart.add" { itemId: 42 }`
 
 ## Custom Widgets
 
-Register custom (non-standard) widgets via `rfw_gen.yaml` at the project root:
+Custom widgets are automatically detected and supported. When you use a
+non-built-in widget inside an `@RfwWidget` function, the generator:
 
-```yaml
-widgets:
-  MyCustomWidget:
-    import: custom.widgets
+1. Discovers the custom widget via AST analysis
+2. Resolves its constructor using the Dart analyzer (WidgetResolver)
+3. Generates a `LocalWidgetBuilder` bridge (`.rfw_library.dart`)
+4. Emits widget metadata (`.rfw_meta.json`) for MCP/tooling
+
+```dart
+// 1. Define your custom widget
+class CustomText extends StatelessWidget {
+  const CustomText({super.key, required this.text, this.fontSize = 14.0});
+  final String text;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) => Text(text, style: TextStyle(fontSize: fontSize));
+}
+
+// 2. Use it in an @RfwWidget function — no config file needed
+@RfwWidget('customDemo')
+Widget buildCustomDemo() {
+  return CustomText(text: 'Hello', fontSize: 24.0);
+}
 ```
 
-The generator will recognize `MyCustomWidget` and use the specified import
-library in the output.
+Running `build_runner` generates:
+- `custom_demo.rfwtxt` / `.rfw` — RFW output with `CustomText` references
+- `.rfw_library.dart` — `Map<String, LocalWidgetBuilder>` that wires
+  RFW's `DataSource` to your widget's constructor
+- `.rfw_meta.json` — machine-readable parameter/child/handler metadata
+
+No `rfw_gen.yaml` configuration is required (removed in 0.4.0).
+
+## Generated Output
+
+For each `.dart` file containing `@RfwWidget` functions, the generator produces:
+
+| File | Purpose |
+|------|---------|
+| `.rfwtxt` | Human-readable RFW text format |
+| `.rfw` | Binary format for production use |
+| `.rfw_library.dart` | `LocalWidgetBuilder` map for custom widgets |
+| `.rfw_meta.json` | Widget metadata (params, child type, handlers) |
 
 ## Limitations
 
 - `@RfwWidget` must be applied to top-level functions only.
 - Only the 65 built-in widgets (core + material) are supported out of the box.
-  Other widgets require custom configuration.
+  Other widgets are auto-detected and require their source to be importable.
 
 ## Pre-1.0 Note
 

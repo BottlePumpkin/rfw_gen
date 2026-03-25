@@ -128,7 +128,7 @@ class WidgetAstVisitor {
             properties[mapping.positionalParam!] = value;
           } on UnsupportedExpressionError catch (e) {
             collector?.warning(
-              '$widgetName의 positional 파라미터 "${mapping.positionalParam}" 변환 실패: ${e.message}',
+              'Failed to convert positional parameter "${mapping.positionalParam}" of $widgetName: ${e.message}',
               offset: e.offset,
               suggestion: _suggestFor(e.message),
             );
@@ -208,7 +208,7 @@ class WidgetAstVisitor {
         properties[paramName] = expressionConverter.convertHandler(expression);
       } on UnsupportedExpressionError catch (e) {
         collector?.warning(
-          '${mapping.rfwName}의 핸들러 "$paramName" 변환 실패: ${e.message}',
+          'Failed to convert handler "$paramName" of ${mapping.rfwName}: ${e.message}',
           offset: e.offset,
           suggestion: _suggestFor(e.message),
         );
@@ -227,8 +227,8 @@ class WidgetAstVisitor {
         properties[paramName] = IrListValue(children);
       } else if (isList) {
         collector?.warning(
-          '${mapping.rfwName}의 named slot "$paramName"이 리스트가 아닙니다 (${expression.runtimeType})',
-          suggestion: '리스트 슬롯에는 리스트 리터럴 [...]을 사용하세요',
+          'Named slot "$paramName" of ${mapping.rfwName} is not a list (${expression.runtimeType})',
+          suggestion: 'Use a list literal [...] for list slots',
         );
       } else {
         properties[paramName] = _convertWidgetOrSpecial(expression);
@@ -252,8 +252,8 @@ class WidgetAstVisitor {
             properties[paramName] = IrListValue(children);
           } else {
             collector?.warning(
-              '${mapping.rfwName}의 children 파라미터가 리스트가 아닙니다 (${expression.runtimeType})',
-              suggestion: 'children 파라미터에는 리스트 리터럴 [...]을 사용하세요',
+              'children parameter of ${mapping.rfwName} is not a list (${expression.runtimeType})',
+              suggestion: 'Use a list literal [...] for the children parameter',
             );
           }
         case ChildType.none:
@@ -271,7 +271,7 @@ class WidgetAstVisitor {
         properties[paramMapping.rfwName] = value;
       } on UnsupportedExpressionError catch (e) {
         collector?.warning(
-          '${mapping.rfwName}의 "$paramName" 파라미터 변환 실패: ${e.message}',
+          'Failed to convert parameter "$paramName" of ${mapping.rfwName}: ${e.message}',
           offset: e.offset,
           suggestion: _suggestFor(e.message),
         );
@@ -295,7 +295,7 @@ class WidgetAstVisitor {
       properties[paramName] = value;
     } on UnsupportedExpressionError catch (e) {
       collector?.warning(
-        '알 수 없는 파라미터 "$paramName" 변환 실패: ${e.message}',
+        'Failed to convert unknown parameter "$paramName": ${e.message}',
         offset: e.offset,
         suggestion: _suggestFor(e.message),
       );
@@ -305,26 +305,26 @@ class WidgetAstVisitor {
   /// Returns a suggestion string based on the error message pattern.
   String? _suggestFor(String errorMessage) {
     if (errorMessage.contains('ConditionalExpression')) {
-      return '삼항연산자 대신 RfwSwitch를 사용하세요';
+      return 'Use RfwSwitch instead of ternary operator';
     }
     if (errorMessage.contains('FunctionExpressionInvocation')) {
-      return '함수 호출 결과는 지원되지 않습니다. const 값을 직접 사용하세요';
+      return 'Function call results are not supported. Use const values directly';
     }
     if (errorMessage.contains('Unsupported EdgeInsets constructor')) {
-      return '지원되는 생성자: .all, .symmetric, .only, .fromLTRB';
+      return 'Supported constructors: .all, .symmetric, .only, .fromLTRB';
     }
     if (errorMessage.contains('Unsupported BorderRadius constructor')) {
-      return '지원되는 생성자: .circular, .all, .only';
+      return 'Supported constructors: .circular, .all, .only';
     }
     if (errorMessage.contains('Alignment') &&
         errorMessage.contains('constant')) {
-      return '지원되는 값: topLeft, topCenter, topRight, centerLeft, center, centerRight, bottomLeft, bottomCenter, bottomRight';
+      return 'Supported values: topLeft, topCenter, topRight, centerLeft, center, centerRight, bottomLeft, bottomCenter, bottomRight';
     }
     if (errorMessage.contains('Unsupported method invocation')) {
-      return '지원되지 않는 메서드입니다. 지원 목록: Color, EdgeInsets, TextStyle 등';
+      return 'Unsupported method. Supported: Color, EdgeInsets, TextStyle, etc.';
     }
     if (errorMessage.contains('Unsupported const constructor')) {
-      return '지원되지 않는 생성자입니다';
+      return 'Unsupported constructor';
     }
     return null;
   }

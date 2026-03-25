@@ -108,9 +108,9 @@ class RfwConverter {
                     entries[key] = exprConverter.convert(entry.value);
                   } on UnsupportedExpressionError catch (e) {
                     collector.warning(
-                      'state 필드 "$key" 값을 변환할 수 없습니다: ${e.message}',
+                      'Failed to convert state field "$key": ${e.message}',
                       offset: e.offset,
-                      suggestion: '상태 초기값은 리터럴(문자열, 숫자, 불리언)만 지원됩니다',
+                      suggestion: 'State initial values only support literals (string, number, boolean)',
                     );
                   }
                 }

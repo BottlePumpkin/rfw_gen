@@ -5,6 +5,11 @@ import 'code_block.dart';
 import 'doc_table.dart';
 import 'link_text.dart';
 import 'rich_text_row.dart';
+import 'gallery/conditional_widget.dart';
+import 'gallery/mystique_badge.dart';
+import 'gallery/mystique_box_button.dart';
+import 'gallery/mystique_spinner.dart';
+import 'gallery/mystique_tag.dart';
 
 /// Library name matching the rfwtxt import: `import rfw_gen_playground;`
 const docWidgetsLibraryName = LibraryName(<String>['rfw_gen_playground']);
@@ -15,6 +20,11 @@ Map<String, LocalWidgetBuilder> get docWidgetBuilders => {
       'RichTextRow': _buildRichTextRow,
       'DocTable': _buildDocTable,
       'LinkText': _buildLinkText,
+      'MystiqueBoxButton': _buildMystiqueBoxButton,
+      'MystiqueTag': _buildMystiqueTag,
+      'MystiqueBadge': _buildMystiqueBadge,
+      'MystiqueSpinner': _buildMystiqueSpinner,
+      'ConditionalWidget': _buildConditionalWidget,
     };
 
 Widget _buildCodeBlock(BuildContext context, DataSource source) {
@@ -64,6 +74,45 @@ Widget _buildLinkText(BuildContext context, DataSource source) {
     onNavigate: (_) {
       source.voidHandler(['onTap'])?.call();
     },
+  );
+}
+
+Widget _buildMystiqueBoxButton(BuildContext context, DataSource source) {
+  return MystiqueBoxButton(
+    text: source.v<String>(['text']) ?? '',
+    type: source.v<String>(['type']) ?? 'primary',
+    size: source.v<String>(['size']) ?? 'l',
+    onPressed: source.voidHandler(['onPressed']),
+  );
+}
+
+Widget _buildMystiqueTag(BuildContext context, DataSource source) {
+  return MystiqueTag(
+    title: source.v<String>(['title']) ?? '',
+    type: source.v<String>(['type']) ?? 'primary',
+    size: source.v<String>(['size']) ?? 'medium',
+  );
+}
+
+Widget _buildMystiqueBadge(BuildContext context, DataSource source) {
+  return MystiqueBadge(
+    type: source.v<String>(['type']) ?? 'dot',
+    title: source.v<String>(['title']),
+    color: source.v<int>(['color']),
+  );
+}
+
+Widget _buildMystiqueSpinner(BuildContext context, DataSource source) {
+  return MystiqueSpinner(
+    size: source.v<String>(['size']) ?? 'medium',
+  );
+}
+
+Widget _buildConditionalWidget(BuildContext context, DataSource source) {
+  return ConditionalWidget(
+    condition: source.v<bool>(['condition']) ?? false,
+    childIfTrue: source.child(['childIfTrue']),
+    childIfFalse: source.child(['childIfFalse']),
   );
 }
 

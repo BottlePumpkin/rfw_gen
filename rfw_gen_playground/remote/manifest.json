@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "baseUrl": "",
+  "categories": [
+    { "id": "overview", "title": "Overview" },
+    { "id": "guides", "title": "Guides" },
+    { "id": "packages", "title": "Packages" },
+    { "id": "reference", "title": "Reference" }
+  ],
+  "screens": []
+}

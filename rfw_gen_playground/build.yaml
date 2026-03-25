@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      rfw_gen_builder|rfw_widget_builder:
+        enabled: true
+      rfw_gen_builder|rfw_local_widget_builder:
+        enabled: true

@@ -1,0 +1,20 @@
+name: rfw_preview
+description: Dev preview widget for rfw_gen. Renders generated rfwtxt with automatic Runtime setup and custom widget support.
+version: 0.1.0
+homepage: https://github.com/BottlePumpkin/rfw_gen
+repository: https://github.com/BottlePumpkin/rfw_gen
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  rfw: ^1.0.0
+  shared_preferences: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^5.0.0

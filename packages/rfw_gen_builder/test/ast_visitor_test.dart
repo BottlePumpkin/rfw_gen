@@ -585,6 +585,28 @@ Widget build() {
       expect(loop.body.properties['child'], isA<IrSwitchExpr>());
     });
 
+    test('throws descriptive error when DataRef used as widget', () {
+      final fn = parseFunction('''
+Widget build() {
+  return DataRef('user.name');
+}
+''');
+
+      expect(
+        () => visitor.extractWidgetTree(fn),
+        throwsA(
+          isA<UnsupportedWidgetError>().having(
+            (e) => e.toString(),
+            'message',
+            allOf(
+              contains('cannot be used as a widget'),
+              isNot(contains('is not registered')),
+            ),
+          ),
+        ),
+      );
+    });
+
     test('throws on unsupported widget', () {
       final fn = parseFunction('''
 Widget build() {

@@ -97,7 +97,9 @@ class LocalWidgetBuilderBuilder implements Builder {
   Future<void> _writeEmptyOutputs(BuildStep buildStep) async {
     await buildStep.writeAsString(
       buildStep.inputId.changeExtension('.rfw_library.dart'),
-      '// GENERATED - no custom widgets found\n',
+      '// GENERATED - no custom widgets found in this file.\n'
+      '// LocalWidgetBuilder code is generated for the .dart file\n'
+      '// that contains @RfwWidget annotations using custom widgets.\n',
     );
     await buildStep.writeAsString(
       buildStep.inputId.changeExtension('.rfw_meta.json'),

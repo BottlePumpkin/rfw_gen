@@ -63,14 +63,17 @@ void main() {
       expect(output, contains("import 'package:rfw/rfw.dart';"));
     });
 
-    test('includes source dartImport in output', () {
+    test('includes source dartImport with show directive in output', () {
       final widget = makeWidget(
         className: 'CouponCard',
         dartImport: 'package:mystique/widgets/coupon_card.dart',
       );
       final output = gen.generate({'CouponCard': widget});
-      expect(output,
-          contains("import 'package:mystique/widgets/coupon_card.dart';"));
+      expect(
+        output,
+        contains(
+            "import 'package:mystique/widgets/coupon_card.dart' show CouponCard;"),
+      );
     });
 
     test('deduplicates imports when multiple widgets share same file', () {
@@ -79,9 +82,13 @@ void main() {
       final w2 = makeWidget(className: 'WidgetB', dartImport: sharedImport);
       final output = gen.generate({'WidgetA': w1, 'WidgetB': w2});
 
-      // Count occurrences of the import
-      final count = "import '$sharedImport';".allMatches(output).length;
+      // Single import line with both names in show clause
+      final count = 'import \'$sharedImport\''.allMatches(output).length;
       expect(count, equals(1));
+      expect(
+        output,
+        contains("import 'package:myapp/shared.dart' show WidgetA, WidgetB;"),
+      );
     });
 
     test('output contains generatedLocalWidgetBuilders getter', () {
@@ -289,6 +296,21 @@ void main() {
       expect(output, contains("'WidgetB'"));
       expect(output, contains("x: source.v<String>(['x'])"));
       expect(output, contains("y: source.v<int>(['y'])"));
+    });
+
+    // --- Show directive ---
+
+    test('show directive lists multiple widgets from same import', () {
+      final sharedImport = 'package:myapp/shared.dart';
+      final w1 = makeWidget(className: 'Zebra', dartImport: sharedImport);
+      final w2 = makeWidget(className: 'Alpha', dartImport: sharedImport);
+      final output = gen.generate({'Zebra': w1, 'Alpha': w2});
+
+      // Names should be sorted alphabetically
+      expect(
+        output,
+        contains("import 'package:myapp/shared.dart' show Alpha, Zebra;"),
+      );
     });
 
     // --- Complex widget with mixed params ---

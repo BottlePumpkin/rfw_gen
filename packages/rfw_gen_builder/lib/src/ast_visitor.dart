@@ -8,10 +8,13 @@ import 'widget_registry.dart';
 /// Thrown when a widget is not found in the [WidgetRegistry].
 class UnsupportedWidgetError implements Exception {
   final String widgetName;
-  UnsupportedWidgetError(this.widgetName);
+  final String? message;
+  UnsupportedWidgetError(this.widgetName, {this.message});
 
   @override
-  String toString() => 'UnsupportedWidgetError: $widgetName is not registered';
+  String toString() => message != null
+      ? 'UnsupportedWidgetError: $message'
+      : 'UnsupportedWidgetError: $widgetName is not registered';
 }
 
 /// Extracts an [IrWidgetNode] tree from a [FunctionDeclaration]'s AST.
@@ -87,6 +90,22 @@ class WidgetAstVisitor {
     }
 
     final widgetName = expr.methodName.name;
+
+    const helperNames = {
+      'DataRef',
+      'ArgsRef',
+      'StateRef',
+      'RfwConcat',
+      'RfwSwitchValue',
+    };
+    if (helperNames.contains(widgetName)) {
+      throw UnsupportedWidgetError(
+        widgetName,
+        message: '$widgetName cannot be used as a widget. '
+            'It can only be used as a parameter value of core/material widgets. '
+            'If used inside a custom widget, pass a constant value instead.',
+      );
+    }
 
     if (!registry.isSupported(widgetName)) {
       throw UnsupportedWidgetError(widgetName);

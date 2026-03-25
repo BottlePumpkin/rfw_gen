@@ -1,5 +1,19 @@
 # RFW Widget Reference
 
+## RFW-Only Widgets
+
+These widgets exist only in RFW and have no direct Flutter class. Import them via `package:rfw_gen/rfw_gen.dart`.
+
+| RFW Widget | Flutter Equivalent | Notes |
+|---|---|---|
+| **Rotation** | `AnimatedRotation` | Implicit animation via `duration`/`curve` |
+| **Scale** | `AnimatedScale` / `Transform.scale` | Implicit animation via `duration`/`curve` |
+| **AnimationDefaults** | _(none)_ | Sets default `duration`/`curve` for child animations |
+| **SizedBoxExpand** | `SizedBox.expand()` | Expands to fill available space |
+| **SizedBoxShrink** | `SizedBox.shrink()` | Constrains to 0×0 |
+
+> **Note:** `Container`, `Align`, `Opacity`, `Padding`, `DefaultTextStyle`, `Positioned` in RFW are implicit animation variants (use `duration`/`curve` params). Their Flutter equivalents are `AnimatedContainer`, `AnimatedAlign`, `AnimatedOpacity`, etc.
+
 ## Core Widgets (createCoreWidgets)
 
 ### Layout

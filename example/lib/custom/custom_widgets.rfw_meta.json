@@ -37,7 +37,7 @@
     },
     "NullConditionalWidget": {
       "import": "rfw_gen_example",
-      "childType": "optionalChild",
+      "childType": "namedSlots",
       "handlers": [],
       "params": []
     },
@@ -130,7 +130,7 @@
     },
     "CompareWidget": {
       "import": "rfw_gen_example",
-      "childType": "optionalChild",
+      "childType": "namedSlots",
       "handlers": [],
       "params": []
     },
@@ -163,7 +163,7 @@
     },
     "CustomTile": {
       "import": "rfw_gen_example",
-      "childType": "optionalChild",
+      "childType": "namedSlots",
       "handlers": [
         "onTap"
       ],
@@ -171,7 +171,7 @@
     },
     "CustomAppBar": {
       "import": "rfw_gen_example",
-      "childType": "optionalChild",
+      "childType": "childList",
       "handlers": [],
       "params": []
     }

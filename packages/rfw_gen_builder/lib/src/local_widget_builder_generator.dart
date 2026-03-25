@@ -215,11 +215,35 @@ class LocalWidgetBuilderGenerator {
   }
 
   String _inferChildTypeName(List<ResolvedParam> params) {
-    for (final p in params) {
-      if (p.type == ResolvedParamType.widgetList) return 'childList';
-      if (p.type == ResolvedParamType.widget) return 'child';
-      if (p.type == ResolvedParamType.optionalWidget) return 'optionalChild';
+    final widgetParams = params.where((p) =>
+        p.type == ResolvedParamType.widget ||
+        p.type == ResolvedParamType.optionalWidget ||
+        p.type == ResolvedParamType.widgetList);
+
+    if (widgetParams.isEmpty) return 'none';
+
+    // List<Widget> takes precedence
+    if (widgetParams.any((p) => p.type == ResolvedParamType.widgetList)) {
+      return 'childList';
     }
+
+    // Required Widget child
+    final requiredChild = widgetParams.where(
+        (p) => p.type == ResolvedParamType.widget && p.name == 'child');
+    if (requiredChild.isNotEmpty) return 'child';
+
+    // Single optional Widget? named 'child' with no other widget params
+    final optionalWidgets =
+        widgetParams.where((p) => p.type == ResolvedParamType.optionalWidget);
+    if (optionalWidgets.length == 1 && optionalWidgets.first.name == 'child') {
+      return 'optionalChild';
+    }
+
+    // Multiple widget params → namedSlots
+    if (widgetParams.length > 1 || optionalWidgets.isNotEmpty) {
+      return 'namedSlots';
+    }
+
     return 'none';
   }
 

@@ -1,3 +1,7 @@
+## 0.4.1
+
+- No changes (version bump to match rfw_gen_builder)
+
 ## 0.4.0
 
 - **Breaking**: Remove `rfw_gen.yaml` custom widget configuration

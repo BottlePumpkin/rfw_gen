@@ -1,3 +1,7 @@
+## 0.4.1
+
+- No changes (version bump to match rfw_gen_builder)
+
 ## 0.4.0
 
 - **Breaking**: Read `.rfw_meta.json` instead of `rfw_gen.yaml` for custom widget metadata

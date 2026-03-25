@@ -1,3 +1,9 @@
+## 0.4.1
+
+- Fix: use `show` directive in generated `.rfw_library.dart` imports to prevent name conflicts with Flutter built-in widgets (#23)
+- Fix: improve error message when `DataRef`/`RfwConcat`/`StateRef` used as a widget (#24)
+- Fix: clarify "no custom widgets found" message in empty `.rfw_library.dart` (#25)
+
 ## 0.4.0
 
 - **Breaking**: Remove `rfw_gen.yaml` support and `yaml` dependency

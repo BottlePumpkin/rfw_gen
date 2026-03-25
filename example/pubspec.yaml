@@ -12,6 +12,8 @@ dependencies:
   rfw: ^1.0.0
   rfw_gen:
     path: ../packages/rfw_gen
+  rfw_preview:
+    path: ../packages/rfw_preview
 
 flutter:
   uses-material-design: true
@@ -19,6 +21,9 @@ flutter:
     - assets/catalog_widgets.rfw
     - assets/shop_widgets.rfw
     - assets/custom_widgets.rfw
+    - lib/catalog/catalog_widgets.rfwtxt
+    - lib/custom/custom_widgets.rfwtxt
+    - lib/ecommerce/shop_widgets.rfwtxt
 
 dev_dependencies:
   build_runner: ^2.4.0

@@ -1,15 +1,25 @@
-import 'package:rfw/rfw.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DocNavigator {
-  DocNavigator({required this.onNavigate});
+  static String pageIdToPath(String pageId) {
+    return '/${pageId.replaceAll('_', '-')}';
+  }
 
-  final void Function(String pageId) onNavigate;
+  static String pathToPageId(String path) {
+    final cleaned = path.startsWith('/') ? path.substring(1) : path;
+    return cleaned.replaceAll('-', '_');
+  }
 
-  bool handleEvent(String name, DynamicMap arguments) {
+  static bool handleEvent(
+    BuildContext context,
+    String name,
+    Map<String, Object?> arguments,
+  ) {
     if (name == 'navigate') {
       final page = arguments['page'] as String?;
       if (page != null) {
-        onNavigate(page);
+        context.go(pageIdToPath(page));
         return true;
       }
     }

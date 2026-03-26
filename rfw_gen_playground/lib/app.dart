@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rfw/rfw.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,43 +11,19 @@ import 'ui/search_bar.dart';
 import 'ui/sidebar.dart';
 import 'widgets/doc_widget_library.dart';
 
-class DocsApp extends StatelessWidget {
+class DocsApp extends StatefulWidget {
   const DocsApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'rfw_gen Docs',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF237AF2),
-        scaffoldBackgroundColor: const Color(0xFFFAFBFC),
-        useMaterial3: true,
-      ),
-      home: const DocsShell(),
-    );
-  }
+  State<DocsApp> createState() => _DocsAppState();
 }
 
-class DocsShell extends StatefulWidget {
-  const DocsShell({super.key});
-
-  @override
-  State<DocsShell> createState() => _DocsShellState();
-}
-
-class _DocsShellState extends State<DocsShell> {
-  Manifest? _manifest;
-  String _selectedPageId = '';
-  bool _isLoading = true;
-  bool _isLoadingPage = false;
-  String? _error;
-  FullyQualifiedWidgetName? _widgetName;
-
+class _DocsAppState extends State<DocsApp> {
   late final Runtime _runtime;
   late final DynamicContent _data;
   late RemoteLoader _loader;
-  late final DocNavigator _navigator;
+  Manifest? _manifest;
+  bool _isAppLoading = true;
 
   @override
   void initState() {
@@ -66,7 +43,6 @@ class _DocsShellState extends State<DocsShell> {
     );
     _data = DynamicContent();
     _loader = RemoteLoader(baseUrl: '');
-    _navigator = DocNavigator(onNavigate: _selectPage);
     _loadManifest();
   }
 
@@ -84,95 +60,115 @@ class _DocsShellState extends State<DocsShell> {
       );
       setState(() {
         _manifest = manifest;
-        _isLoading = false;
-      });
-      if (manifest.screens.isNotEmpty) {
-        _selectPage(manifest.screens.first.id);
-      }
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _selectPage(String pageId) {
-    setState(() => _selectedPageId = pageId);
-    _loadPage(pageId);
-  }
-
-  Future<void> _loadPage(String pageId) async {
-    final screen = _manifest?.screenById(pageId);
-    if (screen == null) return;
-    setState(() {
-      _isLoadingPage = true;
-      _error = null;
-    });
-    try {
-      final library = await _loader.loadScreen(screen.rfwtxtPath);
-      _runtime.update(const LibraryName(<String>['screen']), library);
-      if (screen.dataPath != null) {
-        final dataMap = await _loader.loadData(screen.dataPath!);
-        _populateData(dataMap);
-      }
-      setState(() {
-        _widgetName = const FullyQualifiedWidgetName(
-          LibraryName(<String>['screen']),
-          'root',
-        );
-        _isLoadingPage = false;
+        _isAppLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoadingPage = false;
-      });
+      setState(() => _isAppLoading = false);
     }
   }
 
-  void _populateData(Map<String, Object> json) {
-    for (final entry in json.entries) {
-      _data.update(entry.key, entry.value);
-    }
-  }
+  late final _router = GoRouter(
+    initialLocation: '/home',
+    redirect: (context, state) {
+      if (state.uri.path == '/') return '/home';
+      return null;
+    },
+    routes: [
+      ShellRoute(
+        builder: (context, state, child) {
+          return _DocsShell(
+            manifest: _manifest,
+            currentPath: state.uri.path,
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: '/:pageId',
+            builder: (context, state) {
+              final urlPageId = state.pathParameters['pageId'] ?? 'home';
+              final pageId = DocNavigator.pathToPageId(urlPageId);
+              return _PageLoader(
+                key: ValueKey(pageId),
+                pageId: pageId,
+                manifest: _manifest,
+                loader: _loader,
+                runtime: _runtime,
+                data: _data,
+              );
+            },
+          ),
+        ],
+      ),
+    ],
+  );
 
-  void _handleEvent(String name, DynamicMap arguments) {
-    _navigator.handleEvent(name, arguments);
+  @override
+  Widget build(BuildContext context) {
+    if (_isAppLoading) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
+    return MaterialApp.router(
+      title: 'rfw_gen Docs',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorSchemeSeed: const Color(0xFF237AF2),
+        scaffoldBackgroundColor: const Color(0xFFFAFBFC),
+        useMaterial3: true,
+      ),
+      routerConfig: _router,
+    );
+  }
+}
+
+class _DocsShell extends StatelessWidget {
+  const _DocsShell({
+    required this.manifest,
+    required this.currentPath,
+    required this.child,
+  });
+
+  final Manifest? manifest;
+  final String currentPath;
+  final Widget child;
+
+  String get _selectedPageId => DocNavigator.pathToPageId(currentPath);
+
+  void _selectPage(BuildContext context, String pageId) {
+    context.go(DocNavigator.pageIdToPath(pageId));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 900;
-        return isWide ? _buildWideLayout() : _buildNarrowLayout();
+        return isWide
+            ? _buildWideLayout(context)
+            : _buildNarrowLayout(context);
       },
     );
   }
 
-  Widget _buildWideLayout() {
+  Widget _buildWideLayout(BuildContext context) {
     return Scaffold(
       body: Row(
         children: [
-          if (_manifest != null)
+          if (manifest != null)
             Sidebar(
-              manifest: _manifest!,
+              manifest: manifest!,
               selectedPageId: _selectedPageId,
-              onPageSelected: _selectPage,
+              onPageSelected: (id) => _selectPage(context, id),
             ),
           const VerticalDivider(width: 1),
           Expanded(
             child: Column(
               children: [
-                _buildTopBar(),
-                Expanded(child: _buildContent()),
+                _buildTopBar(context),
+                Expanded(child: child),
               ],
             ),
           ),
@@ -181,60 +177,58 @@ class _DocsShellState extends State<DocsShell> {
     );
   }
 
-  Widget _buildNarrowLayout() {
+  Widget _buildNarrowLayout(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('rfw_gen'),
         actions: [
-          if (_manifest != null)
+          if (manifest != null)
             SizedBox(
               width: 200,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: DocSearchBar(
-                  manifest: _manifest!,
-                  onPageSelected: _selectPage,
+                  manifest: manifest!,
+                  onPageSelected: (id) => _selectPage(context, id),
                 ),
               ),
             ),
           const SizedBox(width: 8),
         ],
       ),
-      drawer: _manifest != null
+      drawer: manifest != null
           ? Drawer(
               child: Sidebar(
-                manifest: _manifest!,
+                manifest: manifest!,
                 selectedPageId: _selectedPageId,
-                onPageSelected: (pageId) {
-                  _selectPage(pageId);
+                onPageSelected: (id) {
+                  _selectPage(context, id);
                   Navigator.of(context).pop();
                 },
               ),
             )
           : null,
-      body: _buildContent(),
+      body: child,
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFE8EAED)),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFFE8EAED))),
       ),
       child: Row(
         children: [
           const Spacer(),
-          if (_manifest != null)
+          if (manifest != null)
             SizedBox(
               width: 280,
               child: DocSearchBar(
-                manifest: _manifest!,
-                onPageSelected: _selectPage,
+                manifest: manifest!,
+                onPageSelected: (id) => _selectPage(context, id),
               ),
             ),
           const SizedBox(width: 12),
@@ -254,19 +248,86 @@ class _DocsShellState extends State<DocsShell> {
       ),
     );
   }
+}
 
-  // Kept at instance level for reuse — no state needed
-  Widget _buildContent() {
+class _PageLoader extends StatefulWidget {
+  const _PageLoader({
+    super.key,
+    required this.pageId,
+    required this.manifest,
+    required this.loader,
+    required this.runtime,
+    required this.data,
+  });
+
+  final String pageId;
+  final Manifest? manifest;
+  final RemoteLoader loader;
+  final Runtime runtime;
+  final DynamicContent data;
+
+  @override
+  State<_PageLoader> createState() => _PageLoaderState();
+}
+
+class _PageLoaderState extends State<_PageLoader> {
+  bool _isLoading = true;
+  String? _error;
+  FullyQualifiedWidgetName? _widgetName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  Future<void> _loadPage() async {
+    final screen = widget.manifest?.screenById(widget.pageId);
+    if (screen == null) {
+      setState(() {
+        _error = 'Page not found: ${widget.pageId}';
+        _isLoading = false;
+      });
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final library = await widget.loader.loadScreen(screen.rfwtxtPath);
+      widget.runtime.update(const LibraryName(<String>['screen']), library);
+      if (screen.dataPath != null) {
+        final dataMap = await widget.loader.loadData(screen.dataPath!);
+        for (final entry in dataMap.entries) {
+          widget.data.update(entry.key, entry.value);
+        }
+      }
+      setState(() {
+        _widgetName = const FullyQualifiedWidgetName(
+          LibraryName(<String>['screen']),
+          'root',
+        );
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ContentArea(
-      runtime: _runtime,
-      data: _data,
+      runtime: widget.runtime,
+      data: widget.data,
       widgetName: _widgetName,
-      isLoading: _isLoadingPage,
+      isLoading: _isLoading,
       error: _error,
-      onEvent: _handleEvent,
-      onRetry: _error != null && _selectedPageId.isNotEmpty
-          ? () => _loadPage(_selectedPageId)
-          : null,
+      onEvent: (name, args) => DocNavigator.handleEvent(context, name, args),
+      onRetry: _loadPage,
     );
   }
 }

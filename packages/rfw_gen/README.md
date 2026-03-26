@@ -12,12 +12,16 @@ to your dev dependencies:
 
 ```yaml
 dependencies:
+  rfw: ^1.0.17
   rfw_gen: ^0.4.0
 
 dev_dependencies:
   rfw_gen_builder: ^0.4.0
   build_runner: ^2.4.0
 ```
+
+> **Note:** The `rfw` package is required at runtime to render Remote Flutter
+> Widgets. `rfw_gen` and `rfw_gen_builder` handle code generation only.
 
 ## Quick Start
 
@@ -171,6 +175,34 @@ GestureDetector(
 
 Generates: `onTap: event "cart.add" { itemId: 42 }`
 
+Toggle a boolean state value using `RfwSwitchValue`:
+
+```dart
+@RfwWidget('toggle', state: {'isActive': false})
+Widget buildToggle() {
+  return GestureDetector(
+    onTap: RfwHandler.setState('isActive', RfwSwitchValue<bool>(
+      value: StateRef('isActive'),
+      cases: {true: false, false: true},
+    )),
+    child: Container(
+      color: RfwSwitchValue<int>(
+        value: StateRef('isActive'),
+        cases: {true: 0xFF4CAF50, false: 0xFFE0E0E0},
+      ),
+    ),
+  );
+}
+```
+
+Generates:
+```rfwtxt
+onTap: set state.isActive = switch state.isActive {
+  true: false,
+  false: true,
+},
+```
+
 ## Custom Widgets
 
 Custom widgets are automatically detected and supported. When you use a
@@ -218,11 +250,94 @@ For each `.dart` file containing `@RfwWidget` functions, the generator produces:
 | `.rfw_library.dart` | `LocalWidgetBuilder` map for custom widgets |
 | `.rfw_meta.json` | Widget metadata (params, child type, handlers) |
 
+## Rendering Generated Widgets
+
+After running `build_runner`, use the generated `.rfw` file with the
+[rfw](https://pub.dev/packages/rfw) package to render widgets:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:rfw/rfw.dart';
+
+class RfwScreen extends StatefulWidget {
+  const RfwScreen({super.key});
+
+  @override
+  State<RfwScreen> createState() => _RfwScreenState();
+}
+
+class _RfwScreenState extends State<RfwScreen> {
+  final Runtime _runtime = Runtime();
+  final DynamicContent _data = DynamicContent();
+
+  @override
+  void initState() {
+    super.initState();
+    // Register built-in widget libraries
+    _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets);
+    _runtime.update(const LibraryName(<String>['material']), createMaterialWidgets);
+
+    // Load the generated .rfw binary
+    rootBundle.load('assets/greeting.rfw').then((bytes) {
+      _runtime.update(
+        const LibraryName(<String>['main']),
+        decodeLibraryBlob(bytes.buffer.asUint8List()),
+      );
+      setState(() {});
+    });
+
+    // Supply dynamic data
+    _data.update('user', <String, Object>{'name': 'World'});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RemoteWidget(
+      runtime: _runtime,
+      data: _data,
+      widget: const FullyQualifiedWidgetName(
+        LibraryName(<String>['main']),
+        'greeting',
+      ),
+    );
+  }
+}
+```
+
+For more details, see the [rfw package documentation](https://pub.dev/packages/rfw).
+
 ## Limitations
 
 - `@RfwWidget` must be applied to top-level functions only.
 - Only the 65 built-in widgets (core + material) are supported out of the box.
   Other widgets are auto-detected and require their source to be importable.
+- `RfwSwitchValue` / `RfwSwitch` **cannot be used in handler positions**
+  (e.g., `onTap`, `onPressed`). This is an RFW runtime limitation — handlers
+  only support `setState`, `setStateFromArg`, and `event`. To conditionally
+  switch behavior, use `RfwSwitch` to swap entire widgets:
+
+  ```dart
+  // ❌ This does NOT work:
+  onPressed: RfwSwitchValue(value: StateRef('mode'), cases: {
+    true: RfwHandler.event('pause', {}),
+    false: RfwHandler.event('start', {}),
+  })
+
+  // ✅ Use RfwSwitch to swap widgets instead:
+  RfwSwitch(
+    value: StateRef('mode'),
+    cases: {
+      true: ElevatedButton(
+        onPressed: RfwHandler.event('pause', {}),
+        child: Text('Pause'),
+      ),
+      false: ElevatedButton(
+        onPressed: RfwHandler.event('start', {}),
+        child: Text('Start'),
+      ),
+    },
+  )
+  ```
 
 ## Pre-1.0 Note
 

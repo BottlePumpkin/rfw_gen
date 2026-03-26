@@ -540,6 +540,31 @@ class ExpressionConverter {
       return _convertRfwIcon(identifier, offset: expr.offset);
     }
 
+    // Icons.xxx → auto-convert via RfwIcon lookup
+    if (prefix == 'Icons') {
+      final codepoint = RfwIcon.lookup(identifier);
+      if (codepoint != null) {
+        return IrMapValue({
+          'icon': IrIntValue(codepoint),
+          'fontFamily': IrStringValue('MaterialIcons'),
+        });
+      }
+      throw UnsupportedExpressionError(
+        'Icons.$identifier is not mapped in RfwIcon. '
+        'Use RfwIcon.$identifier instead, or add it to RfwIcon if missing.',
+        offset: expr.offset,
+      );
+    }
+
+    // double.infinity is not supported in RFW
+    if (prefix == 'double' && identifier == 'infinity') {
+      throw UnsupportedExpressionError(
+        'double.infinity is not supported in RFW. '
+        'Use SizedBoxExpand to fill available space, or set a fixed size.',
+        offset: expr.offset,
+      );
+    }
+
     if (prefix == 'Alignment') {
       return _convertAlignmentConstant(identifier, offset: expr.offset);
     }
@@ -1110,7 +1135,11 @@ class ExpressionConverter {
     }
 
     throw UnsupportedExpressionError(
-      'Unknown handler expression: $methodName',
+      'Unsupported handler expression: $methodName. '
+      'RFW handlers only support RfwHandler.setState, '
+      'RfwHandler.setStateFromArg, and RfwHandler.event. '
+      'RfwSwitchValue/RfwSwitch cannot be used in handler positions — '
+      'use RfwSwitch to swap entire widgets with different handlers instead.',
       offset: expr.offset,
     );
   }

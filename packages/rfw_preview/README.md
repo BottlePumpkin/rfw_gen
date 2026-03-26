@@ -6,7 +6,7 @@ and custom widget support.
 
 ## Features
 
-- **RfwPreview** — drop-in widget that renders rfwtxt from strings, files, or assets
+- **RfwPreview** — drop-in widget that renders rfwtxt from strings, binary assets, or raw bytes
 - **RfwEditorApp** — standalone editor with live preview, snippet storage, and device frames
 - **RfwEditor** — embeddable editor widget for integration into existing apps
 - **RfwEditorController** — state management for editor instances
@@ -26,20 +26,28 @@ dev_dependencies:
 import 'package:rfw_preview/rfw_preview.dart';
 
 RfwPreview(
-  source: RfwSource.text('''
+  source: RfwSource.text(
+    '''
     import core.widgets;
     widget root = Center(child: Text(text: "Hello, RFW!"));
-  '''),
+    ''',
+    library: LibraryName(['main']),
+  ),
+  widget: 'root',
 )
 ```
 
-Load from a generated `.rfwtxt` file:
+Load from a `.rfw` binary asset:
 
 ```dart
 RfwPreview(
-  source: RfwSource.file('path/to/widget.rfwtxt'),
+  source: RfwSource.asset(
+    'assets/greeting.rfw',
+    library: LibraryName(['main']),
+  ),
+  widget: 'greeting',
   data: {'user': {'name': 'Alice'}},
-  localWidgetBuilders: myCustomBuilders,
+  localWidgetLibraries: myCustomWidgetLibraries,
 )
 ```
 
@@ -49,18 +57,15 @@ Launch a full-screen editor with live preview:
 
 ```dart
 RfwEditorApp(
-  localWidgetBuilders: myCustomBuilders,
+  localWidgetLibraries: myCustomWidgetLibraries,
 )
 ```
 
 ### RfwEditor (Embeddable)
 
 ```dart
-final controller = RfwEditorController();
-
 RfwEditor(
-  controller: controller,
-  localWidgetBuilders: myCustomBuilders,
+  localWidgetLibraries: myCustomWidgetLibraries,
 )
 ```
 

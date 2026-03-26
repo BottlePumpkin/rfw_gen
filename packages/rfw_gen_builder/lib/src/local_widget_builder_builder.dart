@@ -33,7 +33,7 @@ class LocalWidgetBuilderBuilder implements Builder {
 
     // Quick check: skip files without @RfwWidget annotation.
     if (!source.contains('RfwWidget')) {
-      return _writeEmptyOutputs(buildStep);
+      return _skipOutputs();
     }
 
     // Parse the source and collect unknown widget names.
@@ -42,7 +42,7 @@ class LocalWidgetBuilderBuilder implements Builder {
     final unknownNames = _collectUnknownWidgetNames(parseResult.unit, registry);
 
     if (unknownNames.isEmpty) {
-      return _writeEmptyOutputs(buildStep);
+      return _skipOutputs();
     }
 
     // Resolve: get input library, walk imports to find widget classes.
@@ -74,7 +74,7 @@ class LocalWidgetBuilderBuilder implements Builder {
     }
 
     if (results.isEmpty) {
-      return _writeEmptyOutputs(buildStep);
+      return _skipOutputs();
     }
 
     final generator = LocalWidgetBuilderGenerator();
@@ -92,19 +92,13 @@ class LocalWidgetBuilderBuilder implements Builder {
     );
   }
 
-  /// Writes empty placeholder outputs (build_runner requires all declared
-  /// outputs to be written).
-  Future<void> _writeEmptyOutputs(BuildStep buildStep) async {
-    await buildStep.writeAsString(
-      buildStep.inputId.changeExtension('.rfw_library.dart'),
-      '// GENERATED - no custom widgets found in this file.\n'
-      '// LocalWidgetBuilder code is generated for the .dart file\n'
-      '// that contains @RfwWidget annotations using custom widgets.\n',
-    );
-    await buildStep.writeAsString(
-      buildStep.inputId.changeExtension('.rfw_meta.json'),
-      '{"widgets":{}}\n',
-    );
+  /// Skips output generation when no custom widgets are found.
+  ///
+  /// Previously wrote empty placeholder files, but this cluttered projects
+  /// with unnecessary .rfw_library.dart and .rfw_meta.json files for every
+  /// .dart file without @RfwWidget annotations.
+  void _skipOutputs() {
+    // Intentionally empty — do not generate files for non-@RfwWidget sources.
   }
 }
 

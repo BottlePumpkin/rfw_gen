@@ -325,8 +325,8 @@ class _MockHeaders implements HttpHeaders {
   int? get port => null;
   @override
   set port(int? value) {}
-  @override
   List<String> get transferEncoding => [];
+  set transferEncoding(List<String> value) {}
 }
 
 // ============================================================

@@ -12,12 +12,16 @@ to your dev dependencies:
 
 ```yaml
 dependencies:
+  rfw: ^1.0.17
   rfw_gen: ^0.4.0
 
 dev_dependencies:
   rfw_gen_builder: ^0.4.0
   build_runner: ^2.4.0
 ```
+
+> **Note:** The `rfw` package is required at runtime to render Remote Flutter
+> Widgets. `rfw_gen` and `rfw_gen_builder` handle code generation only.
 
 ## Quick Start
 
@@ -217,6 +221,62 @@ For each `.dart` file containing `@RfwWidget` functions, the generator produces:
 | `.rfw` | Binary format for production use |
 | `.rfw_library.dart` | `LocalWidgetBuilder` map for custom widgets |
 | `.rfw_meta.json` | Widget metadata (params, child type, handlers) |
+
+## Rendering Generated Widgets
+
+After running `build_runner`, use the generated `.rfw` file with the
+[rfw](https://pub.dev/packages/rfw) package to render widgets:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:rfw/rfw.dart';
+
+class RfwScreen extends StatefulWidget {
+  const RfwScreen({super.key});
+
+  @override
+  State<RfwScreen> createState() => _RfwScreenState();
+}
+
+class _RfwScreenState extends State<RfwScreen> {
+  final Runtime _runtime = Runtime();
+  final DynamicContent _data = DynamicContent();
+
+  @override
+  void initState() {
+    super.initState();
+    // Register built-in widget libraries
+    _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets);
+    _runtime.update(const LibraryName(<String>['material']), createMaterialWidgets);
+
+    // Load the generated .rfw binary
+    rootBundle.load('assets/greeting.rfw').then((bytes) {
+      _runtime.update(
+        const LibraryName(<String>['main']),
+        decodeLibraryBlob(bytes.buffer.asUint8List()),
+      );
+      setState(() {});
+    });
+
+    // Supply dynamic data
+    _data.update('user', <String, Object>{'name': 'World'});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RemoteWidget(
+      runtime: _runtime,
+      data: _data,
+      widget: const FullyQualifiedWidgetName(
+        LibraryName(<String>['main']),
+        'greeting',
+      ),
+    );
+  }
+}
+```
+
+For more details, see the [rfw package documentation](https://pub.dev/packages/rfw).
 
 ## Limitations
 

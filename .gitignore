@@ -10,3 +10,10 @@ build/
 melos_*.iml
 .worktrees/
 example2/
+
+# rfw_gen generated files
+*.rfw_library.dart
+*.rfw_meta.json
+
+# macOS
+.DS_Store

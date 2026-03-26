@@ -215,10 +215,21 @@ widget root = SingleChildScrollView(
       SizedBox(
         height: 32.0
       ),
+      SizedBox(
+        height: 32.0
+      ),
       LinkText(
-        text: "View Examples",
-        page: "examples",
-        onTap: event "navigate" { page: "examples" }
+        text: "Back: rfw_gen_mcp Guide",
+        page: "mcp_guide",
+        onTap: event "navigate" { page: "mcp_guide" }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      LinkText(
+        text: "Next: Supported Widgets",
+        page: "widget_gallery",
+        onTap: event "navigate" { page: "widget_gallery" }
       )
     ]
   )

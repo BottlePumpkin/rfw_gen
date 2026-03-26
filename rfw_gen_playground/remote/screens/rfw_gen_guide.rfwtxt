@@ -176,6 +176,17 @@ widget root = SingleChildScrollView(
       SizedBox(
         height: 32.0
       ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Back: Getting Started",
+        page: "getting_started",
+        onTap: event "navigate" { page: "getting_started" }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
       LinkText(
         text: "Next: rfw_gen_builder Guide",
         page: "builder_guide",

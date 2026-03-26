@@ -99,7 +99,7 @@ widget root = SingleChildScrollView(
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 48.0,
+                      height: 80.0,
                       child: Center(
                         child: DocTable(
                           headers: ["A", "B"],

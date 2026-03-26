@@ -567,6 +567,29 @@ void main() {
       expect(map.entries['icon'], isA<IrIntValue>());
     });
 
+    test('converts fitness icons (RfwIcon.fitnessCenter, timer, etc.)', () {
+      for (final name in [
+        'fitnessCenter',
+        'timer',
+        'directionsRun',
+        'localFireDepartment',
+        'schedule',
+        'trendingUp',
+        'emojiEvents',
+        'selfImprovement',
+        'monitorHeart',
+      ]) {
+        final expr = parseExpression('RfwIcon.$name');
+        final result = converter.convert(expr);
+        expect(result, isA<IrMapValue>(), reason: 'RfwIcon.$name');
+        final map = result as IrMapValue;
+        expect(map.entries['icon'], isA<IrIntValue>(),
+            reason: 'RfwIcon.$name icon');
+        expect(map.entries['fontFamily'], isA<IrStringValue>(),
+            reason: 'RfwIcon.$name fontFamily');
+      }
+    });
+
     test('throws for unknown RfwIcon', () {
       final expr = parseExpression('RfwIcon.nonExistentIcon');
       expect(() => converter.convert(expr),

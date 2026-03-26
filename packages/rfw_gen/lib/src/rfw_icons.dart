@@ -188,6 +188,17 @@ class RfwIcon {
   static const int directions = 0xe1c4;
   static const int navigation = 0xe41d;
 
+  // --- Fitness & Health ---
+  static const int fitnessCenter = 0xe28d;
+  static const int timer = 0xe662;
+  static const int directionsRun = 0xe1dc;
+  static const int localFireDepartment = 0xe392;
+  static const int schedule = 0xe556;
+  static const int trendingUp = 0xe67f;
+  static const int emojiEvents = 0xe22c;
+  static const int selfImprovement = 0xe56f;
+  static const int monitorHeart = 0xf053d;
+
   // --- Toggle ---
   static const int toggleOn = 0xe620;
   static const int toggleOff = 0xe621;
@@ -281,6 +292,13 @@ class RfwIcon {
     'place': place, 'map': map, 'myLocation': myLocation,
     'locationOn': locationOn, 'locationOff': locationOff,
     'directions': directions, 'navigation': navigation,
+
+    // Fitness & Health
+    'fitnessCenter': fitnessCenter, 'timer': timer,
+    'directionsRun': directionsRun,
+    'localFireDepartment': localFireDepartment, 'schedule': schedule,
+    'trendingUp': trendingUp, 'emojiEvents': emojiEvents,
+    'selfImprovement': selfImprovement, 'monitorHeart': monitorHeart,
 
     // Toggle
     'toggleOn': toggleOn, 'toggleOff': toggleOff,

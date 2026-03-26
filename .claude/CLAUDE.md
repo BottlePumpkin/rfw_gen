@@ -52,3 +52,6 @@ Monorepo structure:
 - @rules/rfw-types.md: argument type encoding
 - @agents/golden-test-writer.md: golden test writing agent
 - @skills/add-golden-test.md: golden test addition skill
+- @skills/dogfood.md: dogfood DX 테스트 스킬
+- @skills/commit.md: 커밋 스킬
+- @skills/git-workflow.md: git worktree 워크플로우 스킬

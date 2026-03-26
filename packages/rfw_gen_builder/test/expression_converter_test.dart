@@ -625,7 +625,7 @@ void main() {
           allOf(
             isA<UnsupportedExpressionError>(),
             predicate<UnsupportedExpressionError>(
-              (e) => e.message.contains('RfwIcon'),
+              (e) => e.message.contains('could not be resolved'),
             ),
           ),
         ),

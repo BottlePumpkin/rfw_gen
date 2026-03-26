@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
 
+import 'icon_resolver.dart';
 import 'ir.dart';
 import 'package:rfw_gen/rfw_gen.dart' show RfwIcon;
 
@@ -19,6 +20,13 @@ class UnsupportedExpressionError implements Exception {
 /// known enum prefixes. Throws [UnsupportedExpressionError] for
 /// unsupported expression types.
 class ExpressionConverter {
+  /// Optional resolver for `Icons.xxx` constants via the Dart analyzer.
+  /// When set, unmapped `Icons.xxx` are resolved at build time instead of
+  /// failing with an error.
+  final IconResolver? iconResolver;
+
+  ExpressionConverter({this.iconResolver});
+
   static const _knownEnumPrefixes = <String>{
     'MainAxisAlignment',
     'CrossAxisAlignment',
@@ -540,8 +548,9 @@ class ExpressionConverter {
       return _convertRfwIcon(identifier, offset: expr.offset);
     }
 
-    // Icons.xxx → auto-convert via RfwIcon lookup
+    // Icons.xxx → auto-convert via RfwIcon lookup, then analyzer fallback
     if (prefix == 'Icons') {
+      // Fast path: check hardcoded RfwIcon map
       final codepoint = RfwIcon.lookup(identifier);
       if (codepoint != null) {
         return IrMapValue({
@@ -549,9 +558,17 @@ class ExpressionConverter {
           'fontFamily': IrStringValue('MaterialIcons'),
         });
       }
+      // Fallback: resolve via Dart analyzer at build time
+      final resolved = iconResolver?.resolve(identifier);
+      if (resolved != null) {
+        return IrMapValue({
+          'icon': IrIntValue(resolved),
+          'fontFamily': IrStringValue('MaterialIcons'),
+        });
+      }
       throw UnsupportedExpressionError(
-        'Icons.$identifier is not mapped in RfwIcon. '
-        'Use RfwIcon.$identifier instead, or add it to RfwIcon if missing.',
+        'Icons.$identifier could not be resolved. '
+        'Ensure the icon name is correct and flutter/material.dart is imported.',
         offset: expr.offset,
       );
     }

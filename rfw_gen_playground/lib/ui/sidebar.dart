@@ -53,6 +53,31 @@ class Sidebar extends StatelessWidget {
               children: _buildCategoryList(),
             ),
           ),
+          const Divider(height: 1),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Built with Remote Flutter Widgets',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF237AF2),
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Powered by rfw_gen',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF788391),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

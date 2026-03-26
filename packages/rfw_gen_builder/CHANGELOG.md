@@ -1,3 +1,7 @@
+## 0.5.1
+
+- Update homepage to GitHub Pages playground
+
 ## 0.5.0
 
 - Fix: handle `Icons.xxx` expressions by converting to iconData map (#41)

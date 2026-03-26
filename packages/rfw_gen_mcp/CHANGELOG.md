@@ -1,3 +1,7 @@
+## 0.5.1
+
+- Update homepage to GitHub Pages playground
+
 ## 0.5.0
 
 - No changes (version bump to match rfw_gen ecosystem)

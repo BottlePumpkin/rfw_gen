@@ -283,6 +283,33 @@ For more details, see the [rfw package documentation](https://pub.dev/packages/r
 - `@RfwWidget` must be applied to top-level functions only.
 - Only the 65 built-in widgets (core + material) are supported out of the box.
   Other widgets are auto-detected and require their source to be importable.
+- `RfwSwitchValue` / `RfwSwitch` **cannot be used in handler positions**
+  (e.g., `onTap`, `onPressed`). This is an RFW runtime limitation — handlers
+  only support `setState`, `setStateFromArg`, and `event`. To conditionally
+  switch behavior, use `RfwSwitch` to swap entire widgets:
+
+  ```dart
+  // ❌ This does NOT work:
+  onPressed: RfwSwitchValue(value: StateRef('mode'), cases: {
+    true: RfwHandler.event('pause', {}),
+    false: RfwHandler.event('start', {}),
+  })
+
+  // ✅ Use RfwSwitch to swap widgets instead:
+  RfwSwitch(
+    value: StateRef('mode'),
+    cases: {
+      true: ElevatedButton(
+        onPressed: RfwHandler.event('pause', {}),
+        child: Text('Pause'),
+      ),
+      false: ElevatedButton(
+        onPressed: RfwHandler.event('start', {}),
+        child: Text('Start'),
+      ),
+    },
+  )
+  ```
 
 ## Pre-1.0 Note
 

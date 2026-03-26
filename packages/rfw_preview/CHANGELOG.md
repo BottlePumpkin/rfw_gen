@@ -1,3 +1,9 @@
+## 0.5.0
+
+- Fix: README Quick Start examples now include required `widget` and `library` parameters (#49)
+- Fix: replace non-existent `RfwSource.file()` with `RfwSource.asset()` in README (#48)
+- Add unit tests for core preview logic (#47)
+
 ## 0.4.1
 
 - No changes (version bump to match rfw_gen_builder)

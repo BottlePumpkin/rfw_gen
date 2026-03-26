@@ -1,3 +1,9 @@
+## 0.5.0
+
+- Add fitness/health/timer category icons to `RfwIcon` (fitnessCenter, timer, directionsRun, etc.)
+- Add setState toggle pattern example to README
+- Add rfw dependency and rendering guide to README
+
 ## 0.4.1
 
 - No changes (version bump to match rfw_gen_builder)

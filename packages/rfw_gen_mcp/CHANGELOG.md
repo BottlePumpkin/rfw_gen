@@ -1,3 +1,7 @@
+## 0.5.0
+
+- No changes (version bump to match rfw_gen ecosystem)
+
 ## 0.4.1
 
 - No changes (version bump to match rfw_gen_builder)

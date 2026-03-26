@@ -1,6 +1,6 @@
 name: rfw_gen_mcp
 description: MCP server exposing rfw_gen widget registry, code conversion, and rfwtxt validation.
-version: 0.4.1
+version: 0.5.0
 homepage: https://github.com/BottlePumpkin/rfw_gen
 repository: https://github.com/BottlePumpkin/rfw_gen
 topics:
@@ -20,8 +20,8 @@ resolution: workspace
 dependencies:
   mcp_dart: ^2.0.0
   rfw: ^1.0.0
-  rfw_gen: ^0.4.0
-  rfw_gen_builder: ^0.4.0
+  rfw_gen: ^0.5.0
+  rfw_gen_builder: ^0.5.0
 
 dev_dependencies:
   lints: ^5.0.0

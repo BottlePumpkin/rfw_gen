@@ -1,3 +1,11 @@
+## 0.5.0
+
+- Fix: handle `Icons.xxx` expressions by converting to iconData map (#41)
+- Fix: handle `double.infinity` with actionable error message (#41)
+- Fix: translate Korean warning/error messages to English (#42)
+- Fix: skip `.rfw_library.dart` and `.rfw_meta.json` generation for files without `@RfwWidget` (#42)
+- Fix: improve handler error message and document RfwSwitch limitation (#44)
+
 ## 0.4.1
 
 - Fix: use `show` directive in generated `.rfw_library.dart` imports to prevent name conflicts with Flutter built-in widgets (#23)

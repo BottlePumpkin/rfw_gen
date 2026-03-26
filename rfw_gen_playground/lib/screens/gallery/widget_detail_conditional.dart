@@ -81,7 +81,7 @@ Widget buildWidgetDetailConditional() {
         SizedBox(height: 12.0),
         CodeBlock(
           code:
-              'ConditionalWidget(condition: true, childIfTrue: Text(text: "Yes"), childIfFalse: Text(text: "No"))',
+              'ConditionalWidget(\\n  condition: true,\\n  childIfTrue: Text(text: "Yes"),\\n  childIfFalse: Text(text: "No"),\\n)',
         ),
       ],
     ),

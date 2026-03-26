@@ -97,7 +97,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "@RfwWidget('myWidget') Widget buildMyWidget() { return Text('Hello'); }"
+        code: "@RfwWidget('myWidget')\\nWidget buildMyWidget() {\\n  return Text('Hello');\\n}"
       ),
       SizedBox(
         height: 32.0
@@ -209,19 +209,19 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "final runtime = Runtime(); runtime.update(const LibraryName(<String>[\"core\", \"widgets\"]), createCoreWidgets);"
+        code: "final runtime = Runtime();\\nruntime.update(\\n  const LibraryName(<String>[\"core\", \"widgets\"]),\\n  createCoreWidgets,\\n);"
       ),
       SizedBox(
         height: 8.0
       ),
       CodeBlock(
-        code: "final data = DynamicContent(); data.update(\"user\", <String, Object>{\"name\": \"Alice\"});"
+        code: "final data = DynamicContent();\\ndata.update(\"user\", <String, Object>{\\n  \"name\": \"Alice\",\\n});"
       ),
       SizedBox(
         height: 8.0
       ),
       CodeBlock(
-        code: "RemoteWidget(runtime: runtime, data: data, widget: const FullyQualifiedWidgetName(LibraryName(<String>[\"main\"]), \"root\"))"
+        code: "RemoteWidget(\\n  runtime: runtime,\\n  data: data,\\n  widget: const FullyQualifiedWidgetName(\\n    LibraryName(<String>[\"main\"]),\\n    \"root\",\\n  ),\\n)"
       ),
       SizedBox(
         height: 32.0

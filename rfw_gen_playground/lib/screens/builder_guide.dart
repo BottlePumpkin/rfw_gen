@@ -133,7 +133,7 @@ Widget buildBuilderGuide() {
         SizedBox(height: 12.0),
         CodeBlock(
             code:
-                'Unsupported widget: CustomWidget is not in WidgetRegistry. Use a supported RFW widget.'),
+                'Unsupported widget: CustomWidget is not in WidgetRegistry.\\nUse a supported RFW widget.'),
         SizedBox(height: 32.0),
 
         // Navigation

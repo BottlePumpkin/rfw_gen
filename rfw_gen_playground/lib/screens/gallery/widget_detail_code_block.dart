@@ -46,7 +46,7 @@ Widget buildWidgetDetailCodeBlock() {
         ),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: '@RfwWidget("root") Widget buildHome() { return Container(); }',
+          code: '@RfwWidget("root")\\nWidget buildHome() {\\n  return Container();\\n}',
           language: 'dart',
         ),
         SizedBox(height: 32.0),

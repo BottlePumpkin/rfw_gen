@@ -76,7 +76,7 @@ Widget buildMcpGuide() {
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: 'dev_dependencies:  rfw_gen_mcp: ^0.4.0',
+          code: 'dev_dependencies:\\n  rfw_gen_mcp: ^0.4.0',
           language: 'yaml',
         ),
         SizedBox(height: 24.0),
@@ -128,7 +128,7 @@ Widget buildMcpGuide() {
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: '{ "mcpServers": { "rfw_gen": { "command": "dart", "args": ["run", "rfw_gen_mcp"] } } }',
+          code: '{\\n  "mcpServers": {\\n    "rfw_gen": {\\n      "command": "dart",\\n      "args": ["run", "rfw_gen_mcp"]\\n    }\\n  }\\n}',
           language: 'json',
         ),
         SizedBox(height: 32.0),

@@ -66,7 +66,7 @@ Widget buildHome() {
                 color: Color(0xFF141618))),
         SizedBox(height: 16.0),
         CodeBlock(
-          code: 'dependencies:  rfw_gen: ^0.4.0  dev_dependencies:  build_runner: ^2.4.0  rfw_gen_builder: ^0.4.0',
+          code: 'dependencies:\\n  rfw_gen: ^0.4.0\\n\\ndev_dependencies:\\n  build_runner: ^2.4.0\\n  rfw_gen_builder: ^0.4.0',
           language: 'yaml',
         ),
         SizedBox(height: 24.0),

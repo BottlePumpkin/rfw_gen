@@ -37,7 +37,7 @@ Widget buildRfwGenGuide() {
         SizedBox(height: 12.0),
         CodeBlock(
             code:
-                "@RfwWidget('productCard') Widget buildProductCard() { return Card(child: Text('Hello')); }"),
+                "@RfwWidget('productCard')\\nWidget buildProductCard() {\\n  return Card(\\n    child: Text('Hello'),\\n  );\\n}"),
         SizedBox(height: 12.0),
         Text(
             'Rules: must be top-level, use block body with return, function name starts with build.',
@@ -84,7 +84,7 @@ Widget buildRfwGenGuide() {
         SizedBox(height: 12.0),
         CodeBlock(
             code:
-                "final registry = WidgetRegistry(); final info = registry.lookup('Container');"),
+                "final registry = WidgetRegistry();\\nfinal info = registry.lookup('Container');"),
         SizedBox(height: 24.0),
 
         // Supported types

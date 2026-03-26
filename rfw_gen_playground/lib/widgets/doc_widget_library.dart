@@ -28,8 +28,9 @@ Map<String, LocalWidgetBuilder> get docWidgetBuilders => {
     };
 
 Widget _buildCodeBlock(BuildContext context, DataSource source) {
+  final code = (source.v<String>(['code']) ?? '').replaceAll(r'\n', '\n');
   return CodeBlock(
-    code: source.v<String>(['code']) ?? '',
+    code: code,
     language: source.v<String>(['language']),
   );
 }

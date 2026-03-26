@@ -87,7 +87,7 @@ Widget buildWidgetDetailMystiqueBoxButton() {
         SizedBox(height: 12.0),
         CodeBlock(
           code:
-              'MystiqueBoxButton(text: "Click", type: "primary", onPressed: event "tap" {})',
+              'MystiqueBoxButton(\\n  text: "Click",\\n  type: "primary",\\n  onPressed: event "tap" {},\\n)',
         ),
       ],
     ),

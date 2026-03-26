@@ -77,7 +77,7 @@ Widget buildWidgetDetailLinkText() {
         SizedBox(height: 12.0),
         CodeBlock(
           code:
-              'LinkText(text: "Go to page", page: "home", onTap: event "navigate" { page: "home" })',
+              'LinkText(\\n  text: "Go to page",\\n  page: "home",\\n  onTap: event "navigate" { page: "home" },\\n)',
         ),
       ],
     ),

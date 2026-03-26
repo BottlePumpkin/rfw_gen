@@ -79,7 +79,7 @@ Widget buildWidgetDetailDocTable() {
           ),
         ),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'DocTable(headers: ["Col1", "Col2"], rows: [["a", "b"]])'),
+        CodeBlock(code: 'DocTable(\\n  headers: ["Col1", "Col2"],\\n  rows: [["a", "b"]],\\n)'),
       ],
     ),
   );

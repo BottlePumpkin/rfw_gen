@@ -6,7 +6,6 @@ widget root = SingleChildScrollView(
     crossAxisAlignment: "start",
     children: [
       GestureDetector(
-        onTap: event "navigate" { page: "widget_gallery_custom" },
         child: Text(
           text: "Back to Gallery",
           style: {
@@ -94,7 +93,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "DocTable(headers: [\"Col1\", \"Col2\"], rows: [[\"a\", \"b\"]])"
+        code: "DocTable(\\n  headers: [\"Col1\", \"Col2\"],\\n  rows: [[\"a\", \"b\"]],\\n)"
       )
     ]
   )

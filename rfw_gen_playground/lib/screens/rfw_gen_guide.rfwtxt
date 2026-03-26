@@ -48,7 +48,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "@RfwWidget('productCard') Widget buildProductCard() { return Card(child: Text('Hello')); }"
+        code: "@RfwWidget('productCard')\\nWidget buildProductCard() {\\n  return Card(\\n    child: Text('Hello'),\\n  );\\n}"
       ),
       SizedBox(
         height: 12.0
@@ -120,7 +120,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "final registry = WidgetRegistry(); final info = registry.lookup('Container');"
+        code: "final registry = WidgetRegistry();\\nfinal info = registry.lookup('Container');"
       ),
       SizedBox(
         height: 24.0

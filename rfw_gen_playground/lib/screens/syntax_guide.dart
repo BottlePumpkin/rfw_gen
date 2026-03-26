@@ -61,7 +61,7 @@ Widget buildSyntaxGuide() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'widget myWidget = Container(color: 0xFF002211, child: Text(text: "Hello"));'),
+        CodeBlock(code: 'widget myWidget = Container(\\n  color: 0xFF002211,\\n  child: Text(text: "Hello"),\\n);'),
         SizedBox(height: 32.0),
 
         // Stateful Widgets
@@ -75,7 +75,7 @@ Widget buildSyntaxGuide() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'widget Button { down: false } = GestureDetector(onTapDown: set state.down = true, child: Text(text: "tap"));'),
+        CodeBlock(code: 'widget Button { down: false } = GestureDetector(\\n  onTapDown: set state.down = true,\\n  child: Text(text: "tap"),\\n);'),
         SizedBox(height: 32.0),
 
         // Data References
@@ -123,7 +123,7 @@ Widget buildSyntaxGuide() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'color: switch state.active { true: 0xFF00FF00, false: 0xFFFF0000, default: 0xFF888888 }'),
+        CodeBlock(code: 'color: switch state.active {\\n  true: 0xFF00FF00,\\n  false: 0xFFFF0000,\\n  default: 0xFF888888,\\n}'),
         SizedBox(height: 32.0),
 
         // State Mutation
@@ -165,7 +165,7 @@ Widget buildSyntaxGuide() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'children: [ ...for item in data.items: ListTile(title: Text(text: item.name)), ]'),
+        CodeBlock(code: 'children: [\\n  ...for item in data.items:\\n    ListTile(title: Text(text: item.name)),\\n]'),
         SizedBox(height: 32.0),
 
         // Literals
@@ -179,7 +179,7 @@ Widget buildSyntaxGuide() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'String: "hello"  Number: 24.0  Hex: 0xFF000000  Bool: true, false  List: [16.0, 8.0]  Map: { fontSize: 24.0 }'),
+        CodeBlock(code: 'String: "hello"\\nNumber: 24.0\\nHex: 0xFF000000\\nBool: true, false\\nList: [16.0, 8.0]\\nMap: { fontSize: 24.0 }'),
         SizedBox(height: 32.0),
 
         // Comments

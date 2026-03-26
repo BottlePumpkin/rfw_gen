@@ -31,7 +31,6 @@ widget root = SingleChildScrollView(
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_code_block" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -84,7 +83,6 @@ widget root = SingleChildScrollView(
           ),
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_doc_table" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -145,7 +143,6 @@ widget root = SingleChildScrollView(
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_rich_text_row" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -203,7 +200,6 @@ widget root = SingleChildScrollView(
           ),
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_link_text" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -262,7 +258,6 @@ widget root = SingleChildScrollView(
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_mystique_box_button" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -317,7 +312,6 @@ widget root = SingleChildScrollView(
           ),
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_mystique_tag" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -388,7 +382,6 @@ widget root = SingleChildScrollView(
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_mystique_badge" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -461,7 +454,6 @@ widget root = SingleChildScrollView(
           ),
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_mystique_spinner" },
               child: Container(
                 padding: [20.0],
                 decoration: {
@@ -519,7 +511,6 @@ widget root = SingleChildScrollView(
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: event "navigate" { page: "widget_detail_conditional" },
               child: Container(
                 padding: [20.0],
                 decoration: {

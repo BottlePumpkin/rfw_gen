@@ -52,7 +52,7 @@ Widget buildExamples() {
                 color: Color(0xFF141618))),
         SizedBox(height: 8.0),
         CodeBlock(
-          code: '@RfwWidget("root")  Widget buildGreeting() {  return Text("Hello, World!",    style: TextStyle(fontSize: 24.0, color: Color(0xFF141618)));  }',
+          code: '@RfwWidget("root")\\nWidget buildGreeting() {\\n  return Text(\\n    "Hello, World!",\\n    style: TextStyle(fontSize: 24.0, color: Color(0xFF141618)),\\n  );\\n}',
           language: 'dart',
         ),
         SizedBox(height: 12.0),
@@ -63,7 +63,7 @@ Widget buildExamples() {
                 color: Color(0xFF141618))),
         SizedBox(height: 8.0),
         CodeBlock(
-          code: 'widget root = Text(text: "Hello, World!", style: { fontSize: 24.0, color: 0xFF141618 });',
+          code: 'widget root = Text(\\n  text: "Hello, World!",\\n  style: { fontSize: 24.0, color: 0xFF141618 },\\n);',
           language: 'rfwtxt',
         ),
         SizedBox(height: 32.0),
@@ -85,7 +85,7 @@ Widget buildExamples() {
                 color: Color(0xFF141618))),
         SizedBox(height: 8.0),
         CodeBlock(
-          code: '@RfwWidget("root")  Widget buildProfile() {  return Column(    crossAxisAlignment: CrossAxisAlignment.start,    children: [      Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),      SizedBox(height: 8.0),      Text("Developer"),    ],  );  }',
+          code: '@RfwWidget("root")\\nWidget buildProfile() {\\n  return Column(\\n    crossAxisAlignment: CrossAxisAlignment.start,\\n    children: [\\n      Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),\\n      SizedBox(height: 8.0),\\n      Text("Developer"),\\n    ],\\n  );\\n}',
           language: 'dart',
         ),
         SizedBox(height: 12.0),
@@ -96,7 +96,7 @@ Widget buildExamples() {
                 color: Color(0xFF141618))),
         SizedBox(height: 8.0),
         CodeBlock(
-          code: 'widget root = Column(  crossAxisAlignment: "start",  children: [    Text(text: "Name", style: { fontWeight: "bold" }),    SizedBox(height: 8.0),    Text(text: "Developer"),  ],);',
+          code: 'widget root = Column(\\n  crossAxisAlignment: "start",\\n  children: [\\n    Text(text: "Name", style: { fontWeight: "bold" }),\\n    SizedBox(height: 8.0),\\n    Text(text: "Developer"),\\n  ],\\n);',
           language: 'rfwtxt',
         ),
         SizedBox(height: 32.0),
@@ -118,7 +118,7 @@ Widget buildExamples() {
                 color: Color(0xFF141618))),
         SizedBox(height: 8.0),
         CodeBlock(
-          code: '@RfwWidget("root")  Widget buildCard() {  return Container(    padding: EdgeInsets.all(16.0),    color: Color(0xFFF5F5F5),    child: Text("Content"),  );  }',
+          code: '@RfwWidget("root")\\nWidget buildCard() {\\n  return Container(\\n    padding: EdgeInsets.all(16.0),\\n    color: Color(0xFFF5F5F5),\\n    child: Text("Content"),\\n  );\\n}',
           language: 'dart',
         ),
         SizedBox(height: 12.0),
@@ -129,7 +129,7 @@ Widget buildExamples() {
                 color: Color(0xFF141618))),
         SizedBox(height: 8.0),
         CodeBlock(
-          code: 'widget root = Container(  padding: [16.0],  color: 0xFFF5F5F5,  child: Text(text: "Content"),);',
+          code: 'widget root = Container(\\n  padding: [16.0],\\n  color: 0xFFF5F5F5,\\n  child: Text(text: "Content"),\\n);',
           language: 'rfwtxt',
         ),
         SizedBox(height: 32.0),
@@ -166,7 +166,7 @@ Widget buildExamples() {
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: 'widget root = Column(  children: [    Text(text: data.user.name),    Text(text: ["Score: ", data.user.score]),  ],);',
+          code: 'widget root = Column(\\n  children: [\\n    Text(text: data.user.name),\\n    Text(text: ["Score: ", data.user.score]),\\n  ],\\n);',
           language: 'rfwtxt',
         ),
         SizedBox(height: 24.0),
@@ -182,7 +182,7 @@ Widget buildExamples() {
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: 'widget root = ElevatedButton(  onPressed: event "button.clicked" { id: "submit" },  child: Text(text: "Submit"),);',
+          code: 'widget root = ElevatedButton(\\n  onPressed: event "button.clicked" { id: "submit" },\\n  child: Text(text: "Submit"),\\n);',
           language: 'rfwtxt',
         ),
         SizedBox(height: 32.0),

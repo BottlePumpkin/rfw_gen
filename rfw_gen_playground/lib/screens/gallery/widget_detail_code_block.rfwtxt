@@ -51,7 +51,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "@RfwWidget(\"root\") Widget buildHome() { return Container(); }",
+        code: "@RfwWidget(\"root\")\\nWidget buildHome() {\\n  return Container();\\n}",
         language: "dart"
       ),
       SizedBox(

@@ -52,7 +52,7 @@ Widget buildGettingStarted() {
         SizedBox(height: 12.0),
         CodeBlock(
             code:
-                "@RfwWidget('myWidget') Widget buildMyWidget() { return Container(color: Colors.blue); }"),
+                "@RfwWidget('myWidget')\\nWidget buildMyWidget() {\\n  return Container(\\n    color: Colors.blue,\\n  );\\n}"),
         SizedBox(height: 12.0),
         Text(
             'The function must be top-level (not inside a class), use a block body with return, and start with the build prefix.',

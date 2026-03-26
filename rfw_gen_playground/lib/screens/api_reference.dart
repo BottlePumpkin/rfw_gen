@@ -67,7 +67,7 @@ Widget buildApiReference() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: "@RfwWidget('myWidget') Widget buildMyWidget() { return Text('Hello'); }"),
+        CodeBlock(code: "@RfwWidget('myWidget')\\nWidget buildMyWidget() {\\n  return Text('Hello');\\n}"),
         SizedBox(height: 32.0),
 
         // Builder Outputs
@@ -137,11 +137,11 @@ Widget buildApiReference() {
             style:
                 const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
-        CodeBlock(code: 'final runtime = Runtime(); runtime.update(const LibraryName(<String>["core", "widgets"]), createCoreWidgets);'),
+        CodeBlock(code: 'final runtime = Runtime();\\nruntime.update(\\n  const LibraryName(<String>["core", "widgets"]),\\n  createCoreWidgets,\\n);'),
         SizedBox(height: 8.0),
-        CodeBlock(code: 'final data = DynamicContent(); data.update("user", <String, Object>{"name": "Alice"});'),
+        CodeBlock(code: 'final data = DynamicContent();\\ndata.update("user", <String, Object>{\\n  "name": "Alice",\\n});'),
         SizedBox(height: 8.0),
-        CodeBlock(code: 'RemoteWidget(runtime: runtime, data: data, widget: const FullyQualifiedWidgetName(LibraryName(<String>["main"]), "root"))'),
+        CodeBlock(code: 'RemoteWidget(\\n  runtime: runtime,\\n  data: data,\\n  widget: const FullyQualifiedWidgetName(\\n    LibraryName(<String>["main"]),\\n    "root",\\n  ),\\n)'),
         SizedBox(height: 32.0),
 
         // Type Encoding Quick Reference

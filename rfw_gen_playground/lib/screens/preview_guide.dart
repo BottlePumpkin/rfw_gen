@@ -93,7 +93,7 @@ Widget buildPreviewGuide() {
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: 'RfwPreview(  source: RfwSource.asset("assets/my_widget.rfwtxt"),  widgetName: "myWidget",  data: { "title": "Hello" },  onEvent: (name, args) => print("Event: \$name"),)',
+          code: 'RfwPreview(\\n  source: RfwSource.asset("assets/my_widget.rfwtxt"),\\n  widgetName: "myWidget",\\n  data: { "title": "Hello" },\\n  onEvent: (name, args) => print("Event: \$name"),\\n)',
           language: 'dart',
         ),
         SizedBox(height: 24.0),
@@ -109,7 +109,7 @@ Widget buildPreviewGuide() {
             style: const TextStyle(fontSize: 14.0, color: Color(0xFF49515A))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: 'RfwEditor(  initialSource: RfwSource.text("widget hello = Text(text: \\"Hi\\");"),  widgetName: "hello",)',
+          code: 'RfwEditor(\\n  initialSource: RfwSource.text("widget hello = Text(text: \\"Hi\\");"),\\n  widgetName: "hello",\\n)',
           language: 'dart',
         ),
         SizedBox(height: 24.0),
@@ -141,7 +141,7 @@ Widget buildPreviewGuide() {
                 color: Color(0xFF141618))),
         SizedBox(height: 12.0),
         CodeBlock(
-          code: 'dependencies:  rfw_preview: ^0.4.0',
+          code: 'dependencies:\\n  rfw_preview: ^0.4.0',
           language: 'yaml',
         ),
         SizedBox(height: 32.0),

@@ -75,7 +75,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "@RfwWidget('myWidget') Widget buildMyWidget() { return Container(color: Colors.blue); }"
+        code: "@RfwWidget('myWidget')\\nWidget buildMyWidget() {\\n  return Container(\\n    color: Colors.blue,\\n  );\\n}"
       ),
       SizedBox(
         height: 12.0

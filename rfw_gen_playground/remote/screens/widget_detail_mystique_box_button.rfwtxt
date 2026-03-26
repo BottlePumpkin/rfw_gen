@@ -6,7 +6,6 @@ widget root = SingleChildScrollView(
     crossAxisAlignment: "start",
     children: [
       GestureDetector(
-        onTap: event "navigate" { page: "widget_gallery_custom" },
         child: Text(
           text: "Back to Gallery",
           style: {
@@ -115,7 +114,7 @@ widget root = SingleChildScrollView(
         height: 12.0
       ),
       CodeBlock(
-        code: "MystiqueBoxButton(text: \"Click\", type: \"primary\", onPressed: event \"tap\" {})"
+        code: "MystiqueBoxButton(\\n  text: \"Click\",\\n  type: \"primary\",\\n  onPressed: event \"tap\" {},\\n)"
       )
     ]
   )

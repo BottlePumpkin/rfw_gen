@@ -90,7 +90,7 @@ Widget buildWidgetDetailRichTextRow() {
         SizedBox(height: 12.0),
         CodeBlock(
           code:
-              'RichTextRow(segments: [{ text: "Hello " }, { text: "World", bold: true }])',
+              'RichTextRow(\\n  segments: [\\n    { text: "Hello " },\\n    { text: "World", bold: true },\\n  ],\\n)',
         ),
       ],
     ),

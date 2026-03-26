@@ -6,6 +6,7 @@ widget root = SingleChildScrollView(
     crossAxisAlignment: "start",
     children: [
       GestureDetector(
+        onTap: event "navigate" { page: "widget_gallery_custom" },
         child: Text(
           text: "Back to Gallery",
           style: {

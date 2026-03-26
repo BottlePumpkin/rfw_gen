@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rfw/rfw.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'navigation/doc_navigator.dart';
 import 'remote/remote_loader.dart';
@@ -236,11 +237,25 @@ class _DocsShellState extends State<DocsShell> {
                 onPageSelected: _selectPage,
               ),
             ),
+          const SizedBox(width: 12),
+          _ExternalLinkIcon(
+            icon: Icons.code,
+            tooltip: 'GitHub',
+            url: 'https://github.com/BottlePumpkin/rfw_gen',
+          ),
+          const SizedBox(width: 4),
+          _ExternalLinkIcon(
+            icon: Icons.open_in_new,
+            tooltip: 'pub.dev',
+            url: 'https://pub.dev/packages/rfw_gen',
+          ),
+          const SizedBox(width: 8),
         ],
       ),
     );
   }
 
+  // Kept at instance level for reuse — no state needed
   Widget _buildContent() {
     return ContentArea(
       runtime: _runtime,
@@ -252,6 +267,28 @@ class _DocsShellState extends State<DocsShell> {
       onRetry: _error != null && _selectedPageId.isNotEmpty
           ? () => _loadPage(_selectedPageId)
           : null,
+    );
+  }
+}
+
+class _ExternalLinkIcon extends StatelessWidget {
+  const _ExternalLinkIcon({
+    required this.icon,
+    required this.tooltip,
+    required this.url,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(icon, size: 20, color: const Color(0xFF788391)),
+      tooltip: tooltip,
+      onPressed: () => launchUrl(Uri.parse(url)),
+      splashRadius: 18,
     );
   }
 }

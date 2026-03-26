@@ -22,15 +22,28 @@ class Sidebar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 24, 20, 16),
-            child: Text(
-              'rfw_gen',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF141618),
-              ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'rfw_gen',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF141618),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'v0.4.0',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF788391),
+                  ),
+                ),
+              ],
             ),
           ),
           const Divider(height: 1),

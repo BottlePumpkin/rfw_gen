@@ -79,7 +79,15 @@ void main() {
 }
 
 String _titleCase(String id) {
-  if (id == 'widget_gallery') return 'Supported Widgets';
+  const overrides = {
+    'widget_gallery': 'Supported Widgets',
+    'builder_guide': 'rfw_gen_builder Guide',
+    'rfw_gen_guide': 'rfw_gen Guide',
+    'mcp_guide': 'rfw_gen_mcp Guide',
+    'preview_guide': 'rfw_preview Guide',
+    'widget_gallery_custom': 'Gallery',
+  };
+  if (overrides.containsKey(id)) return overrides[id]!;
   return id
       .replaceAll('_', ' ')
       .split(' ')

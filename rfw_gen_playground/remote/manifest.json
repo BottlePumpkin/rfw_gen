@@ -1,5 +1,5 @@
 {
-  "version": 1774483209500,
+  "version": 1774483896374,
   "baseUrl": "",
   "categories": [
     {
@@ -36,7 +36,7 @@
     },
     {
       "id": "builder_guide",
-      "title": "Builder Guide",
+      "title": "rfw_gen_builder Guide",
       "category": "packages",
       "rfwtxt": "screens/builder_guide.rfwtxt",
       "keywords": [
@@ -164,7 +164,7 @@
     },
     {
       "id": "widget_gallery_custom",
-      "title": "Widget Gallery Custom",
+      "title": "Gallery",
       "category": "gallery",
       "rfwtxt": "screens/widget_gallery_custom.rfwtxt",
       "keywords": [
@@ -195,7 +195,7 @@
     },
     {
       "id": "mcp_guide",
-      "title": "Mcp Guide",
+      "title": "rfw_gen_mcp Guide",
       "category": "packages",
       "rfwtxt": "screens/mcp_guide.rfwtxt",
       "keywords": [
@@ -205,7 +205,7 @@
     },
     {
       "id": "preview_guide",
-      "title": "Preview Guide",
+      "title": "rfw_preview Guide",
       "category": "packages",
       "rfwtxt": "screens/preview_guide.rfwtxt",
       "keywords": [
@@ -215,7 +215,7 @@
     },
     {
       "id": "rfw_gen_guide",
-      "title": "Rfw Gen Guide",
+      "title": "rfw_gen Guide",
       "category": "packages",
       "rfwtxt": "screens/rfw_gen_guide.rfwtxt",
       "keywords": [

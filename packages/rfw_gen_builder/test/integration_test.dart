@@ -514,6 +514,43 @@ Widget buildToggle() {
       expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
     });
 
+    test('RfwSwitch at root produces parseable rfwtxt', () {
+      const source = '''
+Widget buildToggle() {
+  return RfwSwitch(
+    value: StateRef('active'),
+    cases: {
+      true: Text('Active'),
+      false: Text('Inactive'),
+    },
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('switch state.active'));
+      expect(result.rfwtxt, contains('Text('));
+      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+    });
+
+    test('RfwSwitch at root with defaultCase produces parseable rfwtxt', () {
+      const source = '''
+Widget buildStatus() {
+  return RfwSwitch(
+    value: DataRef('status'),
+    cases: {
+      'loading': CircularProgressIndicator(),
+      'done': Text('Complete'),
+    },
+    defaultCase: SizedBox(),
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('switch data.status'));
+      expect(result.rfwtxt, contains('default:'));
+      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+    });
+
     test('RfwConcat produces parseable rfwtxt', () {
       const source = '''
 Widget buildGreeting() {

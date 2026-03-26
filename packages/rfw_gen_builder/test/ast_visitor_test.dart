@@ -540,6 +540,25 @@ Widget build() {
       expect(sw.defaultCase, isA<IrWidgetNode>());
     });
 
+    test('converts RfwSwitch at root position', () {
+      final fn = parseFunction('''
+Widget build() {
+  return RfwSwitch(
+    value: StateRef('isTyping'),
+    cases: {
+      true: Container(),
+      false: SizedBox(),
+    },
+  );
+}
+''');
+      final root = visitor.extractWidgetTree(fn);
+      expect(root, isA<IrSwitchExpr>());
+      final sw = root as IrSwitchExpr;
+      expect(sw.value, isA<IrStateRef>());
+      expect(sw.cases, hasLength(2));
+    });
+
     test('converts DataRef as pass-through param', () {
       final fn = parseFunction('''
 Widget build() {

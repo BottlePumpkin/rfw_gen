@@ -1,3 +1,7 @@
+## 0.5.1
+
+- Update homepage to GitHub Pages playground
+
 ## 0.5.0
 
 - Fix: README Quick Start examples now include required `widget` and `library` parameters (#49)

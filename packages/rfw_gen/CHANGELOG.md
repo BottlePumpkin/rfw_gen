@@ -1,3 +1,7 @@
+## 0.5.1
+
+- Update homepage to GitHub Pages playground
+
 ## 0.5.0
 
 - Add fitness/health/timer category icons to `RfwIcon` (fitnessCenter, timer, directionsRun, etc.)

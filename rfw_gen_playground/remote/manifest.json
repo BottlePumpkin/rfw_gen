@@ -1,5 +1,5 @@
 {
-  "version": 1774482721563,
+  "version": 1774483209500,
   "baseUrl": "",
   "categories": [
     {
@@ -56,7 +56,7 @@
     {
       "id": "widget_detail_code_block",
       "title": "Widget Detail Code Block",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_code_block.rfwtxt",
       "keywords": [
         "widget",
@@ -68,7 +68,7 @@
     {
       "id": "widget_detail_conditional",
       "title": "Widget Detail Conditional",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_conditional.rfwtxt",
       "keywords": [
         "widget",
@@ -79,7 +79,7 @@
     {
       "id": "widget_detail_doc_table",
       "title": "Widget Detail Doc Table",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_doc_table.rfwtxt",
       "keywords": [
         "widget",
@@ -91,7 +91,7 @@
     {
       "id": "widget_detail_link_text",
       "title": "Widget Detail Link Text",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_link_text.rfwtxt",
       "keywords": [
         "widget",
@@ -103,7 +103,7 @@
     {
       "id": "widget_detail_mystique_badge",
       "title": "Widget Detail Mystique Badge",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_mystique_badge.rfwtxt",
       "keywords": [
         "widget",
@@ -115,7 +115,7 @@
     {
       "id": "widget_detail_mystique_box_button",
       "title": "Widget Detail Mystique Box Button",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_mystique_box_button.rfwtxt",
       "keywords": [
         "widget",
@@ -128,7 +128,7 @@
     {
       "id": "widget_detail_mystique_spinner",
       "title": "Widget Detail Mystique Spinner",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_mystique_spinner.rfwtxt",
       "keywords": [
         "widget",
@@ -140,7 +140,7 @@
     {
       "id": "widget_detail_mystique_tag",
       "title": "Widget Detail Mystique Tag",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_mystique_tag.rfwtxt",
       "keywords": [
         "widget",
@@ -152,7 +152,7 @@
     {
       "id": "widget_detail_rich_text_row",
       "title": "Widget Detail Rich Text Row",
-      "category": "gallery",
+      "category": "gallery_detail",
       "rfwtxt": "screens/widget_detail_rich_text_row.rfwtxt",
       "keywords": [
         "widget",

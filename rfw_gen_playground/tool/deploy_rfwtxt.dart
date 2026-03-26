@@ -91,7 +91,8 @@ String _inferCategory(String id) {
   if (id == 'home') return 'overview';
   if (id == 'getting_started') return 'guides';
   if (id.endsWith('_guide')) return 'packages';
-  if (id.startsWith('widget_detail_') || id == 'widget_gallery_custom') return 'gallery';
+  if (id == 'widget_gallery_custom') return 'gallery';
+  if (id.startsWith('widget_detail_')) return 'gallery_detail';
   return 'reference';
 }
 

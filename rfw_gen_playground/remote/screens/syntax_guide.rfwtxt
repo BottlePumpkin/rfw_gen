@@ -362,14 +362,16 @@ widget root = SingleChildScrollView(
       ),
       LinkText(
         text: "Widget Gallery",
-        page: "widget-gallery"
+        page: "widget_gallery",
+        onTap: event "navigate" { page: "widget_gallery" }
       ),
       SizedBox(
         height: 8.0
       ),
       LinkText(
         text: "API Reference",
-        page: "api-reference"
+        page: "api_reference",
+        onTap: event "navigate" { page: "api_reference" }
       )
     ]
   )

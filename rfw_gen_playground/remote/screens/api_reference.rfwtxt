@@ -265,14 +265,16 @@ widget root = SingleChildScrollView(
       ),
       LinkText(
         text: "Widget Gallery",
-        page: "widget-gallery"
+        page: "widget_gallery",
+        onTap: event "navigate" { page: "widget_gallery" }
       ),
       SizedBox(
         height: 8.0
       ),
       LinkText(
         text: "Syntax Guide",
-        page: "syntax-guide"
+        page: "syntax_guide",
+        onTap: event "navigate" { page: "syntax_guide" }
       )
     ]
   )

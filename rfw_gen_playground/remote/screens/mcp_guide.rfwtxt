@@ -206,7 +206,8 @@ widget root = SingleChildScrollView(
       ),
       LinkText(
         text: "Back to Home",
-        page: "home"
+        page: "home",
+        onTap: event "navigate" { page: "home" }
       )
     ]
   )

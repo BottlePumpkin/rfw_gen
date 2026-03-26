@@ -178,7 +178,8 @@ widget root = SingleChildScrollView(
       ),
       LinkText(
         text: "Next: rfw_gen_builder Guide",
-        page: "rfw-gen-builder"
+        page: "builder_guide",
+        onTap: event "navigate" { page: "builder_guide" }
       )
     ]
   )

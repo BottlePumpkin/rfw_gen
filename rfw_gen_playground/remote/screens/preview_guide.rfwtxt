@@ -217,7 +217,8 @@ widget root = SingleChildScrollView(
       ),
       LinkText(
         text: "View Examples",
-        page: "examples"
+        page: "examples",
+        onTap: event "navigate" { page: "examples" }
       )
     ]
   )

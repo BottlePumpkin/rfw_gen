@@ -1,0 +1,152 @@
+{
+  "widgets": {
+    "CodeBlock": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "language",
+          "type": "String",
+          "required": false
+        }
+      ]
+    },
+    "DocTable": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "headers",
+          "type": "dynamic",
+          "required": true
+        },
+        {
+          "name": "rows",
+          "type": "dynamic",
+          "required": true
+        }
+      ]
+    },
+    "LinkText": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "text",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "page",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "onNavigate",
+          "type": "dynamic",
+          "required": false
+        }
+      ]
+    },
+    "MystiqueBoxButton": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [
+        "onPressed"
+      ],
+      "params": [
+        {
+          "name": "text",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "size",
+          "type": "String",
+          "required": false
+        }
+      ]
+    },
+    "MystiqueTag": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "title",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "size",
+          "type": "String",
+          "required": false
+        }
+      ]
+    },
+    "MystiqueBadge": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "type",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "color",
+          "type": "int",
+          "required": false
+        }
+      ]
+    },
+    "MystiqueSpinner": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "size",
+          "type": "String",
+          "required": false
+        }
+      ]
+    },
+    "ConditionalWidget": {
+      "import": "rfw_gen_playground",
+      "childType": "namedSlots",
+      "handlers": [],
+      "params": [
+        {
+          "name": "condition",
+          "type": "bool",
+          "required": true
+        }
+      ]
+    }
+  }
+}

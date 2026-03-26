@@ -1,0 +1,56 @@
+name: Deploy Playground
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'rfw_gen_playground/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        working-directory: rfw_gen_playground
+        run: flutter pub get
+
+      - name: Build web
+        working-directory: rfw_gen_playground
+        run: flutter build web --no-tree-shake-icons --base-href /rfw_gen/
+
+      - name: Copy remote assets to build
+        working-directory: rfw_gen_playground
+        run: |
+          cp -r remote build/web/remote
+          cp web/404.html build/web/404.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: rfw_gen_playground/build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

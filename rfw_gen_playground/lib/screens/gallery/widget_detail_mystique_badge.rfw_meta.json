@@ -1,0 +1,60 @@
+{
+  "widgets": {
+    "MystiqueBadge": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "type",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "String",
+          "required": false
+        },
+        {
+          "name": "color",
+          "type": "int",
+          "required": false
+        }
+      ]
+    },
+    "DocTable": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "headers",
+          "type": "dynamic",
+          "required": true
+        },
+        {
+          "name": "rows",
+          "type": "dynamic",
+          "required": true
+        }
+      ]
+    },
+    "CodeBlock": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "code",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "language",
+          "type": "String",
+          "required": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "widgets": {
+    "DocTable": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "headers",
+          "type": "dynamic",
+          "required": true
+        },
+        {
+          "name": "rows",
+          "type": "dynamic",
+          "required": true
+        }
+      ]
+    },
+    "LinkText": {
+      "import": "rfw_gen_playground",
+      "childType": "none",
+      "handlers": [],
+      "params": [
+        {
+          "name": "text",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "page",
+          "type": "String",
+          "required": true
+        },
+        {
+          "name": "onNavigate",
+          "type": "dynamic",
+          "required": false
+        }
+      ]
+    }
+  }
+}

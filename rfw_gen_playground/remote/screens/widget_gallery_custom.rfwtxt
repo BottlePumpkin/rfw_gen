@@ -1,0 +1,591 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Text(
+        text: "RFW Custom Widget Gallery",
+        style: {
+          fontSize: 28.0,
+          fontWeight: "w800",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Custom widgets registered via LocalWidgetLibrary for RFW.",
+        style: {
+          fontSize: 16.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Row(
+        crossAxisAlignment: "start",
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_code_block" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: CodeBlock(
+                          code: "print(\"hello\")"
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "CodeBlock",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Dark-themed code display",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          ),
+          SizedBox(
+            width: 12.0
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_doc_table" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 80.0,
+                      child: Center(
+                        child: DocTable(
+                          headers: ["A", "B"],
+                          rows: [
+                            ["1", "2"]
+                          ]
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "DocTable",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Table layout widget",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          )
+        ]
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Row(
+        crossAxisAlignment: "start",
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_rich_text_row" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: Text(
+                          text: "Hello World",
+                          style: {
+                            fontSize: 14.0,
+                            fontWeight: "bold",
+                            color: 0xFF237AF2
+                          }
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "RichTextRow",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Inline styled text",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          ),
+          SizedBox(
+            width: 12.0
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_link_text" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: LinkText(
+                          text: "Click me",
+                          page: ""
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "LinkText",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Tappable link text",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          )
+        ]
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Row(
+        crossAxisAlignment: "start",
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_mystique_box_button" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: MystiqueBoxButton(
+                          text: "Button",
+                          type: "primary",
+                          size: "m"
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "MystiqueBoxButton",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "CTA button with variants",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          ),
+          SizedBox(
+            width: 12.0
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_mystique_tag" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: "center",
+                          children: [
+                            MystiqueTag(
+                              title: "NEW",
+                              type: "primary"
+                            ),
+                            SizedBox(
+                              width: 8.0
+                            ),
+                            MystiqueTag(
+                              title: "HOT",
+                              type: "red"
+                            )
+                          ]
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "MystiqueTag",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Color tags",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          )
+        ]
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Row(
+        crossAxisAlignment: "start",
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_mystique_badge" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: "center",
+                          children: [
+                            MystiqueBadge(
+                              type: "dot"
+                            ),
+                            SizedBox(
+                              width: 12.0
+                            ),
+                            MystiqueBadge(
+                              type: "event",
+                              title: "3",
+                              color: 0xFFFF5041
+                            ),
+                            SizedBox(
+                              width: 12.0
+                            ),
+                            MystiqueBadge(
+                              type: "basic",
+                              title: "NEW"
+                            )
+                          ]
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "MystiqueBadge",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Dot, event, basic badges",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          ),
+          SizedBox(
+            width: 12.0
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_mystique_spinner" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: MystiqueSpinner(
+                          size: "medium"
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "MystiqueSpinner",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Loading spinner",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          )
+        ]
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Row(
+        crossAxisAlignment: "start",
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: event "navigate" { page: "widget_detail_conditional" },
+              child: Container(
+                padding: [20.0],
+                decoration: {
+                  type: "box",
+                  color: 0xFFFFFFFF,
+                  borderRadius: [
+                    {
+                      x: 16.0
+                    }
+                  ]
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 48.0,
+                      child: Center(
+                        child: ConditionalWidget(
+                          condition: true,
+                          childIfTrue: Text(
+                            text: "Visible",
+                            style: {
+                              color: 0xFF4CAF50,
+                              fontWeight: "bold"
+                            }
+                          ),
+                          childIfFalse: Text(
+                            text: "Hidden"
+                          )
+                        )
+                      )
+                    ),
+                    SizedBox(
+                      height: 12.0
+                    ),
+                    Text(
+                      text: "ConditionalWidget",
+                      style: {
+                        fontSize: 14.0,
+                        fontWeight: "w600",
+                        color: 0xFF141618
+                      }
+                    ),
+                    SizedBox(
+                      height: 4.0
+                    ),
+                    Text(
+                      text: "Conditional rendering",
+                      style: {
+                        fontSize: 12.0,
+                        color: 0xFF788391
+                      }
+                    )
+                  ]
+                )
+              )
+            )
+          ),
+          SizedBox(
+            width: 12.0
+          ),
+          Expanded(
+            child: SizedBox(
+            )
+          )
+        ]
+      )
+    ]
+  )
+);

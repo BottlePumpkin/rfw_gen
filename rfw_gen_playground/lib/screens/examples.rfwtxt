@@ -1,0 +1,305 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        padding: [32.0],
+        decoration: {
+          type: "box",
+          color: 0xFFFFF8E1,
+          borderRadius: [
+            {
+              x: 16.0
+            }
+          ]
+        },
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "Conversion Examples",
+              style: {
+                fontSize: 28.0,
+                fontWeight: "w800",
+                color: 0xFF141618
+              }
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "Before and After: Dart to rfwtxt",
+              style: {
+                fontSize: 16.0,
+                color: 0xFF49515A
+              }
+            )
+          ]
+        )
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Example 1: Simple Text Widget",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "A basic @RfwWidget function that returns a styled Text widget.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Dart Input:",
+        style: {
+          fontSize: 14.0,
+          fontWeight: "w600",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "@RfwWidget(\"root\")\\nWidget buildGreeting() {\\n  return Text(\\n    \"Hello, World!\",\\n    style: TextStyle(fontSize: 24.0, color: Color(0xFF141618)),\\n  );\\n}",
+        language: "dart"
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfwtxt Output:",
+        style: {
+          fontSize: 14.0,
+          fontWeight: "w600",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "widget root = Text(\\n  text: \"Hello, World!\",\\n  style: { fontSize: 24.0, color: 0xFF141618 },\\n);",
+        language: "rfwtxt"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Example 2: Column Layout",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "A Column with multiple children and crossAxisAlignment.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Dart Input:",
+        style: {
+          fontSize: 14.0,
+          fontWeight: "w600",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "@RfwWidget(\"root\")\\nWidget buildProfile() {\\n  return Column(\\n    crossAxisAlignment: CrossAxisAlignment.start,\\n    children: [\\n      Text(\"Name\", style: TextStyle(fontWeight: FontWeight.bold)),\\n      SizedBox(height: 8.0),\\n      Text(\"Developer\"),\\n    ],\\n  );\\n}",
+        language: "dart"
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfwtxt Output:",
+        style: {
+          fontSize: 14.0,
+          fontWeight: "w600",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "widget root = Column(\\n  crossAxisAlignment: \"start\",\\n  children: [\\n    Text(text: \"Name\", style: { fontWeight: \"bold\" }),\\n    SizedBox(height: 8.0),\\n    Text(text: \"Developer\"),\\n  ],\\n);",
+        language: "rfwtxt"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Example 3: Styled Container",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "A Container with color, padding, and border radius.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Dart Input:",
+        style: {
+          fontSize: 14.0,
+          fontWeight: "w600",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "@RfwWidget(\"root\")\\nWidget buildCard() {\\n  return Container(\\n    padding: EdgeInsets.all(16.0),\\n    color: Color(0xFFF5F5F5),\\n    child: Text(\"Content\"),\\n  );\\n}",
+        language: "dart"
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfwtxt Output:",
+        style: {
+          fontSize: 14.0,
+          fontWeight: "w600",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "widget root = Container(\\n  padding: [16.0],\\n  color: 0xFFF5F5F5,\\n  child: Text(text: \"Content\"),\\n);",
+        language: "rfwtxt"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Key Conversion Rules",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Dart", "rfwtxt"],
+        rows: [
+          ["Color(0xFF000000)", "0xFF000000"],
+          ["EdgeInsets.all(16.0)", "[16.0]"],
+          ["EdgeInsets.symmetric(h: 8, v: 4)", "[8.0, 4.0]"],
+          ["FontWeight.bold", "\"bold\""],
+          ["CrossAxisAlignment.start", "\"start\""],
+          ["TextStyle(fontSize: 24.0)", "{ fontSize: 24.0 }"],
+          ["Text(\"hello\")", "Text(text: \"hello\")"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Example 4: Data Binding",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfwtxt supports data references for dynamic content from DynamicContent.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "widget root = Column(\\n  children: [\\n    Text(text: data.user.name),\\n    Text(text: [\"Score: \", data.user.score]),\\n  ],\\n);",
+        language: "rfwtxt"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Example 5: Event Handlers",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Use event handlers to communicate back to the host Flutter app.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "widget root = ElevatedButton(\\n  onPressed: event \"button.clicked\" { id: \"submit\" },\\n  child: Text(text: \"Submit\"),\\n);",
+        language: "rfwtxt"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Back to Home",
+        page: "home"
+      )
+    ]
+  )
+);

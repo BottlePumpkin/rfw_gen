@@ -1,0 +1,121 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      GestureDetector(
+        child: Text(
+          text: "Back to Gallery",
+          style: {
+            fontSize: 14.0,
+            color: 0xFF237AF2,
+            fontWeight: "w500"
+          }
+        )
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "MystiqueBoxButton",
+        style: {
+          fontSize: 28.0,
+          fontWeight: "w800",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "A versatile button component with primary, secondary, and disabled variants.",
+        style: {
+          fontSize: 16.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Preview",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Column(
+        crossAxisAlignment: "start",
+        children: [
+          MystiqueBoxButton(
+            text: "Primary",
+            type: "primary",
+            size: "m"
+          ),
+          SizedBox(
+            height: 8.0
+          ),
+          MystiqueBoxButton(
+            text: "Secondary",
+            type: "secondary",
+            size: "m"
+          ),
+          SizedBox(
+            height: 8.0
+          ),
+          MystiqueBoxButton(
+            text: "Disabled",
+            type: "disabled",
+            size: "m"
+          )
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Properties",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Name", "Type", "Required"],
+        rows: [
+          ["text", "String", "Yes"],
+          ["type", "String (primary/secondary/disabled)", "No"],
+          ["size", "String (xl/l/m/s)", "No"],
+          ["onPressed", "handler", "No"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "rfwtxt Usage",
+        style: {
+          fontSize: 20.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "MystiqueBoxButton(\\n  text: \"Click\",\\n  type: \"primary\",\\n  onPressed: event \"tap\" {},\\n)"
+      )
+    ]
+  )
+);

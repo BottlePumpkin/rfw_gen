@@ -1,0 +1,103 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        padding: [32.0],
+        decoration: {
+          type: "box",
+          color: 0xFFF1F8FF,
+          borderRadius: [
+            {
+              x: 16.0
+            }
+          ]
+        },
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "rfw_gen",
+              style: {
+                fontSize: 32.0,
+                fontWeight: "w800",
+                color: 0xFF141618
+              }
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "Flutter Widget to RFW Converter",
+              style: {
+                fontSize: 16.0,
+                color: 0xFF49515A
+              }
+            ),
+            SizedBox(
+              height: 16.0
+            ),
+            Text(
+              text: "Write Flutter widgets with @RfwWidget, get rfwtxt automatically.",
+              style: {
+                fontSize: 14.0,
+                color: 0xFF49515A
+              }
+            )
+          ]
+        )
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Packages",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      DocTable(
+        headers: ["Package", "Description"],
+        rows: [
+          ["rfw_gen", "Core: @RfwWidget annotation + conversion engine"],
+          ["rfw_gen_builder", "build_runner code generator"],
+          ["rfw_gen_mcp", "MCP server for widget registry & validation"],
+          ["rfw_preview", "Dev preview widget with live editor"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Quick Start",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 16.0
+      ),
+      CodeBlock(
+        code: "dependencies:\\n  rfw_gen: ^0.4.0\\n\\ndev_dependencies:\\n  build_runner: ^2.4.0\\n  rfw_gen_builder: ^0.4.0",
+        language: "yaml"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      LinkText(
+        text: "Getting Started Guide",
+        page: "getting-started"
+      )
+    ]
+  )
+);

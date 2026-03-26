@@ -1,0 +1,376 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Container(
+        padding: [32.0],
+        decoration: {
+          type: "box",
+          color: 0xFFF1F8FF,
+          borderRadius: [
+            {
+              x: 16.0
+            }
+          ]
+        },
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(
+              text: "rfwtxt Syntax Guide",
+              style: {
+                fontSize: 28.0,
+                fontWeight: "w800",
+                color: 0xFF141618
+              }
+            ),
+            SizedBox(
+              height: 8.0
+            ),
+            Text(
+              text: "Complete reference for Remote Flutter Widgets text format.",
+              style: {
+                fontSize: 16.0,
+                color: 0xFF49515A
+              }
+            )
+          ]
+        )
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Imports",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Import core and material widget libraries at the top of rfwtxt files.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "import core.widgets;"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "import material;"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Widget Declarations",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Declare a widget with \"widget name = WidgetType(...);\".",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "widget myWidget = Container(\\n  color: 0xFF002211,\\n  child: Text(text: \"Hello\"),\\n);"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Stateful Widgets",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Add local state with curly braces after the widget name.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "widget Button { down: false } = GestureDetector(\\n  onTapDown: set state.down = true,\\n  child: Text(text: \"tap\"),\\n);"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Data References",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Access external data, arguments, and local state using dot notation.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "data.path.to.value"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "data.list.0"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "args.paramName"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "state.fieldName"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "String Concatenation",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Concatenate strings and data references using a list.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "Text(text: [\"Hello, \", data.user.name, \"!\"])"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Switch Expressions",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Use switch on state or data values with true/false/default cases.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "color: switch state.active {\\n  true: 0xFF00FF00,\\n  false: 0xFFFF0000,\\n  default: 0xFF888888,\\n}"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "State Mutation",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Mutate local widget state from event handlers using \"set\".",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "onTap: set state.selected = true,"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Event Handlers",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Fire named events to the host app with optional arguments.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "onTap: event \"shop.purchase\" { productId: args.product.id, quantity: 1 },"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "For Loops (List Spread)",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Iterate over data lists using ...for inside children lists.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "children: [\\n  ...for item in data.items:\\n    ListTile(title: Text(text: item.name)),\\n]"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Literals",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Supported literal types in rfwtxt.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "String: \"hello\"\\nNumber: 24.0\\nHex: 0xFF000000\\nBool: true, false\\nList: [16.0, 8.0]\\nMap: { fontSize: 24.0 }"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "Comments",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "// Line comment"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      CodeBlock(
+        code: "/* Block comment */"
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Widget Gallery",
+        page: "widget-gallery"
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      LinkText(
+        text: "API Reference",
+        page: "api-reference"
+      )
+    ]
+  )
+);

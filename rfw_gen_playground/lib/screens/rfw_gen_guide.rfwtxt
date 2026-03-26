@@ -1,0 +1,185 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Text(
+        text: "rfw_gen Package",
+        style: {
+          fontSize: 28.0,
+          fontWeight: "w800",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "Core package providing @RfwWidget annotation, RfwConverter, and WidgetRegistry.",
+        style: {
+          fontSize: 16.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "@RfwWidget Annotation",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Mark a top-level function to generate rfwtxt. The string argument becomes the widget name in the output.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "@RfwWidget('productCard')\\nWidget buildProductCard() {\\n  return Card(\\n    child: Text('Hello'),\\n  );\\n}"
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Rules: must be top-level, use block body with return, function name starts with build.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "RfwConverter",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "The conversion engine transforms Flutter widget trees into rfwtxt format. It handles widget mapping, argument encoding, and child resolution.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Feature", "Description"],
+        rows: [
+          ["Widget mapping", "Maps Flutter constructors to RFW widget names"],
+          ["Argument encoding", "Converts Dart types to rfwtxt literals"],
+          ["Child resolution", "Handles child, optionalChild, childList"],
+          ["Data references", "Supports data.path and args.param syntax"],
+          ["State management", "Converts state access and set state mutations"],
+          ["Event handlers", "Maps callbacks to event declarations"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "WidgetRegistry",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Registry of all supported RFW widgets with their parameters, child types, and handlers.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "final registry = WidgetRegistry();\\nfinal info = registry.lookup('Container');"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Supported Argument Types",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Type", "RFW Encoding"],
+        rows: [
+          ["Color", "0xAARRGGBB integer"],
+          ["EdgeInsets", "List of 1-4 doubles"],
+          ["TextStyle", "Map with fontSize, fontWeight, color, etc."],
+          ["Alignment", "Map with x and y doubles"],
+          ["BoxDecoration", "Map with type, color, borderRadius, etc."],
+          ["Duration", "Integer in milliseconds"],
+          ["Enums", "Lowercase string values"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Supported Widgets",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Category", "Widgets"],
+        rows: [
+          ["Layout", "Column, Row, Stack, Wrap, Center, Align, Expanded, SizedBox, Spacer"],
+          ["Scrolling", "ListView, GridView, SingleChildScrollView"],
+          ["Styling", "Container, Padding, Opacity, ClipRRect, ColoredBox, Text, Icon, Image"],
+          ["Material", "Scaffold, AppBar, Card, ElevatedButton, ListTile, InkWell, Divider"],
+          ["Interaction", "GestureDetector, InkWell, ElevatedButton, TextButton"],
+          ["Transform", "Positioned, Rotation, Scale"]
+        ]
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Next: rfw_gen_builder Guide",
+        page: "rfw-gen-builder"
+      )
+    ]
+  )
+);

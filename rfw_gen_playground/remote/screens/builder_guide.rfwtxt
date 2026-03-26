@@ -1,0 +1,205 @@
+import core.widgets;
+import rfw_gen_playground;
+
+widget root = SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: "start",
+    children: [
+      Text(
+        text: "rfw_gen_builder Package",
+        style: {
+          fontSize: 28.0,
+          fontWeight: "w800",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 8.0
+      ),
+      Text(
+        text: "build_runner integration for automatic rfwtxt code generation.",
+        style: {
+          fontSize: 16.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      Text(
+        text: "How It Works",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "rfw_gen_builder scans Dart files for @RfwWidget annotations, converts the widget tree using RfwConverter, and writes output files alongside your source.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "dart run build_runner build --delete-conflicting-outputs"
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Use watch mode for automatic rebuilds during development.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "dart run build_runner watch --delete-conflicting-outputs"
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Generated Output Files",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "For each source file with @RfwWidget, four output files are generated.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["File", "Purpose"],
+        rows: [
+          [".rfwtxt", "Human-readable rfwtxt source for inspection and debugging"],
+          [".rfw", "Binary format parsed by RFW runtime for production use"],
+          [".rfw_library.dart", "Dart library with LocalWidgetLibrary builder registration"],
+          [".rfw_meta.json", "Metadata about generated widgets for tooling integration"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "build.yaml Configuration",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "Customize generation behavior by adding a build.yaml file to your project root.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Option", "Default", "Description"],
+        rows: [
+          ["generate_rfwtxt", "true", "Generate human-readable .rfwtxt file"],
+          ["generate_rfw", "true", "Generate binary .rfw file"],
+          ["generate_library", "true", "Generate .rfw_library.dart file"],
+          ["generate_meta", "true", "Generate .rfw_meta.json metadata"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Example Workflow",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "A typical development workflow with rfw_gen_builder.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      DocTable(
+        headers: ["Step", "Action"],
+        rows: [
+          ["1", "Write a Dart file with @RfwWidget functions"],
+          ["2", "Run build_runner build or watch"],
+          ["3", "Check generated .rfwtxt for correctness"],
+          ["4", "Load .rfw binary in your RFW runtime"],
+          ["5", "Use rfw_preview to test interactively"]
+        ]
+      ),
+      SizedBox(
+        height: 24.0
+      ),
+      Text(
+        text: "Error Handling",
+        style: {
+          fontSize: 22.0,
+          fontWeight: "bold",
+          color: 0xFF141618
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      Text(
+        text: "The builder reports errors at build time for unsupported patterns. Common errors include using unsupported widgets, invalid argument types, or non-top-level functions.",
+        style: {
+          fontSize: 14.0,
+          color: 0xFF49515A
+        }
+      ),
+      SizedBox(
+        height: 12.0
+      ),
+      CodeBlock(
+        code: "Unsupported widget: CustomWidget is not in WidgetRegistry.\\nUse a supported RFW widget."
+      ),
+      SizedBox(
+        height: 32.0
+      ),
+      LinkText(
+        text: "Back to Home",
+        page: "home"
+      )
+    ]
+  )
+);

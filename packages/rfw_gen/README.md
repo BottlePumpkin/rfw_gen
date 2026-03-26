@@ -175,6 +175,34 @@ GestureDetector(
 
 Generates: `onTap: event "cart.add" { itemId: 42 }`
 
+Toggle a boolean state value using `RfwSwitchValue`:
+
+```dart
+@RfwWidget('toggle', state: {'isActive': false})
+Widget buildToggle() {
+  return GestureDetector(
+    onTap: RfwHandler.setState('isActive', RfwSwitchValue<bool>(
+      value: StateRef('isActive'),
+      cases: {true: false, false: true},
+    )),
+    child: Container(
+      color: RfwSwitchValue<int>(
+        value: StateRef('isActive'),
+        cases: {true: 0xFF4CAF50, false: 0xFFE0E0E0},
+      ),
+    ),
+  );
+}
+```
+
+Generates:
+```rfwtxt
+onTap: set state.isActive = switch state.isActive {
+  true: false,
+  false: true,
+},
+```
+
 ## Custom Widgets
 
 Custom widgets are automatically detected and supported. When you use a

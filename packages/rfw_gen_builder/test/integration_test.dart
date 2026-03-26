@@ -551,6 +551,25 @@ Widget buildStatus() {
       expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
     });
 
+    // Note: RfwFor at root emits a spread (`...for`) which is not valid as the
+    // root widget expression in rfwtxt — it is only legal inside a children
+    // list.  The test therefore verifies that the converter produces the
+    // correct spread syntax but does NOT assert parseLibraryFile roundtrip,
+    // because the RFW parser rejects a spread at the widget-declaration root.
+    test('RfwFor at root emits spread syntax', () {
+      const source = '''
+Widget buildList() {
+  return RfwFor(
+    items: DataRef('items'),
+    itemName: 'item',
+    builder: (item) => Text(item['name']),
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('...for item in data.items'));
+    });
+
     test('RfwConcat produces parseable rfwtxt', () {
       const source = '''
 Widget buildGreeting() {

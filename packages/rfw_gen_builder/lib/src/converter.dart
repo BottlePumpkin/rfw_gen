@@ -110,7 +110,8 @@ class RfwConverter {
                     collector.warning(
                       'Failed to convert state field "$key": ${e.message}',
                       offset: e.offset,
-                      suggestion: 'State initial values only support literals (string, number, boolean)',
+                      suggestion:
+                          'State initial values only support literals (string, number, boolean)',
                     );
                   }
                 }

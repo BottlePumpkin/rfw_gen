@@ -87,8 +87,9 @@ class RfwWidgetBuilder implements Builder {
         }
       } on UnsupportedWidgetError catch (e) {
         final hasGuidance = e.message != null;
-        final suggestion =
-            hasGuidance ? '' : '\n  Suggestion: Check that the widget class is imported';
+        final suggestion = hasGuidance
+            ? ''
+            : '\n  Suggestion: Check that the widget class is imported';
         log.severe('${function.name.lexeme}: $e$suggestion');
       } catch (e) {
         log.severe('Failed to convert ${function.name.lexeme}: $e');

@@ -113,8 +113,7 @@ void main() {
         var notified = false;
         controller.addListener(() => notified = true);
 
-        controller.rfwtxt =
-            'widget newWidget = Text(text: "Updated");';
+        controller.rfwtxt = 'widget newWidget = Text(text: "Updated");';
         expect(controller.rfwtxt, contains('newWidget'));
         expect(notified, isTrue);
       });
@@ -244,8 +243,8 @@ widget extra = Text(text: "B");
       test('stores current rfwtxt as last successful', () {
         controller.rfwtxt = 'widget ok = Text(text: "OK");';
         controller.markRenderSuccess();
-        expect(controller.lastSuccessfulRfwtxt,
-            'widget ok = Text(text: "OK");');
+        expect(
+            controller.lastSuccessfulRfwtxt, 'widget ok = Text(text: "OK");');
       });
 
       test('clears error and errorLine', () {

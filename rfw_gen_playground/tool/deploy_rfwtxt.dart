@@ -59,6 +59,41 @@ void main() {
     exit(1);
   }
 
+  // Sort screens by explicit order (sidebar + Back/Next consistency)
+  const screenOrder = [
+    // OVERVIEW
+    'home',
+    // GUIDES
+    'getting_started',
+    // PACKAGES
+    'rfw_gen_guide',
+    'builder_guide',
+    'mcp_guide',
+    'preview_guide',
+    // REFERENCE
+    'widget_gallery',
+    'syntax_guide',
+    'api_reference',
+    'examples',
+    // GALLERY
+    'widget_gallery_custom',
+    // GALLERY_DETAIL (hidden from sidebar)
+    'widget_detail_code_block',
+    'widget_detail_doc_table',
+    'widget_detail_rich_text_row',
+    'widget_detail_link_text',
+    'widget_detail_mystique_box_button',
+    'widget_detail_mystique_tag',
+    'widget_detail_mystique_badge',
+    'widget_detail_mystique_spinner',
+    'widget_detail_conditional',
+  ];
+  screens.sort((a, b) {
+    final ai = screenOrder.indexOf(a['id'] as String);
+    final bi = screenOrder.indexOf(b['id'] as String);
+    return (ai == -1 ? 999 : ai).compareTo(bi == -1 ? 999 : bi);
+  });
+
   // Write manifest
   final manifest = {
     'version': DateTime.now().millisecondsSinceEpoch,
@@ -98,9 +133,10 @@ String _titleCase(String id) {
 String _inferCategory(String id) {
   if (id == 'home') return 'overview';
   if (id == 'getting_started') return 'guides';
-  if (id.endsWith('_guide')) return 'packages';
   if (id == 'widget_gallery_custom') return 'gallery';
   if (id.startsWith('widget_detail_')) return 'gallery_detail';
+  const packagePages = {'rfw_gen_guide', 'builder_guide', 'mcp_guide', 'preview_guide'};
+  if (packagePages.contains(id)) return 'packages';
   return 'reference';
 }
 

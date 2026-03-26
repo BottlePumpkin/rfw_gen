@@ -263,24 +263,16 @@ widget root = SingleChildScrollView(
       SizedBox(
         height: 32.0
       ),
-      SizedBox(
-        height: 8.0
-      ),
-      SizedBox(
-        height: 32.0
-      ),
       LinkText(
-        text: "Back: rfwtxt Syntax",
-        page: "syntax_guide",
-        onTap: event "navigate" { page: "syntax_guide" }
+        text: "Widget Gallery",
+        page: "widget-gallery"
       ),
       SizedBox(
         height: 8.0
       ),
       LinkText(
-        text: "Next: Examples",
-        page: "examples",
-        onTap: event "navigate" { page: "examples" }
+        text: "Syntax Guide",
+        page: "syntax-guide"
       )
     ]
   )

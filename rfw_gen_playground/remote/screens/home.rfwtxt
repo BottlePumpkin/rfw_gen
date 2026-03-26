@@ -94,13 +94,9 @@ widget root = SingleChildScrollView(
       SizedBox(
         height: 24.0
       ),
-      SizedBox(
-        height: 32.0
-      ),
       LinkText(
-        text: "Next: Getting Started",
-        page: "getting_started",
-        onTap: event "navigate" { page: "getting_started" }
+        text: "Getting Started Guide",
+        page: "getting-started"
       )
     ]
   )

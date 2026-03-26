@@ -296,13 +296,9 @@ widget root = SingleChildScrollView(
       SizedBox(
         height: 32.0
       ),
-      SizedBox(
-        height: 32.0
-      ),
       LinkText(
-        text: "Back: API Reference",
-        page: "api_reference",
-        onTap: event "navigate" { page: "api_reference" }
+        text: "Back to Home",
+        page: "home"
       )
     ]
   )

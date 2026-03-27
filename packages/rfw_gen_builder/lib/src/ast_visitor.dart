@@ -334,15 +334,24 @@ class WidgetAstVisitor {
     String? itemName;
     IrWidgetNode? body;
 
+    // First pass: extract itemName so we can track loop variable
+    for (final arg in expr.argumentList.arguments) {
+      if (arg is NamedExpression && arg.name.label.name == 'itemName') {
+        itemName = (arg.expression as SimpleStringLiteral).value;
+      }
+    }
+
+    // Second pass: convert items and builder with loop variable context
+    if (itemName != null) {
+      expressionConverter.loopVarNames.add(itemName);
+    }
+
     for (final arg in expr.argumentList.arguments) {
       if (arg is NamedExpression) {
         final name = arg.name.label.name;
         if (name == 'items') {
           items = expressionConverter.convert(arg.expression);
-        } else if (name == 'itemName') {
-          itemName = (arg.expression as SimpleStringLiteral).value;
         } else if (name == 'builder') {
-          // builder: (item) => Widget(...)
           final funcExpr = arg.expression as FunctionExpression;
           final funcBody = funcExpr.body;
           Expression? bodyExpr;
@@ -361,6 +370,10 @@ class WidgetAstVisitor {
           }
         }
       }
+    }
+
+    if (itemName != null) {
+      expressionConverter.loopVarNames.remove(itemName);
     }
 
     if (items == null || itemName == null || body == null) {

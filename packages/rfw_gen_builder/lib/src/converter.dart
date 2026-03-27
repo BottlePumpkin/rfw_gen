@@ -69,7 +69,12 @@ class RfwConverter {
 
     final visitor = WidgetAstVisitor(
       registry: registry,
-      expressionConverter: ExpressionConverter(iconResolver: iconResolver),
+      expressionConverter: ExpressionConverter(
+        iconResolver: iconResolver,
+        onWarning: (message, {int? offset}) {
+          collector.warning(message, offset: offset);
+        },
+      ),
       collector: collector,
     );
     final irTree = visitor.extractWidgetTree(function);

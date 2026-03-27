@@ -129,6 +129,37 @@ RfwFor(
 
 Generates: `...for item in data.items: ListTile(title: Text(text: item.name))`
 
+#### Loop Variables in Event Handlers
+
+Use the builder parameter's subscript syntax to reference loop variables
+in event handler data:
+
+```dart
+RfwFor(
+  items: DataRef('items'),
+  itemName: 'item',
+  builder: (item) => ListTile(
+    title: Text(item['name']),
+    onTap: RfwHandler.event('item.select', {
+      'itemId': item['id'],
+    }),
+  ),
+)
+```
+
+Generates:
+```rfwtxt
+...for item in data.items:
+  ListTile(
+    title: Text(text: item.name),
+    onTap: event "item.select" { itemId: item.id }
+  )
+```
+
+> **Note:** Do not use `DataRef('item.id')` inside a loop — `DataRef` always
+> generates a `data.` prefix (e.g., `data.item.id`), which is a different
+> reference than the loop variable `item.id`.
+
 ### Conditionals
 
 Use `RfwSwitch` for child widgets and `RfwSwitchValue` for values:

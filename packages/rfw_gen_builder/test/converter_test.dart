@@ -131,6 +131,58 @@ Widget buildBad() {
         throwsStateError,
       );
     });
+
+    test('warns when DataRef used with loop variable name inside RfwFor', () {
+      final result = converter.convertFromSource('''
+        Widget build() {
+          return ListView(
+            children: [
+              RfwFor(
+                items: DataRef('contacts'),
+                itemName: 'contact',
+                builder: (contact) => ListTile(
+                  title: Text(contact['name']),
+                  onTap: RfwHandler.event('select', {
+                    'id': DataRef('contact.id'),
+                  }),
+                ),
+              ),
+            ],
+          );
+        }
+      ''');
+
+      expect(result.issues, isNotEmpty);
+      expect(result.issues.first.message, contains('contact'));
+      expect(result.issues.first.message, contains("contact['id']"));
+      expect(result.rfwtxt, contains('data.contact.id'));
+    });
+
+    test('no warning when DataRef does not match loop variable', () {
+      final result = converter.convertFromSource('''
+        Widget build() {
+          return ListView(
+            children: [
+              RfwFor(
+                items: DataRef('contacts'),
+                itemName: 'contact',
+                builder: (contact) => ListTile(
+                  title: Text(contact['name']),
+                  onTap: RfwHandler.event('select', {
+                    'id': DataRef('user.id'),
+                  }),
+                ),
+              ),
+            ],
+          );
+        }
+      ''');
+
+      final loopVarWarnings = result.issues
+          .where((i) => i.message.contains('loop variable'))
+          .toList();
+      expect(loopVarWarnings, isEmpty);
+    });
   });
 
   group('ConvertResult', () {

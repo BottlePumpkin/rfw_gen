@@ -9,6 +9,7 @@ import 'package:rfw/formats.dart';
 
 import 'ast_visitor.dart';
 import 'converter.dart';
+import 'icon_resolver.dart';
 import 'widget_registry.dart';
 import 'widget_resolver.dart';
 
@@ -45,10 +46,13 @@ class RfwWidgetBuilder implements Builder {
     // Build registry: core + custom widgets discovered via Resolver.
     final registry = WidgetRegistry.core();
     final unknownNames = _collectUnknownWidgetNames(parseResult.unit, registry);
+
+    // Resolve the library for custom widget resolution and Icons.xxx resolution.
+    final inputLibrary = await buildStep.resolver.libraryFor(
+      buildStep.inputId,
+    );
+
     if (unknownNames.isNotEmpty) {
-      final inputLibrary = await buildStep.resolver.libraryFor(
-        buildStep.inputId,
-      );
       final resolver = WidgetResolver();
       for (final name in unknownNames) {
         ResolveResult? result = resolver.resolveFromLibrary(inputLibrary, name);
@@ -71,7 +75,11 @@ class RfwWidgetBuilder implements Builder {
       }
     }
 
-    final converter = RfwConverter(registry: registry);
+    // Resolve Icons class for automatic Icons.xxx → codepoint conversion.
+    final iconsClass = IconResolver.findIconsClass(inputLibrary);
+    final iconResolver = iconsClass != null ? IconResolver(iconsClass) : null;
+
+    final converter = RfwConverter(registry: registry, iconResolver: iconResolver);
     final parts = <String>[];
 
     for (final function in annotatedFunctions) {

@@ -7,6 +7,7 @@ import 'package:rfw/formats.dart';
 import 'ast_visitor.dart';
 import 'convert_result.dart';
 import 'expression_converter.dart';
+import 'icon_resolver.dart';
 import 'ir.dart';
 import 'issue_collector.dart';
 import 'rfwtxt_emitter.dart';
@@ -20,8 +21,11 @@ class RfwConverter {
   /// The widget registry used to resolve Flutter widget names to rfwtxt mappings.
   final WidgetRegistry registry;
 
+  /// Optional resolver for `Icons.xxx` constants via the Dart analyzer.
+  final IconResolver? iconResolver;
+
   /// Creates a converter backed by the given [registry].
-  RfwConverter({required this.registry});
+  RfwConverter({required this.registry, this.iconResolver});
 
   /// Converts a Dart source string containing a widget-building function
   /// to a [ConvertResult] containing the rfwtxt string and any diagnostic issues.
@@ -65,7 +69,12 @@ class RfwConverter {
 
     final visitor = WidgetAstVisitor(
       registry: registry,
-      expressionConverter: ExpressionConverter(),
+      expressionConverter: ExpressionConverter(
+        iconResolver: iconResolver,
+        onWarning: (message, {int? offset}) {
+          collector.warning(message, offset: offset);
+        },
+      ),
       collector: collector,
     );
     final irTree = visitor.extractWidgetTree(function);

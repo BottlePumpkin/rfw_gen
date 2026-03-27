@@ -625,7 +625,7 @@ void main() {
           allOf(
             isA<UnsupportedExpressionError>(),
             predicate<UnsupportedExpressionError>(
-              (e) => e.message.contains('RfwIcon'),
+              (e) => e.message.contains('could not be resolved'),
             ),
           ),
         ),
@@ -1673,6 +1673,50 @@ void main() {
               .having((e) => e.offset, 'offset', isNotNull),
         ),
       );
+    });
+  });
+
+  group('Loop variable DataRef warning', () {
+    test('warns when DataRef path starts with a loop variable name', () {
+      final warnings = <String>[];
+      final conv = ExpressionConverter(
+        onWarning: (msg, {int? offset}) => warnings.add(msg),
+      );
+      conv.loopVarNames.add('contact');
+
+      final expr = parseExpression("DataRef('contact.id')");
+      final result = conv.convert(expr);
+
+      expect(result, isA<IrDataRef>());
+      expect((result as IrDataRef).path, equals('contact.id'));
+      expect(warnings, hasLength(1));
+      expect(warnings.first, contains('contact'));
+      expect(warnings.first, contains("contact['id']"));
+    });
+
+    test('does not warn when DataRef path does not match loop variable', () {
+      final warnings = <String>[];
+      final conv = ExpressionConverter(
+        onWarning: (msg, {int? offset}) => warnings.add(msg),
+      );
+      conv.loopVarNames.add('contact');
+
+      final expr = parseExpression("DataRef('user.name')");
+      conv.convert(expr);
+
+      expect(warnings, isEmpty);
+    });
+
+    test('does not warn when no loop variables are set', () {
+      final warnings = <String>[];
+      final conv = ExpressionConverter(
+        onWarning: (msg, {int? offset}) => warnings.add(msg),
+      );
+
+      final expr = parseExpression("DataRef('contact.id')");
+      conv.convert(expr);
+
+      expect(warnings, isEmpty);
     });
   });
 }

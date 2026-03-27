@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
 
+import 'icon_resolver.dart';
 import 'ir.dart';
 import 'package:rfw_gen/rfw_gen.dart' show RfwIcon;
 
@@ -19,6 +20,19 @@ class UnsupportedExpressionError implements Exception {
 /// known enum prefixes. Throws [UnsupportedExpressionError] for
 /// unsupported expression types.
 class ExpressionConverter {
+  /// Optional resolver for `Icons.xxx` constants via the Dart analyzer.
+  /// When set, unmapped `Icons.xxx` are resolved at build time instead of
+  /// failing with an error.
+  final IconResolver? iconResolver;
+
+  /// Stack of active loop variable names for DataRef misuse detection.
+  final List<String> loopVarNames = [];
+
+  /// Optional callback for emitting warnings during conversion.
+  final void Function(String message, {int? offset})? onWarning;
+
+  ExpressionConverter({this.iconResolver, this.onWarning});
+
   static const _knownEnumPrefixes = <String>{
     'MainAxisAlignment',
     'CrossAxisAlignment',
@@ -540,8 +554,9 @@ class ExpressionConverter {
       return _convertRfwIcon(identifier, offset: expr.offset);
     }
 
-    // Icons.xxx → auto-convert via RfwIcon lookup
+    // Icons.xxx → auto-convert via RfwIcon lookup, then analyzer fallback
     if (prefix == 'Icons') {
+      // Fast path: check hardcoded RfwIcon map
       final codepoint = RfwIcon.lookup(identifier);
       if (codepoint != null) {
         return IrMapValue({
@@ -549,9 +564,17 @@ class ExpressionConverter {
           'fontFamily': IrStringValue('MaterialIcons'),
         });
       }
+      // Fallback: resolve via Dart analyzer at build time
+      final resolved = iconResolver?.resolve(identifier);
+      if (resolved != null) {
+        return IrMapValue({
+          'icon': IrIntValue(resolved),
+          'fontFamily': IrStringValue('MaterialIcons'),
+        });
+      }
       throw UnsupportedExpressionError(
-        'Icons.$identifier is not mapped in RfwIcon. '
-        'Use RfwIcon.$identifier instead, or add it to RfwIcon if missing.',
+        'Icons.$identifier could not be resolved. '
+        'Ensure the icon name is correct and flutter/material.dart is imported.',
         offset: expr.offset,
       );
     }
@@ -1195,6 +1218,18 @@ class ExpressionConverter {
     final args = expr.argumentList.arguments;
     if (args.length == 1 && args.first is SimpleStringLiteral) {
       final path = (args.first as SimpleStringLiteral).value;
+      // Warn if DataRef path starts with a known loop variable name
+      if (refType == 'DataRef' && loopVarNames.isNotEmpty) {
+        final firstSegment = path.split('.').first;
+        if (loopVarNames.contains(firstSegment)) {
+          onWarning?.call(
+            "'$firstSegment' is a loop variable — "
+            "DataRef('$path') generates data.$path which is incorrect. "
+            "Use $firstSegment['${path.substring(firstSegment.length + 1)}'] instead.",
+            offset: expr.offset,
+          );
+        }
+      }
       return switch (refType) {
         'DataRef' => IrDataRef(path),
         'ArgsRef' => IrArgsRef(path),

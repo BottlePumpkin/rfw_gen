@@ -11,6 +11,9 @@ melos_*.iml
 .worktrees/
 example2/
 
+# Upstream reference source
+/upstream/
+
 # rfw_gen generated files
 *.rfw_library.dart
 *.rfw_meta.json

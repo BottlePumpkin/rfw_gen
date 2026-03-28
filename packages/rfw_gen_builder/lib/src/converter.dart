@@ -64,7 +64,7 @@ class RfwConverter {
   /// are collected in [ConvertResult.issues] rather than thrown.
   ConvertResult convertFromAst(FunctionDeclaration function, {String? source}) {
     final collector = IssueCollector(source ?? '');
-    final widgetName = _extractWidgetName(function);
+    final widgetName = _extractWidgetName(function, collector);
     final stateDecl = _extractStateDecl(function, collector);
 
     final visitor = WidgetAstVisitor(
@@ -175,7 +175,7 @@ class RfwConverter {
   /// 1. `@RfwWidget('name')` annotation value
   /// 2. Function name with 'build' prefix stripped and first letter lowercased
   /// 3. Function name as-is if no 'build' prefix
-  String _extractWidgetName(FunctionDeclaration function) {
+  String _extractWidgetName(FunctionDeclaration function, [IssueCollector? collector]) {
     // Check for @RfwWidget annotation.
     for (final annotation in function.metadata) {
       if (annotation.name.name == 'RfwWidget') {
@@ -186,13 +186,27 @@ class RfwConverter {
             return arg.value;
           }
         }
+        // @RfwWidget() with empty parentheses — warn and use fallback.
+        if (arguments != null && arguments.arguments.isEmpty) {
+          collector?.warning(
+            '@RfwWidget() requires a name parameter',
+            suggestion:
+                "Use @RfwWidget('widgetName'). "
+                'Falling back to function name: '
+                '${_deriveNameFromFunction(function)}',
+          );
+        }
       }
     }
 
     // Fallback: derive from function name.
+    return _deriveNameFromFunction(function);
+  }
+
+  /// Derives widget name from function name by stripping 'build' prefix.
+  String _deriveNameFromFunction(FunctionDeclaration function) {
     final name = function.name.lexeme;
     if (name.startsWith('build') && name.length > 5) {
-      // Strip 'build' prefix and lowercase the first character.
       return name[5].toLowerCase() + name.substring(6);
     }
     return name;

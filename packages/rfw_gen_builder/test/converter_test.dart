@@ -69,6 +69,23 @@ Widget buildSomething() {
       expect(result.rfwtxt, contains('text: "Annotated"'));
     });
 
+    test('@RfwWidget() without name warns and falls back to function name (#74)',
+        () {
+      const input = '''
+@RfwWidget()
+Widget buildExpenseList() {
+  return Text('Expenses');
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.rfwtxt, contains('widget expenseList'));
+      expect(
+        result.issues.any((i) => i.message.contains('requires a name')),
+        isTrue,
+        reason: 'Should warn that @RfwWidget() requires a name parameter',
+      );
+    });
+
     test('converts SizedBox with dimensions', () {
       const input = '''
 Widget buildSpacer() {
@@ -307,6 +324,17 @@ Widget buildSomethingElse() { return Text('hi'); }
 ''';
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('widget override ='));
+    });
+
+    test('@RfwWidget() without name derives name from function', () {
+      const input = '''
+@RfwWidget()
+Widget buildExpenseList() {
+  return Text('Expenses');
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.rfwtxt, contains('widget expenseList'));
     });
   });
 }

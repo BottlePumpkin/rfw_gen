@@ -115,8 +115,8 @@ void _loadCustomWidgetsFromMeta(WidgetRegistry registry) {
           ),
         );
       }
-    } catch (_) {
-      // Silently ignore parse errors — skip malformed meta files.
+    } catch (e) {
+      stderr.writeln('[rfw_gen_mcp] Warning: Failed to load ${file.path}: $e');
     }
   }
 }

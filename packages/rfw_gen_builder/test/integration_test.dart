@@ -637,6 +637,27 @@ Widget buildFeed() {
       expect(result.rfwtxt, contains('entry.title'));
       expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
     });
+
+    test('spread RfwFor in children produces parseable rfwtxt', () {
+      const source = '''
+Widget buildList() {
+  return ListView(
+    children: [
+      Text('Header'),
+      ...RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => ListTile(title: Text(item['name'])),
+      ),
+    ],
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('...for item in data.items'));
+      expect(result.rfwtxt, contains('Header'));
+      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+    });
   });
 
   group('error reporting', () {

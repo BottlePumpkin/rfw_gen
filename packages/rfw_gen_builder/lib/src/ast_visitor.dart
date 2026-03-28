@@ -223,7 +223,9 @@ class WidgetAstVisitor {
       final isList = mapping.namedChildSlots[paramName]!;
       if (isList && expression is ListLiteral) {
         final children = expression.elements
-            .map((e) => _convertWidgetOrSpecial(e as Expression))
+            .map((e) => _convertWidgetOrSpecial(
+                  e is SpreadElement ? e.expression : (e as Expression),
+                ))
             .toList();
         properties[paramName] = IrListValue(children);
       } else if (isList) {
@@ -248,7 +250,9 @@ class WidgetAstVisitor {
           // List of children: expect a ListLiteral.
           if (expression is ListLiteral) {
             final children = expression.elements
-                .map((e) => _convertWidgetOrSpecial(e as Expression))
+                .map((e) => _convertWidgetOrSpecial(
+                      e is SpreadElement ? e.expression : (e as Expression),
+                    ))
                 .toList();
             properties[paramName] = IrListValue(children);
           } else {

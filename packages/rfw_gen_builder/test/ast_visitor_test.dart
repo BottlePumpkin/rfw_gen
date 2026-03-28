@@ -35,7 +35,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Text');
       expect(node.properties, hasLength(1));
@@ -55,7 +55,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Column');
       final children = node.properties['children'] as IrListValue;
@@ -80,7 +80,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Container');
       final color = node.properties['color'] as IrIntValue;
@@ -98,7 +98,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'SizedBox');
       final width = node.properties['width'] as IrNumberValue;
@@ -117,7 +117,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Row');
       final alignment = node.properties['mainAxisAlignment'] as IrEnumValue;
@@ -132,7 +132,7 @@ Widget build() {
 Widget build() => Text('Hello');
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Text');
       expect((node.properties['text'] as IrStringValue).value, 'Hello');
@@ -153,7 +153,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Container');
       final column = node.properties['child'] as IrWidgetNode;
@@ -201,7 +201,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'GestureDetector');
       final onTap = node.properties['onTap'] as IrSetStateValue;
@@ -234,7 +234,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'GestureDetector');
       final onLongPress = node.properties['onLongPress'] as IrEventValue;
@@ -288,7 +288,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Scaffold');
       final appBar = node.properties['appBar'] as IrWidgetNode;
@@ -322,7 +322,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'AppBar');
       final title = node.properties['title'] as IrWidgetNode;
@@ -367,7 +367,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'ListTile');
       final title = node.properties['title'] as IrWidgetNode;
@@ -413,7 +413,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'ConditionalWidget');
       expect(node.properties['child'], isA<IrWidgetNode>());
       expect(node.properties['nullChild'], isA<IrWidgetNode>());
@@ -452,7 +452,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       final slot = node.properties['slot'] as IrWidgetNode;
       expect(slot.name, 'Inner');
       expect((slot.properties['label'] as IrStringValue).value, 'hello');
@@ -483,7 +483,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'MyWidget');
       expect((node.properties['title'] as IrStringValue).value, 'hello');
       expect((node.properties['count'] as IrIntValue).value, 42);
@@ -508,7 +508,7 @@ Widget build() {
   );
 }
 ''');
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       final children = node.properties['children'] as IrListValue;
       expect(children.values.first, isA<IrForLoop>());
       final loop = children.values.first as IrForLoop;
@@ -532,12 +532,31 @@ Widget build() {
   );
 }
 ''');
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.properties['child'], isA<IrSwitchExpr>());
       final sw = node.properties['child'] as IrSwitchExpr;
       expect(sw.value, isA<IrDataRef>());
       expect(sw.cases, hasLength(1));
       expect(sw.defaultCase, isA<IrWidgetNode>());
+    });
+
+    test('converts RfwSwitch at root position', () {
+      final fn = parseFunction('''
+Widget build() {
+  return RfwSwitch(
+    value: StateRef('isTyping'),
+    cases: {
+      true: Container(),
+      false: SizedBox(),
+    },
+  );
+}
+''');
+      final root = visitor.extractWidgetTree(fn);
+      expect(root, isA<IrSwitchExpr>());
+      final sw = root as IrSwitchExpr;
+      expect(sw.value, isA<IrStateRef>());
+      expect(sw.cases, hasLength(2));
     });
 
     test('converts DataRef as pass-through param', () {
@@ -548,7 +567,7 @@ Widget build() {
   );
 }
 ''');
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.properties['color'], isA<IrDataRef>());
       expect((node.properties['color'] as IrDataRef).path, 'theme.primary');
     });
@@ -575,7 +594,7 @@ Widget build() {
   );
 }
 ''');
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       final children = node.properties['children'] as IrListValue;
       final loop = children.values.first as IrForLoop;
       expect(loop.body.name, 'Container');
@@ -629,7 +648,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'Column');
       // children should be missing because the expression is not a ListLiteral
@@ -661,7 +680,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
 
       expect(node.name, 'AppBar');
       // title should still be present
@@ -690,7 +709,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.properties.containsKey('text'), isTrue);
       expect((node.properties['text'] as IrStringValue).value, 'World');
     });
@@ -702,7 +721,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Text');
       // 'key' is not in the mapping and someKey is unsupported,
       // so it should be silently skipped
@@ -718,7 +737,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Expanded');
       final flex = node.properties['flex'] as IrIntValue;
       expect(flex.value, 2);
@@ -734,7 +753,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Flexible');
       final fit = node.properties['fit'] as IrEnumValue;
       expect(fit.value, 'tight');
@@ -751,7 +770,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Stack');
       final children = node.properties['children'] as IrListValue;
       expect(children.values, hasLength(2));
@@ -774,7 +793,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Wrap');
       final spacing = node.properties['spacing'] as IrNumberValue;
       expect(spacing.value, 8.0);
@@ -794,7 +813,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'ListView');
       final padding = node.properties['padding'] as IrListValue;
       expect(padding.values, hasLength(1));
@@ -814,7 +833,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Opacity');
       final opacity = node.properties['opacity'] as IrNumberValue;
       expect(opacity.value, 0.5);
@@ -833,7 +852,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'ClipRRect');
       final borderRadius = node.properties['borderRadius'] as IrListValue;
       expect(borderRadius.values, hasLength(1));
@@ -854,7 +873,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Padding');
       final padding = node.properties['padding'] as IrListValue;
       expect(padding.values, hasLength(1));
@@ -872,7 +891,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Spacer');
       final flex = node.properties['flex'] as IrIntValue;
       expect(flex.value, 2);
@@ -885,7 +904,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'Placeholder');
       final color = node.properties['color'] as IrIntValue;
       expect(color.value, 0xFFFF0000);
@@ -899,7 +918,7 @@ Widget build() {
 }
 ''');
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.name, 'SafeArea');
       final left = node.properties['left'] as IrBoolValue;
       expect(left.value, false);
@@ -926,7 +945,7 @@ Widget build() {
         collector: collector,
       );
 
-      final node = visitor.extractWidgetTree(fn);
+      final node = visitor.extractWidgetTree(fn) as IrWidgetNode;
       expect(node.properties.containsKey('color'), isFalse);
       expect(collector.issues, hasLength(1));
       expect(collector.issues.first.severity, RfwGenSeverity.warning);

@@ -5,11 +5,11 @@ class RfwtxtEmitter {
   /// Emit a complete rfwtxt file with imports and widget declaration.
   ///
   /// [widgetName] is the name for the `widget` declaration.
-  /// [root] is the top-level widget node.
+  /// [root] is the top-level widget node or special construct (e.g. IrSwitchExpr).
   /// [imports] is the set of library names to import (e.g. `'core.widgets'`).
   String emit({
     required String widgetName,
-    required IrWidgetNode root,
+    required IrValue root,
     required Set<String> imports,
     Map<String, IrValue>? stateDecl,
   }) {
@@ -34,7 +34,7 @@ class RfwtxtEmitter {
       buffer.write(' { $stateEntries }');
     }
     buffer.write(' = ');
-    buffer.write(_emitWidget(root, indent: 0));
+    buffer.write(_emitValue(root, indent: 0));
     buffer.writeln(';');
 
     return buffer.toString();

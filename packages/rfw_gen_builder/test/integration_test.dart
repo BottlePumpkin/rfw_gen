@@ -514,6 +514,62 @@ Widget buildToggle() {
       expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
     });
 
+    test('RfwSwitch at root produces parseable rfwtxt', () {
+      const source = '''
+Widget buildToggle() {
+  return RfwSwitch(
+    value: StateRef('active'),
+    cases: {
+      true: Text('Active'),
+      false: Text('Inactive'),
+    },
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('switch state.active'));
+      expect(result.rfwtxt, contains('Text('));
+      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+    });
+
+    test('RfwSwitch at root with defaultCase produces parseable rfwtxt', () {
+      const source = '''
+Widget buildStatus() {
+  return RfwSwitch(
+    value: DataRef('status'),
+    cases: {
+      'loading': CircularProgressIndicator(),
+      'done': Text('Complete'),
+    },
+    defaultCase: SizedBox(),
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('switch data.status'));
+      expect(result.rfwtxt, contains('default:'));
+      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+    });
+
+    // Note: RfwFor at root emits a spread (`...for`) which is not valid as the
+    // root widget expression in rfwtxt — it is only legal inside a children
+    // list.  The test therefore verifies that the converter produces the
+    // correct spread syntax but does NOT assert parseLibraryFile roundtrip,
+    // because the RFW parser rejects a spread at the widget-declaration root.
+    test('RfwFor at root emits spread syntax', () {
+      const source = '''
+Widget buildList() {
+  return RfwFor(
+    items: DataRef('items'),
+    itemName: 'item',
+    builder: (item) => Text(item['name']),
+  );
+}
+''';
+      final result = converter.convertFromSource(source);
+      expect(result.rfwtxt, contains('...for item in data.items'));
+    });
+
     test('RfwConcat produces parseable rfwtxt', () {
       const source = '''
 Widget buildGreeting() {

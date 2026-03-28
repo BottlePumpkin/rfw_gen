@@ -41,8 +41,9 @@ class WidgetAstVisitor {
   ///
   /// Throws [StateError] if no return expression is found.
   /// Throws [UnsupportedWidgetError] if the root expression is not a
-  /// registered widget.
-  IrWidgetNode extractWidgetTree(FunctionDeclaration function) {
+  /// registered widget or supported special construct (e.g. RfwSwitch,
+  /// RfwFor).
+  IrValue extractWidgetTree(FunctionDeclaration function) {
     final expr = _findReturnExpression(function);
     if (expr == null) {
       throw StateError(
@@ -50,7 +51,7 @@ class WidgetAstVisitor {
         '"${function.name.lexeme}"',
       );
     }
-    return _convertWidget(expr);
+    return _convertWidgetOrSpecial(expr);
   }
 
   /// Finds the return expression from either a block body or arrow body.

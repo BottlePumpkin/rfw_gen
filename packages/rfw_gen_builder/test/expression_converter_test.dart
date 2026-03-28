@@ -1179,6 +1179,78 @@ void main() {
       final map = result as IrMapValue;
       expect(map.entries, isEmpty);
     });
+
+    test('converts const BoxConstraints with maxWidth', () {
+      final expr = parseExpression('const BoxConstraints(maxWidth: 250.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(250.0));
+    });
+
+    test('converts BoxConstraints.tightFor with width only', () {
+      final expr = parseExpression('BoxConstraints.tightFor(width: 100.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(2));
+      expect((map.entries['minWidth'] as IrNumberValue).value, equals(100.0));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(100.0));
+    });
+
+    test('converts BoxConstraints.tightFor with width and height', () {
+      final expr = parseExpression(
+        'BoxConstraints.tightFor(width: 100.0, height: 200.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(4));
+      expect((map.entries['minWidth'] as IrNumberValue).value, equals(100.0));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(100.0));
+      expect((map.entries['minHeight'] as IrNumberValue).value, equals(200.0));
+      expect((map.entries['maxHeight'] as IrNumberValue).value, equals(200.0));
+    });
+
+    test('converts BoxConstraints.tight with Size', () {
+      final expr = parseExpression('BoxConstraints.tight(Size(100.0, 200.0))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(4));
+      expect((map.entries['minWidth'] as IrNumberValue).value, equals(100.0));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(100.0));
+      expect((map.entries['minHeight'] as IrNumberValue).value, equals(200.0));
+      expect((map.entries['maxHeight'] as IrNumberValue).value, equals(200.0));
+    });
+
+    test('converts BoxConstraints.loose with Size', () {
+      final expr = parseExpression('BoxConstraints.loose(Size(300.0, 400.0))');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(2));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(300.0));
+      expect((map.entries['maxHeight'] as IrNumberValue).value, equals(400.0));
+    });
+
+    test('converts BoxConstraints.expand with no params', () {
+      final expr = parseExpression('BoxConstraints.expand()');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries, isEmpty);
+    });
+
+    test('converts BoxConstraints.expand with width', () {
+      final expr = parseExpression('BoxConstraints.expand(width: 200.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(2));
+      expect((map.entries['minWidth'] as IrNumberValue).value, equals(200.0));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(200.0));
+    });
   });
 
   group('LinearGradient', () {

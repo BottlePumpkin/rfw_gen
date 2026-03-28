@@ -55,3 +55,4 @@ Monorepo structure:
 - @skills/dogfood.md: dogfood DX 테스트 스킬
 - @skills/commit.md: 커밋 스킬
 - @skills/git-workflow.md: git worktree 워크플로우 스킬
+- @skills/rfw-contribute.md: RFW upstream 기여 스킬

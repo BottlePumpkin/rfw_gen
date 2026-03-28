@@ -143,6 +143,9 @@ Organize discovered issues into categories:
 - `dx` — Poor documentation, unintuitive API, bad error messages
 - `feature` — Unsupported widgets, missing functionality
 - `docs` — Documentation improvements, missing examples
+- `upstream` — RFW 패키지 자체 한계 (rfw_gen 수정으로 해결 불가)
+
+**분류 기준:** rfw_gen 코드 수정으로 해결 가능하면 위 4개 카테고리. RFW 패키지 자체 변경이 필요하면 `upstream`.
 
 **Maximum 7 issues per cycle.** If more than 7, keep the top 7 by priority (bug > dx > feature > docs). Note the rest as "deferred to next cycle" in the summary.
 
@@ -162,6 +165,54 @@ gh issue list --label dogfood --state open --json title,number -q '.[] | "\(.num
 ```
 
 Compare each new issue title/keywords against existing ones. If a likely duplicate exists, skip it and note in the summary.
+
+### Step 8.5: Handle upstream issues separately
+
+For issues categorized as `upstream`, do NOT file as GitHub Issue. Instead:
+
+1. Create `docs/upstream/{issue-name}.md` with this template:
+
+```markdown
+# {이슈 제목}
+
+## 상태
+수집됨
+
+## 증상
+{뭐가 안 되는지, 사용자 관점}
+
+## 재현 코드
+
+### Flutter 코드 (입력)
+\```dart
+{RFW로 변환하려던 Flutter 코드}
+\```
+
+### 기대하는 rfwtxt 출력
+\```rfwtxt
+{되어야 하는 결과}
+\```
+
+### 실제 동작
+{에러 메시지 또는 잘못된 출력}
+
+## RFW 소스 원인 분석
+- **파일**: `packages/rfw/lib/src/...`
+- **원인**: {코드 레벨에서 왜 안 되는지, 분석 가능하면}
+
+## 제안 해결책
+{있으면 — 없으면 "분석 필요"}
+
+## 관련 링크
+- 발견 경로: dogfood 사이클 #{N}
+```
+
+2. Update `docs/upstream/README.md` — add the new issue under "수집됨" section:
+   ```markdown
+   - [{이슈 제목}]({issue-name}.md) — {한줄 요약}
+   ```
+
+3. Continue to Step 9 with remaining non-upstream issues only.
 
 ### Step 9: File GitHub Issues
 
@@ -210,6 +261,11 @@ If `gh issue create` fails, retry once. If it fails again, output the issue cont
 | # | 카테고리 | 이슈 | GitHub |
 |---|---------|------|--------|
 | 1 | {cat}   | {summary} | #{issue_number} |
+
+### Upstream 이슈 ({count}건, docs/upstream/에 기록)
+| # | 이슈 | 파일 |
+|---|------|------|
+| 1 | {summary} | docs/upstream/{name}.md |
 
 ### 다음 사이클로 이연 ({count}건)
 - {deferred issues, if any}

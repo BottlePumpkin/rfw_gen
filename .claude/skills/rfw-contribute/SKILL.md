@@ -1,6 +1,6 @@
 ---
 name: rfw-contribute
-description: Collect RFW upstream limitations, file issues to flutter/flutter, and submit PRs to flutter/packages. Use /rfw-contribute collect to record a limitation, /rfw-contribute issue to file an issue, /rfw-contribute pr for PR guidance.
+description: Collect RFW upstream limitations, file issues to flutter/flutter, and submit PRs to flutter/packages. Use /rfw-contribute collect to record a limitation, /rfw-contribute issue to file an issue, /rfw-contribute pr for PR guidance. Triggers when user mentions RFW upstream issues, wants to contribute to flutter/packages, or discovers RFW package limitations during dogfooding.
 user_invocable: true
 ---
 

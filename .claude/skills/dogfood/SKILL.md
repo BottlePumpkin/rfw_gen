@@ -1,6 +1,6 @@
 ---
 name: dogfood
-description: Simulate a first-time user trying rfw_gen packages, discover issues, and file them as GitHub Issues. Use /dogfood run to start a collection cycle, /dogfood fix to resolve filed issues.
+description: Simulate a first-time user trying rfw_gen packages, discover issues, and file them as GitHub Issues. Use /dogfood run to start a collection cycle, /dogfood fix to resolve filed issues. Triggers when user mentions dogfooding, DX testing, user simulation, or wants to find usability issues in rfw_gen.
 user_invocable: true
 ---
 

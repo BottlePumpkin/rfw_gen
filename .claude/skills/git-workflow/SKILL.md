@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Manage git worktrees for parallel development sessions. Create isolated workspaces, check status, finish work with PRs, and clean up merged branches.
+description: Manage git worktrees for parallel development sessions. Create isolated workspaces, check status, finish work with PRs, and clean up merged branches. Use when the user says /git-workflow, needs to create a feature branch worktree, check worktree status, push and create a PR from a worktree, or clean up merged worktrees. Triggers on worktree management and parallel development workflow requests.
 user_invocable: true
 ---
 
@@ -20,7 +20,7 @@ Create an isolated worktree for a new feature branch.
 
 **Steps:**
 
-1. Parse the name. If it contains `/` (e.g., `fix/offset-bug`), use as-is. If not, prefix with `feat/` (e.g., `error-reporting` → `feat/error-reporting`).
+1. Parse the name. If it contains `/` (e.g., `fix/offset-bug`), use as-is. If not, prefix with `feat/` (e.g., `error-reporting` -> `feat/error-reporting`).
 2. Extract the short name (part after `/`) for the worktree directory name.
 3. Check if worktree already exists at `.worktrees/<short-name>/`. If yes, just show the path.
 4. Check if `--base <branch>` was specified. Default base is `origin/main`.

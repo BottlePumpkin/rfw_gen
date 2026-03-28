@@ -733,6 +733,38 @@ void main() {
       expect(() => converter.convertHandler(expr),
           throwsA(isA<UnsupportedExpressionError>()));
     });
+
+    test('returns null for empty block function literal () {} (#76)', () {
+      // Parse a function body containing an empty block lambda.
+      // We need to extract the FunctionExpression from an argument position.
+      final source = 'f(onTap: () {})';
+      final parseResult = parseString(content: 'void main() { $source; }');
+      final body = parseResult.unit.declarations.first
+          as FunctionDeclaration;
+      final stmt = (body.functionExpression.body as BlockFunctionBody)
+          .block.statements.first as ExpressionStatement;
+      final invocation = stmt.expression as MethodInvocation;
+      final namedArg = invocation.argumentList.arguments.first as NamedExpression;
+      final funcExpr = namedArg.expression;
+
+      final result = converter.convertHandler(funcExpr);
+      expect(result, isNull);
+    });
+
+    test('returns null for () => null function literal (#76)', () {
+      final source = 'f(onTap: () => null)';
+      final parseResult = parseString(content: 'void main() { $source; }');
+      final body = parseResult.unit.declarations.first
+          as FunctionDeclaration;
+      final stmt = (body.functionExpression.body as BlockFunctionBody)
+          .block.statements.first as ExpressionStatement;
+      final invocation = stmt.expression as MethodInvocation;
+      final namedArg = invocation.argumentList.arguments.first as NamedExpression;
+      final funcExpr = namedArg.expression;
+
+      final result = converter.convertHandler(funcExpr);
+      expect(result, isNull);
+    });
   });
 
   group('Dynamic references', () {

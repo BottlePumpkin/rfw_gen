@@ -1130,7 +1130,14 @@ class ExpressionConverter {
   }
 
   /// Converts a handler expression to an IR handler value.
-  IrValue convertHandler(Expression expr) {
+  ///
+  /// Returns null for empty function literals (`() {}` or `() => null`),
+  /// which are silently skipped — they are no-op handlers used as placeholders
+  /// in Flutter but have no RFW equivalent.
+  IrValue? convertHandler(Expression expr) {
+    // Empty function literal — silently skip (no-op placeholder handler).
+    if (_isEmptyFunctionLiteral(expr)) return null;
+
     if (expr is! MethodInvocation) {
       throw UnsupportedExpressionError(
         'Handler must be RfwHandler.setState/setStateFromArg/event',
@@ -1165,6 +1172,25 @@ class ExpressionConverter {
       'use RfwSwitch to swap entire widgets with different handlers instead.',
       offset: expr.offset,
     );
+  }
+
+  /// Returns true if [expr] is an empty function literal that should be
+  /// silently skipped as a handler.
+  ///
+  /// Matches:
+  /// - `() {}` — empty block body
+  /// - `(_) {}` — empty block body with ignored parameter
+  /// - `() => null` — expression body returning null
+  bool _isEmptyFunctionLiteral(Expression expr) {
+    if (expr is! FunctionExpression) return false;
+    final body = expr.body;
+    if (body is BlockFunctionBody) {
+      return body.block.statements.isEmpty;
+    }
+    if (body is ExpressionFunctionBody) {
+      return body.expression is NullLiteral;
+    }
+    return false;
   }
 
   IrSetStateValue _convertSetState(MethodInvocation expr) {

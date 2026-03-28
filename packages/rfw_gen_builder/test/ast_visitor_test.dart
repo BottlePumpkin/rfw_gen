@@ -926,6 +926,32 @@ Widget build() {
       expect(child.name, 'Text');
       expect((child.properties['text'] as IrStringValue).value, 'Safe');
     });
+
+    // -----------------------------------------------------------------
+    // SpreadElement in children lists (#79)
+    // -----------------------------------------------------------------
+
+    test('converts spread RfwFor in children list', () {
+      final fn = parseFunction('''
+Widget build() {
+  return Column(
+    children: [
+      Text('Header'),
+      ...RfwFor(
+        items: DataRef('items'),
+        itemName: 'item',
+        builder: (item) => Text(item['name']),
+      ),
+    ],
+  );
+}
+''');
+      final root = visitor.extractWidgetTree(fn) as IrWidgetNode;
+      final children = root.properties['children'] as IrListValue;
+      expect(children.values, hasLength(2));
+      expect(children.values[0], isA<IrWidgetNode>());
+      expect(children.values[1], isA<IrForLoop>());
+    });
   });
 
   group('IssueCollector integration', () {

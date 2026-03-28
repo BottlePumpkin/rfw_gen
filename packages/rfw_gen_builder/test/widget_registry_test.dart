@@ -558,10 +558,24 @@ void main() {
         expect(w.params.containsKey('iconThemeData'), isTrue);
       });
 
-      test('Image has optionalChild and imageProvider params', () {
+      test('Image widget has ChildType.none', () {
         final w = registry.supportedWidgets['Image']!;
-        expect(w.childType, equals(ChildType.optionalChild));
-        expect(w.params.containsKey('imageProvider'), isTrue);
+        expect(w.childType, equals(ChildType.none));
+      });
+
+      test('Image widget has single imageProvider param target', () {
+        final w = registry.supportedWidgets['Image']!;
+        final imageProviderTargets = w.params.entries
+            .where((e) => e.value.rfwName == 'imageProvider')
+            .toList();
+        expect(imageProviderTargets, hasLength(1));
+      });
+
+      test('Image has imageProvider via image param and other params', () {
+        final w = registry.supportedWidgets['Image']!;
+        expect(w.params.containsKey('image'), isTrue);
+        expect(w.params['image']!.rfwName, equals('imageProvider'));
+        expect(w.params['image']!.transformer, equals('imageProvider'));
         expect(w.params['fit']!.transformer, equals('enum'));
         expect(w.params['color']!.transformer, equals('color'));
       });

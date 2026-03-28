@@ -460,12 +460,9 @@ class WidgetRegistry {
         'Image': WidgetMapping(
           rfwName: 'core.Image',
           import: 'core.widgets',
-          childType: ChildType.optionalChild,
-          childParam: 'child',
           params: {
             'image':
                 ParamMapping('imageProvider', transformer: 'imageProvider'),
-            'imageProvider': ParamMapping.direct('imageProvider'),
             'semanticLabel': ParamMapping.direct('semanticLabel'),
             'width': ParamMapping.direct('width'),
             'height': ParamMapping.direct('height'),

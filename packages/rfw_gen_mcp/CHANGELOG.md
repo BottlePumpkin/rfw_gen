@@ -1,3 +1,7 @@
+## 0.5.2
+
+- No changes (version bump to match rfw_gen_builder)
+
 ## 0.5.1
 
 - Update homepage to GitHub Pages playground

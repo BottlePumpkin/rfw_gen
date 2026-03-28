@@ -1,3 +1,4 @@
+import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:rfw_gen_builder/src/rfwtxt_emitter.dart';
 import 'package:test/test.dart';
@@ -861,6 +862,67 @@ void main() {
         );
         expect(output, contains('widget greeting = Text('));
         expect(output, isNot(contains('{')));
+      });
+    });
+
+    // String escaping for control characters
+    group('string escaping of control characters', () {
+      test('newline is escaped to literal backslash-n', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue('line1\nline2')},
+        );
+        final result = emitter.emit(
+          widgetName: 'myText',
+          root: root,
+          imports: {'core.widgets'},
+        );
+        // Must contain the literal two-char sequence \n, not a raw newline
+        expect(result, contains(r'text: "line1\nline2"'));
+        // Verify parseLibraryFile can parse it
+        expect(() => parseLibraryFile(result), returnsNormally);
+      });
+
+      test('tab is escaped to literal backslash-t', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue('col1\tcol2')},
+        );
+        final result = emitter.emit(
+          widgetName: 'myText',
+          root: root,
+          imports: {'core.widgets'},
+        );
+        expect(result, contains(r'text: "col1\tcol2"'));
+        expect(() => parseLibraryFile(result), returnsNormally);
+      });
+
+      test('carriage return + newline is escaped', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue('line1\r\nline2')},
+        );
+        final result = emitter.emit(
+          widgetName: 'myText',
+          root: root,
+          imports: {'core.widgets'},
+        );
+        expect(result, contains(r'text: "line1\r\nline2"'));
+        expect(() => parseLibraryFile(result), returnsNormally);
+      });
+
+      test('backslash and quote escaping still works', () {
+        final root = IrWidgetNode(
+          name: 'Text',
+          properties: {'text': IrStringValue(r'say "hello\world"')},
+        );
+        final result = emitter.emit(
+          widgetName: 'myText',
+          root: root,
+          imports: {'core.widgets'},
+        );
+        expect(result, contains(r'text: "say \"hello\\world\""'));
+        expect(() => parseLibraryFile(result), returnsNormally);
       });
     });
   });

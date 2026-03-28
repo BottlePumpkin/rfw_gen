@@ -22,9 +22,13 @@ Monorepo structure:
 
 ## Release Rules
 
+- VERSION file (root) is the single source of truth for all package versions
 - `rfw_gen`, `rfw_gen_builder`, `rfw_gen_mcp`, `rfw_preview` versions must always stay in sync
 - Follow semver: breaking change → major, new feature → minor, bug fix → patch
-- Release process: `release/x.y.z` branch → CHANGELOG + version bump → PR → main → tag → pub.dev
+- Version change: edit VERSION → `dart tool/sync_versions.dart` → PR
+- CI automatically validates version consistency (`--check` mode)
+- Release process: `release/x.y.z` branch → VERSION + sync + CHANGELOG → PR → main → tag → pub.dev
+- After pub.dev publish, playground dependencies are updated via automatic PR
 - Hotfixes also use `release/x.y.z` branches (patch version)
 
 ## Development Rules

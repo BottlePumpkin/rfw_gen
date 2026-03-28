@@ -13,10 +13,10 @@ to your dev dependencies:
 ```yaml
 dependencies:
   rfw: ^1.0.17
-  rfw_gen: ^0.4.0
+  rfw_gen: ^0.5.0
 
 dev_dependencies:
-  rfw_gen_builder: ^0.4.0
+  rfw_gen_builder: ^0.5.0
   build_runner: ^2.4.0
 ```
 

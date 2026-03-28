@@ -268,6 +268,59 @@ rfw_gen/
 | publish 부분 실패 | workflow_run conclusion != success → playground 업데이트 안 함 |
 | playground 외 다른 의존성도 업데이트 필요 | update-playground.yml에서 sed 패턴 추가 |
 
+## Playground 콘텐츠 동기화 전략
+
+버전 동기화 외에, playground의 **콘텐츠**(위젯 예제, API 사용법)가 코어 패키지 변경과 맞지 않는 문제도 해결한다.
+
+### 문제
+
+- `WidgetRegistry`에 ~60개 위젯이 등록되어 있지만, playground gallery는 커스텀 위젯만 커버
+- 코어 위젯의 파라미터가 변경되어도 playground 예제가 구 버전 문법을 사용할 수 있음
+- 위젯 추가 시 playground 예제 생성이 수동이라 누락됨
+
+### 해결: 3-layer 방어
+
+#### Layer 1: CI Drift Detection (자동 감지)
+
+CI에 `check-playground-coverage` job 추가. `WidgetRegistry.core()`에 등록된 위젯 목록과 playground의 `widget_gallery.dart` 또는 gallery 예제 목록을 비교한다.
+
+**구현:** `tool/sync_versions.dart`에 `--check-playground` 모드 추가 (또는 별도 스크립트 `tool/check_playground_coverage.dart`).
+
+- `widget_registry.dart`에서 등록된 위젯 이름 추출 (정규식: `'core.XXX'` 또는 `'material.XXX'`)
+- `rfw_gen_playground/lib/screens/widget_gallery.dart` 및 `gallery/` 디렉토리에서 커버된 위젯 추출
+- 누락된 위젯 목록 출력
+- **soft warning** (CI 실패는 아님) — 모든 위젯에 playground 예제가 필수는 아님
+- 릴리즈 PR에서 "이 위젯들은 playground에 예제가 없습니다" 리마인더 역할
+
+#### Layer 2: `/add-widget` 스킬 확장 (원천 차단)
+
+현재 `/add-widget` 스킬의 10단계 workflow에 playground 단계 추가:
+
+**기존 Step 6**: `example/lib/catalog/catalog_widgets.dart`에 데모 함수 추가
+**새 Step 6.5**: playground gallery에 해당 위젯 예제 화면 추가 (선택적)
+
+- `rfw_gen_playground/lib/screens/gallery/widget_detail_{name}.dart` 생성
+- `rfw_gen_playground/remote/manifest.json`에 엔트리 추가
+- 위젯의 주요 파라미터와 사용 패턴을 보여주는 예제 코드 포함
+- 이 단계는 **optional**로 표시 — 모든 위젯이 gallery 예제가 필요하진 않음
+
+#### Layer 3: `/dogfood` 스킬에 freshness 카테고리 추가
+
+dogfood run 모드의 friction point 수집 시, playground content freshness를 추가 체크 카테고리로 포함:
+
+- playground 예제가 현재 API와 맞는지 확인 (파라미터 이름, 타입, 필수/선택 여부)
+- 빌드는 되지만 deprecated 패턴을 사용하는 stale 예제 감지
+- 발견된 이슈는 기존 dogfood 파이프라인으로 GitHub Issue 생성 (label: `playground`, `stale`)
+
+### 시나리오별 해결 수단
+
+| 시나리오 | 해결 수단 |
+|----------|-----------|
+| 새 위젯 추가, 예제 누락 | `/add-widget` Step 6.5 (원천 차단) |
+| 스킬 안 쓰고 수동 추가 | CI drift detection (soft warning) |
+| 기존 예제가 API 변경으로 stale | `/dogfood` freshness 카테고리 |
+| 빌드 깨질 정도의 변경 | 기존 CI 빌드가 이미 감지 |
+
 ## CLAUDE.md 업데이트
 
 Release Rules 섹션에 추가:

@@ -1,7 +1,7 @@
 # for문 index 변수 및 동적 리스트 접근 불가
 
 ## 상태
-수집됨
+issue 제출
 
 ## 증상
 rfwtxt의 `...for item in data.items:` 구문에서 현재 반복 index를 변수로 접근할 수 없다. 또한 리스트 요소를 동적 index로 접근하는 것이 불가능하여 `data.list.0`, `data.list.1`처럼 하드코딩해야 한다.

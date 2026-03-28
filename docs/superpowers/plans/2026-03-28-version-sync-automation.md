@@ -303,6 +303,8 @@ git commit -m "feat: add version sync script with --check and --dry-run modes"
 
 ### Task 3: Add check-versions job to CI
 
+**Depends on:** Task 1 (VERSION file), Task 2 (sync_versions.dart)
+
 **Files:**
 - Modify: `.github/workflows/ci.yml`
 
@@ -434,7 +436,7 @@ jobs:
       - name: Update playground dependencies
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          sed -i "s/rfw_gen_builder: \^.*/rfw_gen_builder: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
+          sed -i "s/^  rfw_gen_builder: \^.*/  rfw_gen_builder: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
           sed -i "s/^  rfw_gen: \^.*/  rfw_gen: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
 
       - name: Wait for pub.dev indexing
@@ -523,7 +525,9 @@ git commit -m "docs: update CLAUDE.md release rules with version sync automation
 
 ---
 
-### Task 7: End-to-end verification
+### Task 7: End-to-end verification (version sync)
+
+**Depends on:** Tasks 1-6
 
 - [ ] **Step 1: Verify --check passes with current state**
 
@@ -625,8 +629,8 @@ Set<String> _extractRegistryWidgets(String repoRoot) {
   }
   final content = file.readAsStringSync();
 
-  // Match patterns like: 'core.WidgetName' or 'material.WidgetName'
-  final regex = RegExp(r"'(core|material)\.(\w+)'");
+  // Match rfwName entries like: rfwName: 'core.Text' or 'material.Scaffold'
+  final regex = RegExp(r"rfwName:\s*'(core|material)\.(\w+)'");
   final matches = regex.allMatches(content);
 
   return matches.map((m) => m.group(2)!).toSet();
@@ -793,6 +797,8 @@ git commit -m "docs: add playground freshness check to dogfood skill"
 ---
 
 ### Task 11: Final verification (content sync additions)
+
+**Depends on:** Tasks 8-10
 
 - [ ] **Step 1: Run playground coverage check**
 

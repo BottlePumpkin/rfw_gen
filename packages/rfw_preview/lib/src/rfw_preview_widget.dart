@@ -84,7 +84,8 @@ class RfwPreview extends StatefulWidget {
 
 class _RfwPreviewState extends State<RfwPreview> {
   late final Runtime _runtime;
-  late final DynamicContent _data;
+  late DynamicContent _data;
+  Set<String> _dataKeys = <String>{};
   bool _isLoaded = false;
   Object? _error;
 
@@ -101,6 +102,10 @@ class _RfwPreviewState extends State<RfwPreview> {
   @override
   void didUpdateWidget(RfwPreview oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.source != widget.source ||
+        oldWidget.widget != widget.widget) {
+      _loadSource();
+    }
     if (oldWidget.data != widget.data) {
       _updateData();
     }
@@ -137,11 +142,23 @@ class _RfwPreviewState extends State<RfwPreview> {
 
   void _updateData() {
     final data = widget.data;
-    if (data != null) {
+    final newKeys = data?.keys.toSet() ?? <String>{};
+    if (newKeys.length != _dataKeys.length ||
+        !newKeys.containsAll(_dataKeys)) {
+      // Keys changed — recreate DynamicContent to remove stale entries.
+      _data = DynamicContent();
+      if (data != null) {
+        for (final entry in data.entries) {
+          _data.update(entry.key, entry.value);
+        }
+      }
+    } else if (data != null) {
       for (final entry in data.entries) {
         _data.update(entry.key, entry.value);
       }
     }
+    _dataKeys = newKeys;
+    setState(() {});
   }
 
   Future<void> _loadSource() async {

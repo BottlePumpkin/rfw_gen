@@ -206,7 +206,11 @@ class WidgetAstVisitor {
     // 1. Handler params — use convertHandler instead of convert.
     if (mapping.handlerParams.contains(paramName)) {
       try {
-        properties[paramName] = expressionConverter.convertHandler(expression);
+        final handler = expressionConverter.convertHandler(expression);
+        // null means an empty no-op handler — skip it silently.
+        if (handler != null) {
+          properties[paramName] = handler;
+        }
       } on UnsupportedExpressionError catch (e) {
         collector?.warning(
           'Failed to convert handler "$paramName" of ${mapping.rfwName}: ${e.message}',

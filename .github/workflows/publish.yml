@@ -19,6 +19,16 @@ jobs:
         with:
           channel: stable
 
+      - name: Validate tag matches VERSION file
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          FILE_VERSION="$(cat VERSION)"
+          if [ "$TAG_VERSION" != "$FILE_VERSION" ]; then
+            echo "ERROR: Tag $GITHUB_REF_NAME does not match VERSION file ($FILE_VERSION)"
+            exit 1
+          fi
+          echo "Tag $GITHUB_REF_NAME matches VERSION file"
+
       - name: Resolve workspace dependencies
         run: flutter pub get
 
@@ -51,28 +61,45 @@ jobs:
         run: dart pub publish --dry-run
 
       - name: Publish rfw_gen
-        run: dart pub publish --directory packages/rfw_gen --force
+        run: |
+          if dart pub publish --dry-run --directory packages/rfw_gen 2>&1 | grep -q "has already been published"; then
+            echo "rfw_gen already published, skipping"
+          else
+            dart pub publish --directory packages/rfw_gen --force
+          fi
 
       - name: Wait for pub.dev indexing
         run: sleep 60
 
       - name: Publish rfw_gen_builder
-        run: dart pub publish --directory packages/rfw_gen_builder --force
-        continue-on-error: true
+        run: |
+          if dart pub publish --dry-run --directory packages/rfw_gen_builder 2>&1 | grep -q "has already been published"; then
+            echo "rfw_gen_builder already published, skipping"
+          else
+            dart pub publish --directory packages/rfw_gen_builder --force
+          fi
 
       - name: Wait for pub.dev indexing
         run: sleep 60
 
       - name: Publish rfw_gen_mcp
-        run: dart pub publish --directory packages/rfw_gen_mcp --force
-        continue-on-error: true
+        run: |
+          if dart pub publish --dry-run --directory packages/rfw_gen_mcp 2>&1 | grep -q "has already been published"; then
+            echo "rfw_gen_mcp already published, skipping"
+          else
+            dart pub publish --directory packages/rfw_gen_mcp --force
+          fi
 
       - name: Wait for pub.dev indexing
         run: sleep 60
 
       - name: Publish rfw_preview
-        run: dart pub publish --directory packages/rfw_preview --force
-        continue-on-error: true
+        run: |
+          if dart pub publish --dry-run --directory packages/rfw_preview 2>&1 | grep -q "has already been published"; then
+            echo "rfw_preview already published, skipping"
+          else
+            dart pub publish --directory packages/rfw_preview --force
+          fi
 
       - name: Create GitHub Release
         run: gh release create ${{ github.ref_name }} --generate-notes --title "${{ github.ref_name }}"

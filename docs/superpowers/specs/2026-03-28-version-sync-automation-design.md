@@ -53,22 +53,38 @@ Dart 스크립트가 `VERSION` 파일을 읽어서 모든 pubspec.yaml을 업데
 
 **playground는 건드리지 않는다** — pub.dev에 아직 없는 버전으로 업데이트하면 빌드 실패.
 
+**rfw_preview 참고:** rfw_preview는 현재 다른 코어 패키지에 대한 의존성이 없다 (rfw만 의존). 향후 rfw_gen 의존성이 추가되면 위 테이블에 항목 추가 필요.
+
 **스크립트 동작:**
 1. `VERSION` 파일 읽기
 2. 정규식으로 각 pubspec.yaml의 `version:` 필드 교체
 3. 크로스 의존성 버전도 규칙에 따라 교체
-4. 변경 사항 출력 (dry-run 모드 지원: `--dry-run`)
+4. 변경 사항 출력
 5. 변경 없으면 "Already in sync" 메시지
+
+**모드:**
+- `--check`: 파일 수정 없이 불일치만 검사, exit code 1로 실패 (CI용)
+- `--dry-run`: 변경 내용 미리보기 (수정 없음)
+- (기본): 실제 파일 수정
+
+> `--check` 모드가 CI 검증도 담당하므로 별도 `check_versions.dart`는 필요 없다.
+> 검증과 동기화 로직이 하나의 스크립트에 있어 드리프트 위험이 없다.
 
 **사용법:**
 ```bash
 # 릴리즈 준비 시
 echo "0.6.0" > VERSION
-dart run tool/sync_versions.dart
+dart tool/sync_versions.dart
 
-# 확인만 하고 싶을 때
-dart run tool/sync_versions.dart --dry-run
+# CI 검증 (불일치 시 exit 1)
+dart tool/sync_versions.dart --check
+
+# 미리보기
+dart tool/sync_versions.dart --dry-run
 ```
+
+> **호출 방식 주의:** `dart run tool/...`이 아닌 `dart tool/...`을 사용한다.
+> 루트가 workspace pubspec이므로 `dart run`은 패키지 컨텍스트를 찾지 못한다.
 
 ### 3. CI 버전 검증: `check-versions` job
 
@@ -80,19 +96,17 @@ dart run tool/sync_versions.dart --dry-run
 2. **코어 4개 패키지 version 필드가 VERSION과 일치하는지**
 3. **크로스 의존성 버전이 호환되는지** (minor floor 규칙 준수)
 
-**구현 방식:** Dart 스크립트 `tool/check_versions.dart`
+**구현:** `sync_versions.dart --check` 모드 사용 (별도 스크립트 불필요).
 
-- sync_versions.dart와 동일한 파싱 로직 공유 (공통 유틸)
-- 불일치 발견 시 구체적 에러 메시지 출력:
-  ```
-  ERROR: Version mismatch detected!
-    VERSION file: 0.6.0
-    packages/rfw_gen_builder/pubspec.yaml version: 0.5.1 (expected: 0.6.0)
-    packages/rfw_gen_mcp/pubspec.yaml rfw_gen dep: ^0.5.0 (expected: ^0.6.0)
+불일치 발견 시 구체적 에러 메시지 출력:
+```
+ERROR: Version mismatch detected!
+  VERSION file: 0.6.0
+  packages/rfw_gen_builder/pubspec.yaml version: 0.5.1 (expected: 0.6.0)
+  packages/rfw_gen_mcp/pubspec.yaml rfw_gen dep: ^0.5.0 (expected: ^0.6.0)
 
-  Run: dart run tool/sync_versions.dart
-  ```
-- exit code 1로 CI 실패
+Run: dart tool/sync_versions.dart
+```
 
 **CI workflow 추가:**
 ```yaml
@@ -102,7 +116,7 @@ check-versions:
     - uses: actions/checkout@v4
     - uses: dart-lang/setup-dart@v1
     - name: Check version consistency
-      run: dart run tool/check_versions.dart
+      run: dart tool/sync_versions.dart --check
 ```
 
 ### 4. Publish → Playground 자동 업데이트
@@ -111,8 +125,24 @@ check-versions:
 
 현재 `continue-on-error: true`는 부분 실패를 감춘다. 개선:
 - `continue-on-error` 제거
-- 이미 게시된 버전이면 skip하는 로직 추가 (멱등성)
+- 이미 게시된 버전이면 skip하는 로직 추가 (멱등성):
+  ```bash
+  if dart pub publish --dry-run --directory packages/rfw_gen 2>&1 | grep -q "already been published"; then
+    echo "Already published, skipping"
+  else
+    dart pub publish --directory packages/rfw_gen --force
+  fi
+  ```
 - 전체 workflow 성공/실패가 명확해짐
+- **tag-VERSION 일치 검증 추가:** publish 시작 전에 `VERSION` 파일 내용과 tag 버전이 일치하는지 확인. 불일치 시 즉시 실패:
+  ```bash
+  TAG_VERSION="${GITHUB_REF_NAME#v}"  # v0.6.0 → 0.6.0
+  FILE_VERSION="$(cat VERSION)"
+  if [ "$TAG_VERSION" != "$FILE_VERSION" ]; then
+    echo "ERROR: Tag $GITHUB_REF_NAME does not match VERSION file ($FILE_VERSION)"
+    exit 1
+  fi
+  ```
 
 #### 4b. 새 workflow: `update-playground.yml`
 
@@ -123,40 +153,49 @@ on:
   workflow_run:
     workflows: ['Publish to pub.dev']
     types: [completed]
+  workflow_dispatch:  # 수동 재실행 지원 (인덱싱 타임아웃 시)
 
 jobs:
   update-playground:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
 
       - name: Read VERSION
         id: version
         run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
 
-      - name: Wait for pub.dev indexing
-        run: |
-          VERSION=${{ steps.version.outputs.version }}
-          for i in {1..10}; do
-            if dart pub deps --directory=rfw_gen_playground 2>/dev/null; then
-              echo "Dependencies resolved successfully"
-              exit 0
-            fi
-            echo "Attempt $i: waiting for pub.dev indexing..."
-            sleep 30
-          done
-          echo "ERROR: pub.dev indexing timeout"
-          exit 1
-
+      # 1) 먼저 pubspec.yaml 업데이트 (sed 순서 중요: builder를 먼저 처리)
       - name: Update playground dependencies
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          sed -i "s/rfw_gen: \^.*/rfw_gen: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
+          # rfw_gen_builder를 먼저 교체 (rfw_gen의 substring이므로)
           sed -i "s/rfw_gen_builder: \^.*/rfw_gen_builder: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
+          # 그 후 rfw_gen 교체 (이미 builder는 처리됨, 정확한 키 매칭)
+          sed -i "s/^  rfw_gen: \^.*/  rfw_gen: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
+
+      # 2) 업데이트된 pubspec으로 pub.dev 가용성 확인
+      - name: Wait for pub.dev indexing
+        working-directory: rfw_gen_playground
+        run: |
+          for i in {1..10}; do
+            if flutter pub get 2>/dev/null; then
+              echo "Dependencies resolved successfully"
+              exit 0
+            fi
+            echo "Attempt $i/10: waiting for pub.dev indexing..."
+            sleep 30
+          done
+          echo "ERROR: pub.dev indexing timeout after 5 minutes"
+          exit 1
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
@@ -172,6 +211,10 @@ jobs:
           commit-message: "chore(playground): update deps to v${{ steps.version.outputs.version }}"
 ```
 
+> **sed 순서가 중요한 이유:** `rfw_gen`은 `rfw_gen_builder`의 substring이다.
+> `rfw_gen:` 패턴을 먼저 적용하면 `rfw_gen_builder:` 행도 매칭되어 파일이 깨진다.
+> 따라서 `rfw_gen_builder`를 먼저 처리하고, `rfw_gen` 교체 시에는 행 시작 인덴트(`^  rfw_gen:`)로 정확히 매칭한다.
+
 #### 4c. deploy-playground.yml 변경 없음
 
 기존 `push` + `paths` 트리거 유지. playground PR 머지 시 자동 배포된다.
@@ -182,12 +225,10 @@ jobs:
 rfw_gen/
 ├── VERSION                              # NEW: single source of truth
 ├── tool/
-│   ├── sync_versions.dart               # NEW: 버전 동기화 스크립트
-│   ├── check_versions.dart              # NEW: CI 검증 스크립트
-│   └── version_utils.dart               # NEW: 공통 파싱 유틸
+│   └── sync_versions.dart               # NEW: 동기화 + 검증 (--check 모드)
 ├── .github/workflows/
 │   ├── ci.yml                           # MODIFIED: check-versions job 추가
-│   ├── publish.yml                      # MODIFIED: continue-on-error 제거
+│   ├── publish.yml                      # MODIFIED: tag-VERSION 검증, skip-if-published
 │   ├── update-playground.yml            # NEW: 자동 playground 업데이트
 │   └── deploy-playground.yml            # UNCHANGED
 ```
@@ -222,7 +263,8 @@ rfw_gen/
 |----------|------|
 | VERSION 파일 없이 PR 생성 | CI check-versions 실패, 명확한 에러 메시지 |
 | sync_versions 실행 안 하고 PR | CI 불일치 감지, `Run: dart run tool/sync_versions.dart` 안내 |
-| pub.dev 인덱싱 5분 초과 | update-playground workflow 실패, 수동 재실행 (workflow_dispatch) |
+| pub.dev 인덱싱 5분 초과 | update-playground workflow 실패, `workflow_dispatch`로 수동 재실행 |
+| tag와 VERSION 불일치 | publish.yml 시작 시 즉시 실패, 에러 메시지로 안내 |
 | publish 부분 실패 | workflow_run conclusion != success → playground 업데이트 안 함 |
 | playground 외 다른 의존성도 업데이트 필요 | update-playground.yml에서 sed 패턴 추가 |
 
@@ -231,7 +273,7 @@ rfw_gen/
 Release Rules 섹션에 추가:
 ```
 - VERSION 파일이 모든 패키지 버전의 single source of truth
-- 버전 변경 시: VERSION 수정 → dart run tool/sync_versions.dart → PR
+- 버전 변경 시: VERSION 수정 → dart tool/sync_versions.dart → PR
 - CI가 자동으로 버전 일치 검증
 - pub.dev 게시 후 playground 의존성은 자동 PR로 업데이트됨
 ```

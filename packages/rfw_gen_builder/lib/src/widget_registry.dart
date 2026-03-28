@@ -661,120 +661,49 @@ class WidgetRegistry {
       };
 
   // ---------------------------------------------------------------------------
-  // Animated widget aliases (map to same RFW widgets as non-animated)
+  // Animated widget aliases (reference base mappings to avoid duplication)
+  //
+  // In RFW, AnimatedAlign/AnimatedContainer/etc. map to the same rfwtxt
+  // widget as their base counterparts (Align, Container, etc.) because the
+  // base RFW widgets already support implicit animation via duration/curve.
+  // We reuse the exact same WidgetMapping objects so a change to the base
+  // widget's params automatically propagates to the animated alias.
   // ---------------------------------------------------------------------------
 
-  static Map<String, WidgetMapping> _animatedAliases() => const {
-        'AnimatedAlign': WidgetMapping(
-          rfwName: 'core.Align',
-          import: 'core.widgets',
-          childType: ChildType.optionalChild,
-          childParam: 'child',
-          params: {
-            'alignment': ParamMapping('alignment', transformer: 'alignment'),
-            'widthFactor': ParamMapping.direct('widthFactor'),
-            'heightFactor': ParamMapping.direct('heightFactor'),
-            'duration': ParamMapping('duration', transformer: 'duration'),
-            'curve': ParamMapping('curve', transformer: 'curve'),
-          },
-          handlerParams: {'onEnd'},
-        ),
-        'AnimatedContainer': WidgetMapping(
-          rfwName: 'core.Container',
-          import: 'core.widgets',
-          childType: ChildType.optionalChild,
-          childParam: 'child',
-          params: {
-            'color': ParamMapping('color', transformer: 'color'),
-            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
-            'margin': ParamMapping('margin', transformer: 'edgeInsets'),
-            'width': ParamMapping.direct('width'),
-            'height': ParamMapping.direct('height'),
-            'alignment': ParamMapping('alignment', transformer: 'alignment'),
-            'decoration':
-                ParamMapping('decoration', transformer: 'boxDecoration'),
-            'foregroundDecoration': ParamMapping('foregroundDecoration',
-                transformer: 'boxDecoration'),
-            'constraints': ParamMapping.direct('constraints'),
-            'transform': ParamMapping.direct('transform'),
-            'clipBehavior': ParamMapping('clipBehavior', transformer: 'enum'),
-            'duration': ParamMapping('duration', transformer: 'duration'),
-            'curve': ParamMapping('curve', transformer: 'curve'),
-          },
-          handlerParams: {'onEnd'},
-        ),
-        'AnimatedPadding': WidgetMapping(
-          rfwName: 'core.Padding',
-          import: 'core.widgets',
-          childType: ChildType.optionalChild,
-          childParam: 'child',
-          params: {
-            'padding': ParamMapping('padding', transformer: 'edgeInsets'),
-            'duration': ParamMapping('duration', transformer: 'duration'),
-            'curve': ParamMapping('curve', transformer: 'curve'),
-          },
-          handlerParams: {'onEnd'},
-        ),
-        'AnimatedDefaultTextStyle': WidgetMapping(
-          rfwName: 'core.DefaultTextStyle',
-          import: 'core.widgets',
-          childType: ChildType.child,
-          childParam: 'child',
-          params: {
-            'style': ParamMapping('style', transformer: 'textStyle'),
-            'textAlign': ParamMapping('textAlign', transformer: 'enum'),
-            'softWrap': ParamMapping.direct('softWrap'),
-            'overflow': ParamMapping('overflow', transformer: 'enum'),
-            'maxLines': ParamMapping.direct('maxLines'),
-            'duration': ParamMapping('duration', transformer: 'duration'),
-            'curve': ParamMapping('curve', transformer: 'curve'),
-          },
-          handlerParams: {'onEnd'},
-        ),
-        'AnimatedOpacity': WidgetMapping(
-          rfwName: 'core.Opacity',
-          import: 'core.widgets',
-          childType: ChildType.optionalChild,
-          childParam: 'child',
-          params: {
-            'opacity': ParamMapping.direct('opacity'),
-            'duration': ParamMapping('duration', transformer: 'duration'),
-            'curve': ParamMapping('curve', transformer: 'curve'),
-          },
-          handlerParams: {'onEnd'},
-        ),
-        'PositionedDirectional': WidgetMapping(
-          rfwName: 'core.Positioned',
-          import: 'core.widgets',
-          childType: ChildType.child,
-          childParam: 'child',
-          params: {
-            'start': ParamMapping.direct('start'),
-            'top': ParamMapping.direct('top'),
-            'end': ParamMapping.direct('end'),
-            'bottom': ParamMapping.direct('bottom'),
-            'width': ParamMapping.direct('width'),
-            'height': ParamMapping.direct('height'),
-          },
-        ),
-        'AnimatedPositionedDirectional': WidgetMapping(
-          rfwName: 'core.Positioned',
-          import: 'core.widgets',
-          childType: ChildType.child,
-          childParam: 'child',
-          params: {
-            'start': ParamMapping.direct('start'),
-            'top': ParamMapping.direct('top'),
-            'end': ParamMapping.direct('end'),
-            'bottom': ParamMapping.direct('bottom'),
-            'width': ParamMapping.direct('width'),
-            'height': ParamMapping.direct('height'),
-            'duration': ParamMapping('duration', transformer: 'duration'),
-            'curve': ParamMapping('curve', transformer: 'curve'),
-          },
-          handlerParams: {'onEnd'},
-        ),
-      };
+  static Map<String, WidgetMapping> _animatedAliases() {
+    final layout = _layoutWidgets();
+    final styling = _stylingWidgets();
+    final transform = _transformWidgets();
+
+    return {
+      // Animated aliases that share the exact same mapping as their base widget
+      'AnimatedAlign': layout['Align']!,
+      'AnimatedContainer': styling['Container']!,
+      'AnimatedPadding': styling['Padding']!,
+      'AnimatedDefaultTextStyle': styling['DefaultTextStyle']!,
+      'AnimatedOpacity': styling['Opacity']!,
+      // AnimatedPositionedDirectional has the same params as Positioned
+      // (position params + duration/curve + onEnd)
+      'AnimatedPositionedDirectional': transform['Positioned']!,
+
+      // PositionedDirectional maps to core.Positioned but WITHOUT animation
+      // params (duration/curve/onEnd), so it keeps its own mapping.
+      'PositionedDirectional': const WidgetMapping(
+        rfwName: 'core.Positioned',
+        import: 'core.widgets',
+        childType: ChildType.child,
+        childParam: 'child',
+        params: {
+          'start': ParamMapping.direct('start'),
+          'top': ParamMapping.direct('top'),
+          'end': ParamMapping.direct('end'),
+          'bottom': ParamMapping.direct('bottom'),
+          'width': ParamMapping.direct('width'),
+          'height': ParamMapping.direct('height'),
+        },
+      ),
+    };
+  }
 
   // ---------------------------------------------------------------------------
   // Material widgets (Task 8)

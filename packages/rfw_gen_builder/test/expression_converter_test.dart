@@ -1251,6 +1251,19 @@ void main() {
       expect((map.entries['minWidth'] as IrNumberValue).value, equals(200.0));
       expect((map.entries['maxWidth'] as IrNumberValue).value, equals(200.0));
     });
+
+    test('Container with constraints generates correct map', () {
+      final expr = parseExpression(
+        'const BoxConstraints(maxWidth: 250.0, minHeight: 100.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(250.0));
+      expect((map.entries['minHeight'] as IrNumberValue).value, equals(100.0));
+      expect(map.entries.containsKey('minWidth'), isFalse);
+      expect(map.entries.containsKey('maxHeight'), isFalse);
+    });
   });
 
   group('LinearGradient', () {

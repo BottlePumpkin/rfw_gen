@@ -204,8 +204,10 @@ In `docs/upstream/README.md`, move the entry from "수집됨" to "Issue 제출" 
 
 ```bash
 git add docs/upstream/
-git commit -m "docs(upstream): file issue for {issue-name} (flutter/flutter#{number})"
+git commit -m "docs(upstream): file issue for {issue-name} (ref flutter-flutter-{number})"
 ```
+
+**⚠️ 주의: 커밋 메시지에 `flutter/flutter#N` 형식을 쓰지 말 것!** rfw_gen 레포에서 머지되면 GitHub가 해당 flutter/flutter issue를 자동으로 close합니다. `ref flutter-flutter-N` 형식을 사용하세요.
 
 ## PR Mode
 
@@ -302,5 +304,7 @@ In `docs/upstream/README.md`, move the entry from "Issue 제출" to "PR 제출" 
 
 ```bash
 git add docs/upstream/
-git commit -m "docs(upstream): submit PR for {issue-name} (flutter/packages#{pr_number})"
+git commit -m "docs(upstream): submit PR for {issue-name} (ref flutter-packages-{pr_number})"
 ```
+
+**⚠️ 주의: 커밋 메시지에 `flutter/packages#N` 형식을 쓰지 말 것!** rfw_gen 레포에서 머지되면 GitHub가 해당 issue/PR을 자동으로 close합니다.

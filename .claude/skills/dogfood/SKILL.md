@@ -147,6 +147,20 @@ Organize discovered issues into categories:
 
 **분류 기준:** rfw_gen 코드 수정으로 해결 가능하면 위 4개 카테고리. RFW 패키지 자체 변경이 필요하면 `upstream`.
 
+#### Playground Freshness Check (during dogfood run)
+
+After completing the dogfood app, also check playground content:
+
+1. **Stale examples**: Open `rfw_gen_playground/` in browser, navigate to widget gallery
+   - Do examples use current API? (check parameter names, types, required/optional)
+   - Do examples compile without deprecation warnings?
+2. **Missing examples**: Run `dart tool/check_playground_coverage.dart`
+   - Note any core/material widgets without playground gallery entries
+3. **Categorize findings** as:
+   - `playground` + `stale`: Example exists but uses outdated API
+   - `playground` + `missing`: Widget registered but no playground example
+   - `playground` + `broken`: Example doesn't compile or render correctly
+
 **Maximum 7 issues per cycle.** If more than 7, keep the top 7 by priority (bug > dx > feature > docs). Note the rest as "deferred to next cycle" in the summary.
 
 For each issue, prepare:

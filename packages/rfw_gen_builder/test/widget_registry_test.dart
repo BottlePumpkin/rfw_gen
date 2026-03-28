@@ -847,6 +847,44 @@ void main() {
       expect(registry.supportedWidgets.length, equals(beforeCount + 1));
     });
 
+    test('register() logs warning when overwriting core widget', () {
+      final registry = WidgetRegistry.core();
+      final warnings = <String>[];
+      registry.onWarning = (msg) => warnings.add(msg);
+
+      registry.register(
+        'Text',
+        const WidgetMapping(
+          rfwName: 'custom.Text',
+          import: 'custom',
+          childType: ChildType.none,
+          params: {},
+        ),
+      );
+
+      expect(warnings, hasLength(1));
+      expect(warnings.first, contains('Text'));
+      expect(warnings.first, contains('Overwriting'));
+    });
+
+    test('register() does not warn for new widget', () {
+      final registry = WidgetRegistry.core();
+      final warnings = <String>[];
+      registry.onWarning = (msg) => warnings.add(msg);
+
+      registry.register(
+        'MyCustomWidget',
+        const WidgetMapping(
+          rfwName: 'app.MyCustomWidget',
+          import: 'app',
+          childType: ChildType.none,
+          params: {},
+        ),
+      );
+
+      expect(warnings, isEmpty);
+    });
+
     test('register overwrites existing mapping', () {
       final registry = WidgetRegistry.core();
       const newTextMapping = WidgetMapping(

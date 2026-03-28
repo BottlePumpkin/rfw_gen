@@ -1,3 +1,10 @@
+## 0.5.2
+
+- Fix: handle `SpreadElement` in children lists (#79)
+- Fix: allow `RfwSwitch` at root widget position (#57)
+- Fix: auto-resolve `Icons.xxx` codepoints at build time (#73)
+- Fix: `@RfwWidget()` name parameter, empty handler generation, and doc comment support (#74 #76 #80)
+
 ## 0.5.1
 
 - Update homepage to GitHub Pages playground

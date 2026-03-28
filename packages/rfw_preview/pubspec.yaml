@@ -1,6 +1,6 @@
 name: rfw_preview
 description: Dev preview widget for rfw_gen. Renders generated rfwtxt with automatic Runtime setup and custom widget support.
-version: 0.5.1
+version: 0.5.2
 homepage: https://bottlepumpkin.github.io/rfw_gen/
 repository: https://github.com/BottlePumpkin/rfw_gen
 

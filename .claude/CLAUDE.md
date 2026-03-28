@@ -56,3 +56,4 @@ Monorepo structure:
 - @skills/commit.md: 커밋 스킬
 - @skills/git-workflow.md: git worktree 워크플로우 스킬
 - @skills/rfw-contribute.md: RFW upstream 기여 스킬
+- @skills/release.md: 릴리즈 스킬 (버전 범프, CHANGELOG, PR, 태그)

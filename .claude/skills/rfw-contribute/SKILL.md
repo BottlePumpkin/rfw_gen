@@ -21,7 +21,8 @@ Parse user arguments to determine mode:
 Before any operation, verify:
 
 1. **gh auth**: Run `gh auth status`. If not authenticated, tell user to run `! gh auth login` and stop.
-2. **docs/upstream/**: Check directory exists. If not, create it with README.md:
+2. **flutter/packages fork**: `/Users/byeonghopark-jobis/dev/packages` (origin=BottlePumpkin/packages, upstream=flutter/packages). RFW 소스 분석과 PR 작업 모두 이 경로에서 수행.
+3. **docs/upstream/**: Check directory exists. If not, create it with README.md:
    ```bash
    mkdir -p docs/upstream
    ```
@@ -224,12 +225,10 @@ Verify the user has:
 
 1. **CLA signed**: "flutter/packages PR을 올리려면 Google CLA 서명이 필요합니다. 서명하셨나요? https://cla.developers.google.com/"
 2. **Fork exists**: `gh repo view BottlePumpkin/packages --json url 2>/dev/null` — if not, guide to fork.
-3. **Local clone**: Check if the fork is cloned locally. If not, guide:
-   ```
-   gh repo clone BottlePumpkin/packages
-   cd packages
-   git remote add upstream https://github.com/flutter/packages.git
-   ```
+3. **Local clone**: flutter/packages fork는 `/Users/byeonghopark-jobis/dev/packages`에 clone되어 있음.
+   - RFW 소스: `/Users/byeonghopark-jobis/dev/packages/packages/rfw/`
+   - Remote: origin=BottlePumpkin/packages, upstream=flutter/packages
+   - 작업 전 반드시: `cd /Users/byeonghopark-jobis/dev/packages && git fetch upstream && git checkout main && git pull upstream main`
 
 ### Step 4: Show contribution checklist
 

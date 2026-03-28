@@ -1148,6 +1148,39 @@ void main() {
     });
   });
 
+  group('BoxConstraints', () {
+    test('converts BoxConstraints with maxWidth only', () {
+      final expr = parseExpression('BoxConstraints(maxWidth: 250.0)');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(1));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(250.0));
+    });
+
+    test('converts BoxConstraints with all params', () {
+      final expr = parseExpression(
+        'BoxConstraints(minWidth: 100.0, maxWidth: 300.0, minHeight: 50.0, maxHeight: 200.0)',
+      );
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries.length, equals(4));
+      expect((map.entries['minWidth'] as IrNumberValue).value, equals(100.0));
+      expect((map.entries['maxWidth'] as IrNumberValue).value, equals(300.0));
+      expect((map.entries['minHeight'] as IrNumberValue).value, equals(50.0));
+      expect((map.entries['maxHeight'] as IrNumberValue).value, equals(200.0));
+    });
+
+    test('converts BoxConstraints with no params to empty map', () {
+      final expr = parseExpression('BoxConstraints()');
+      final result = converter.convert(expr);
+      expect(result, isA<IrMapValue>());
+      final map = result as IrMapValue;
+      expect(map.entries, isEmpty);
+    });
+  });
+
   group('LinearGradient', () {
     test('converts LinearGradient with begin, end, colors', () {
       final expr = parseExpression(

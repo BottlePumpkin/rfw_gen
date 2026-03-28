@@ -255,6 +255,11 @@ class ExpressionConverter {
       return _convertShapeBorder(methodName, expr.argumentList);
     }
 
+    // BoxConstraints(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'BoxConstraints') {
+      return _convertBoxConstraints(expr.argumentList);
+    }
+
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
@@ -328,6 +333,7 @@ class ExpressionConverter {
       'RoundedRectangleBorder' => _convertShapeBorder(className, argList),
       'CircleBorder' => _convertShapeBorder(className, argList),
       'StadiumBorder' => _convertShapeBorder(className, argList),
+      'BoxConstraints' => _convertBoxConstraints(argList),
       _ when _knownGridDelegates.contains(className) =>
         _convertGridDelegateFromArgs(argList),
       _ => throw UnsupportedExpressionError(
@@ -944,6 +950,28 @@ class ExpressionConverter {
             } else {
               entries[name] = convert(arg.expression);
             }
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts `BoxConstraints(minWidth: ..., maxWidth: ..., ...)` to IrMapValue.
+  ///
+  /// Only includes params that are explicitly provided.
+  /// RFW runtime defaults: minWidth=0.0, maxWidth=infinity,
+  /// minHeight=0.0, maxHeight=infinity.
+  IrMapValue _convertBoxConstraints(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'minWidth':
+          case 'maxWidth':
+          case 'minHeight':
+          case 'maxHeight':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
         }
       }
     }

@@ -34,6 +34,9 @@ class RfwWidgetBuilder implements Builder {
   FutureOr<void> build(BuildStep buildStep) async {
     final source = await buildStep.readAsString(buildStep.inputId);
 
+    // Quick check: skip files without @RfwWidget annotation.
+    if (!source.contains('RfwWidget')) return;
+
     // Parse the Dart source and find @RfwWidget-annotated functions.
     final parseResult = parseString(content: source);
     final annotatedFunctions = parseResult.unit.declarations

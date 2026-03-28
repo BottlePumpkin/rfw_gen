@@ -1,0 +1,58 @@
+name: Update Playground Dependencies
+
+on:
+  workflow_run:
+    workflows: ['Publish to pub.dev']
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  update-playground:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Read VERSION
+        id: version
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Update playground dependencies
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          sed -i "s/^  rfw_gen_builder: \^.*/  rfw_gen_builder: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
+          sed -i "s/^  rfw_gen: \^.*/  rfw_gen: ^${VERSION}/" rfw_gen_playground/pubspec.yaml
+
+      - name: Wait for pub.dev indexing
+        working-directory: rfw_gen_playground
+        run: |
+          for i in {1..10}; do
+            if flutter pub get 2>/dev/null; then
+              echo "Dependencies resolved successfully"
+              exit 0
+            fi
+            echo "Attempt $i/10: waiting for pub.dev indexing..."
+            sleep 30
+          done
+          echo "ERROR: pub.dev indexing timeout after 5 minutes"
+          exit 1
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore(playground): update dependencies to v${{ steps.version.outputs.version }}"
+          body: |
+            Automated update after [v${{ steps.version.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }}) publish.
+
+            Updates:
+            - `rfw_gen: ^${{ steps.version.outputs.version }}`
+            - `rfw_gen_builder: ^${{ steps.version.outputs.version }}`
+          branch: chore/playground-v${{ steps.version.outputs.version }}
+          commit-message: "chore(playground): update deps to v${{ steps.version.outputs.version }}"

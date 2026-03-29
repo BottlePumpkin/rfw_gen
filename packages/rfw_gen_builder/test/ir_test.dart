@@ -339,6 +339,153 @@ void main() {
     });
   });
 
+  group('IrValue equality', () {
+    test('IrStringValue equality', () {
+      expect(IrStringValue('hello'), equals(IrStringValue('hello')));
+      expect(IrStringValue('a'), isNot(equals(IrStringValue('b'))));
+    });
+
+    test('IrIntValue equality', () {
+      expect(IrIntValue(42), equals(IrIntValue(42)));
+      expect(IrIntValue(1), isNot(equals(IrIntValue(2))));
+    });
+
+    test('IrNumberValue equality', () {
+      expect(IrNumberValue(3.14), equals(IrNumberValue(3.14)));
+      expect(IrNumberValue(1.0), isNot(equals(IrNumberValue(2.0))));
+    });
+
+    test('IrBoolValue equality', () {
+      expect(IrBoolValue(true), equals(IrBoolValue(true)));
+      expect(IrBoolValue(true), isNot(equals(IrBoolValue(false))));
+    });
+
+    test('IrEnumValue equality', () {
+      expect(IrEnumValue('center'), equals(IrEnumValue('center')));
+      expect(IrEnumValue('center'), isNot(equals(IrEnumValue('start'))));
+    });
+
+    test('IrDataRef equality', () {
+      expect(IrDataRef('user.name'), equals(IrDataRef('user.name')));
+      expect(IrDataRef('a'), isNot(equals(IrDataRef('b'))));
+    });
+
+    test('IrArgsRef equality', () {
+      expect(IrArgsRef('id'), equals(IrArgsRef('id')));
+      expect(IrArgsRef('a'), isNot(equals(IrArgsRef('b'))));
+    });
+
+    test('IrStateRef equality', () {
+      expect(IrStateRef('count'), equals(IrStateRef('count')));
+      expect(IrStateRef('a'), isNot(equals(IrStateRef('b'))));
+    });
+
+    test('IrLoopVarRef equality', () {
+      expect(IrLoopVarRef('item.name'), equals(IrLoopVarRef('item.name')));
+      expect(IrLoopVarRef('a'), isNot(equals(IrLoopVarRef('b'))));
+    });
+
+    test('IrListValue equality', () {
+      expect(
+        IrListValue([IrStringValue('a'), IrIntValue(1)]),
+        equals(IrListValue([IrStringValue('a'), IrIntValue(1)])),
+      );
+      expect(
+        IrListValue([IrStringValue('a')]),
+        isNot(equals(IrListValue([IrStringValue('b')]))),
+      );
+      expect(
+        IrListValue([IrStringValue('a')]),
+        isNot(equals(IrListValue([]))),
+      );
+    });
+
+    test('IrMapValue equality', () {
+      expect(
+        IrMapValue({'k': IrStringValue('v')}),
+        equals(IrMapValue({'k': IrStringValue('v')})),
+      );
+      expect(
+        IrMapValue({'k': IrStringValue('v')}),
+        isNot(equals(IrMapValue({'k': IrStringValue('other')}))),
+      );
+      expect(
+        IrMapValue({'k': IrStringValue('v')}),
+        isNot(equals(IrMapValue({}))),
+      );
+    });
+
+    test('IrConcat equality', () {
+      expect(
+        IrConcat([IrStringValue('a'), IrDataRef('b')]),
+        equals(IrConcat([IrStringValue('a'), IrDataRef('b')])),
+      );
+      expect(
+        IrConcat([IrStringValue('a')]),
+        isNot(equals(IrConcat([IrStringValue('b')]))),
+      );
+    });
+
+    test('IrSetStateValue equality', () {
+      expect(
+        IrSetStateValue('field', IrBoolValue(true)),
+        equals(IrSetStateValue('field', IrBoolValue(true))),
+      );
+      expect(
+        IrSetStateValue('field', IrBoolValue(true)),
+        isNot(equals(IrSetStateValue('field', IrBoolValue(false)))),
+      );
+      expect(
+        IrSetStateValue('a', IrBoolValue(true)),
+        isNot(equals(IrSetStateValue('b', IrBoolValue(true)))),
+      );
+    });
+
+    test('IrSetStateFromArgValue equality', () {
+      expect(
+        IrSetStateFromArgValue('field', 'value'),
+        equals(IrSetStateFromArgValue('field', 'value')),
+      );
+      expect(
+        IrSetStateFromArgValue('field', 'value'),
+        isNot(equals(IrSetStateFromArgValue('field', 'other'))),
+      );
+      expect(
+        IrSetStateFromArgValue('a'),
+        isNot(equals(IrSetStateFromArgValue('b'))),
+      );
+    });
+
+    test('IrEventValue equality', () {
+      expect(
+        IrEventValue('click', {'id': IrIntValue(1)}),
+        equals(IrEventValue('click', {'id': IrIntValue(1)})),
+      );
+      expect(
+        IrEventValue('click'),
+        isNot(equals(IrEventValue('tap'))),
+      );
+      expect(
+        IrEventValue('click', {'id': IrIntValue(1)}),
+        isNot(equals(IrEventValue('click', {'id': IrIntValue(2)}))),
+      );
+    });
+
+    test('IrSwitchExpr cases with value-equal keys', () {
+      final cases = <IrValue, IrValue>{};
+      cases[IrStringValue('a')] = IrIntValue(1);
+      expect(cases[IrStringValue('a')], equals(IrIntValue(1)));
+    });
+
+    test('different IrValue types are not equal', () {
+      expect(IrStringValue('42'), isNot(equals(IrIntValue(42))));
+      expect(IrIntValue(1), isNot(equals(IrBoolValue(true))));
+      expect(IrDataRef('x'), isNot(equals(IrArgsRef('x'))));
+      expect(IrArgsRef('x'), isNot(equals(IrStateRef('x'))));
+      expect(IrStateRef('x'), isNot(equals(IrLoopVarRef('x'))));
+    });
+  });
+
   group('IrValue sealed hierarchy', () {
     test('each subtype is an IrValue', () {
       final values = <IrValue>[

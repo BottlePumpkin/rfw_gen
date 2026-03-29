@@ -88,6 +88,10 @@ class WidgetMapping {
 class WidgetRegistry {
   final Map<String, WidgetMapping> _widgets;
 
+  /// Optional callback invoked when a warning condition is detected
+  /// (e.g., overwriting an existing widget mapping).
+  void Function(String message)? onWarning;
+
   /// Creates an empty registry.
   WidgetRegistry() : _widgets = {};
 
@@ -103,7 +107,16 @@ class WidgetRegistry {
   bool isSupported(String widgetName) => _widgets.containsKey(widgetName);
 
   /// Registers or replaces the [WidgetMapping] for [name].
+  ///
+  /// If a mapping for [name] already exists, [onWarning] is called (if set)
+  /// to notify that the existing mapping will be overwritten.
   void register(String name, WidgetMapping mapping) {
+    if (_widgets.containsKey(name)) {
+      onWarning?.call(
+        'Overwriting existing widget mapping for "$name". '
+        'This replaces the ${_widgets[name]!.rfwName} mapping.',
+      );
+    }
     _widgets[name] = mapping;
   }
 

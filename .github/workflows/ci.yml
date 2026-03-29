@@ -55,3 +55,6 @@ jobs:
         run: dart analyze packages/rfw_preview
       - name: Format rfw_preview
         run: dart format --set-exit-if-changed packages/rfw_preview
+      - name: Test rfw_preview
+        working-directory: packages/rfw_preview
+        run: flutter test

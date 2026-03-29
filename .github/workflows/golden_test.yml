@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'packages/rfw_gen/**'
+      - 'packages/rfw_gen_builder/**'
       - 'example/**'
   workflow_dispatch:
 

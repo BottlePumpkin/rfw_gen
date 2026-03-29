@@ -337,6 +337,38 @@ class _RfwScreenState extends State<RfwScreen> {
 
 For more details, see the [rfw package documentation](https://pub.dev/packages/rfw).
 
+### Rendering Custom Widgets
+
+When using custom (non-core) widgets, the builder generates a `.rfw_library.dart` file
+containing `LocalWidgetBuilder` functions. Register these with the RFW runtime:
+
+```dart
+import 'package:rfw/rfw.dart';
+import 'catalog/custom_widgets.rfw_library.dart';
+
+// In your widget's initState or setup:
+runtime.update(
+  const LibraryName(<String>['app', 'custom']),
+  LocalWidgetLibrary(customWidgetBuilders),
+);
+```
+
+Where `customWidgetBuilders` is the generated `Map<String, LocalWidgetBuilder>`
+from the `.rfw_library.dart` file.
+
+### Using Icons
+
+Flutter's `Icons.home` constants are runtime-only and cannot be resolved at build time.
+Use `RfwIcon` constants instead:
+
+```dart
+@RfwWidget('iconDemo')
+Widget iconDemo() => Icon(icon: RfwIcon.home, size: 24);
+```
+
+If your icon is not in `RfwIcon`, the builder will attempt to resolve it via the Dart
+analyzer as a fallback. See `RfwIcon` for the full list of supported icons.
+
 ## Limitations
 
 - `@RfwWidget` must be applied to top-level functions only.

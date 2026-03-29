@@ -969,5 +969,28 @@ void main() {
       expect(mapping.params.containsKey('duration'), isTrue);
       expect(mapping.params.containsKey('end'), isTrue);
     });
+
+    test('animated aliases share identical mapping with base widgets', () {
+      final aliases = {
+        'AnimatedAlign': 'Align',
+        'AnimatedContainer': 'Container',
+        'AnimatedPadding': 'Padding',
+        'AnimatedDefaultTextStyle': 'DefaultTextStyle',
+        'AnimatedOpacity': 'Opacity',
+        'AnimatedPositionedDirectional': 'Positioned',
+      };
+      for (final entry in aliases.entries) {
+        final animated = registry.supportedWidgets[entry.key]!;
+        final base = registry.supportedWidgets[entry.value]!;
+        expect(animated.rfwName, equals(base.rfwName),
+            reason: '${entry.key} rfwName should match ${entry.value}');
+        expect(animated.params.keys.toSet(), equals(base.params.keys.toSet()),
+            reason: '${entry.key} params should match ${entry.value}');
+        expect(animated.childType, equals(base.childType),
+            reason: '${entry.key} childType should match ${entry.value}');
+        expect(animated.handlerParams, equals(base.handlerParams),
+            reason: '${entry.key} handlerParams should match ${entry.value}');
+      }
+    });
   });
 }

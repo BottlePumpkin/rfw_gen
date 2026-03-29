@@ -22,9 +22,36 @@ jobs:
       - name: Resolve workspace dependencies
         run: flutter pub get
 
+      - name: Verify version consistency
+        run: |
+          V1=$(grep '^version:' packages/rfw_gen/pubspec.yaml | awk '{print $2}')
+          V2=$(grep '^version:' packages/rfw_gen_builder/pubspec.yaml | awk '{print $2}')
+          V3=$(grep '^version:' packages/rfw_gen_mcp/pubspec.yaml | awk '{print $2}')
+          V4=$(grep '^version:' packages/rfw_preview/pubspec.yaml | awk '{print $2}')
+          if [ "$V1" != "$V2" ] || [ "$V1" != "$V3" ] || [ "$V1" != "$V4" ]; then
+            echo "Version mismatch: rfw_gen=$V1, rfw_gen_builder=$V2, rfw_gen_mcp=$V3, rfw_preview=$V4"
+            exit 1
+          fi
+          echo "All packages at version $V1"
+
+      - name: Dry-run publish rfw_gen
+        working-directory: packages/rfw_gen
+        run: dart pub publish --dry-run
+
+      - name: Dry-run publish rfw_gen_builder
+        working-directory: packages/rfw_gen_builder
+        run: dart pub publish --dry-run
+
+      - name: Dry-run publish rfw_gen_mcp
+        working-directory: packages/rfw_gen_mcp
+        run: dart pub publish --dry-run
+
+      - name: Dry-run publish rfw_preview
+        working-directory: packages/rfw_preview
+        run: dart pub publish --dry-run
+
       - name: Publish rfw_gen
         run: dart pub publish --directory packages/rfw_gen --force
-        continue-on-error: true
 
       - name: Wait for pub.dev indexing
         run: sleep 60

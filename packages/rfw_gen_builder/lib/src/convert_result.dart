@@ -1,5 +1,8 @@
 import 'package:rfw_gen/rfw_gen.dart';
 
+import 'ir.dart';
+import 'metadata_collector.dart';
+
 /// The result of an RFW conversion, containing the generated rfwtxt output
 /// and any diagnostic issues encountered during conversion.
 class ConvertResult {
@@ -9,8 +12,23 @@ class ConvertResult {
   /// Diagnostic issues collected during conversion.
   final List<RfwGenIssue> issues;
 
-  /// Creates a [ConvertResult] with the given [rfwtxt] and [issues].
-  ConvertResult({required this.rfwtxt, required this.issues});
+  /// The widget name extracted from @RfwWidget annotation or function name.
+  final String widgetName;
+
+  /// The state declaration map from @RfwWidget(state: {...}), or null.
+  final Map<String, IrValue>? stateDecl;
+
+  /// Metadata collected from the IR tree (dataRefs, stateRefs, events).
+  final RfwWidgetMetadata metadata;
+
+  /// Creates a [ConvertResult] with the given fields.
+  ConvertResult({
+    required this.rfwtxt,
+    required this.issues,
+    required this.widgetName,
+    required this.stateDecl,
+    required this.metadata,
+  });
 
   /// Whether any fatal issues were encountered during conversion.
   bool get hasErrors => issues.any((i) => i.isFatal);

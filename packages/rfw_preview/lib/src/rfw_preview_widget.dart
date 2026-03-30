@@ -143,8 +143,7 @@ class _RfwPreviewState extends State<RfwPreview> {
   void _updateData() {
     final data = widget.data;
     final newKeys = data?.keys.toSet() ?? <String>{};
-    if (newKeys.length != _dataKeys.length ||
-        !newKeys.containsAll(_dataKeys)) {
+    if (newKeys.length != _dataKeys.length || !newKeys.containsAll(_dataKeys)) {
       // Keys changed — recreate DynamicContent to remove stale entries.
       _data = DynamicContent();
       if (data != null) {

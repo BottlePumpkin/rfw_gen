@@ -235,8 +235,7 @@ class ExpressionConverter {
 
     // BoxConstraints.xxx(...) — parses as MethodInvocation with target 'BoxConstraints'
     if (target is SimpleIdentifier && target.name == 'BoxConstraints') {
-      return _convertBoxConstraintsNamed(
-          methodName, expr.argumentList,
+      return _convertBoxConstraintsNamed(methodName, expr.argumentList,
           offset: expr.offset);
     }
 

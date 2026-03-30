@@ -144,8 +144,7 @@ void main() {
           expect(
             isIntentional,
             isTrue,
-            reason:
-                'Codepoint 0x${entry.key.toRadixString(16)} is shared by '
+            reason: 'Codepoint 0x${entry.key.toRadixString(16)} is shared by '
                 '${entry.value} — only $intentionalAliases may share a codepoint',
           );
         }

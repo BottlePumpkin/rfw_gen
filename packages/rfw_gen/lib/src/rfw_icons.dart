@@ -230,7 +230,8 @@ class RfwIcon {
     'filterList': filterList, 'sort': sort, 'clear': clear,
     'download': download, 'upload': upload, 'openInNew': openInNew,
     'checkCircle': checkCircle, 'checkCircleOutline': checkCircleOutline,
-    'doneAll': doneAll, 'power': power, 'print': print, 'undo': undo, 'redo': redo,
+    'doneAll': doneAll, 'power': power, 'print': print, 'undo': undo,
+    'redo': redo,
     'zoomIn': zoomIn, 'zoomOut': zoomOut, 'login': login, 'logout': logout,
 
     // Content

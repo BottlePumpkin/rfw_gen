@@ -57,6 +57,11 @@ abstract class StatefulWidget extends Widget {
   const StatefulWidget({Key? key});
 }
 typedef VoidCallback = void Function();
+
+class Color {
+  final int value;
+  const Color(this.value);
+}
 ''');
 
   // Widget with primitives only → ChildType.none
@@ -252,6 +257,27 @@ class RawCallbackWidget extends StatelessWidget {
 }
 ''');
 
+  // Widget with complex types (Color, enum)
+  _writeFile(root, 'widgets_pkg/lib/complex_types_widget.dart', '''
+import 'framework.dart';
+
+enum Clip { none, hardEdge, antiAlias }
+
+class ComplexTypesWidget extends StatelessWidget {
+  final Color? backgroundColor;
+  final Clip? clipBehavior;
+
+  const ComplexTypesWidget({
+    super.key,
+    this.backgroundColor,
+    this.clipBehavior,
+  });
+
+  @override
+  Widget build(BuildContext context) => this;
+}
+''');
+
   // Consumer package
   _writeFile(root, 'consumer/pubspec.yaml', '''
 name: consumer
@@ -274,6 +300,7 @@ import 'package:widgets_pkg/empty_widget.dart';
 import 'package:widgets_pkg/non_widget.dart';
 import 'package:widgets_pkg/abstract_widget.dart';
 import 'package:widgets_pkg/raw_callback_widget.dart';
+import 'package:widgets_pkg/complex_types_widget.dart';
 
 void useAll() {
   PrimitiveWidget(title: 'test');
@@ -286,6 +313,7 @@ void useAll() {
   EmptyWidget();
   NotAWidget(value: 'test');
   RawCallbackWidget(text: 'test');
+  ComplexTypesWidget();
 }
 ''');
 
@@ -532,6 +560,39 @@ void main() {
       expect(mapping.handlerParams, contains('onTap'));
       expect(mapping.params, contains('text'));
       expect(mapping.params, isNot(contains('onTap')));
+    });
+
+    test('Color param → argumentDecoder with color method', () async {
+      final lib =
+          await getWidgetLibrary('package:widgets_pkg/complex_types_widget');
+      final result = resolver.resolveFromLibrary(lib, 'ComplexTypesWidget');
+
+      expect(result, isNotNull);
+      final rw = result!.resolvedWidget;
+
+      final bgParam = rw.params.firstWhere((p) => p.name == 'backgroundColor');
+      expect(bgParam.type, ResolvedParamType.argumentDecoder);
+      expect(bgParam.decoderInfo, isNotNull);
+      expect(bgParam.decoderInfo!.method, 'color');
+      expect(bgParam.decoderInfo!.dartTypeName, 'Color');
+      expect(bgParam.decoderInfo!.needsContext, isFalse);
+      expect(bgParam.decoderInfo!.enumTypeName, isNull);
+    });
+
+    test('enum param → argumentDecoder with enumValue method', () async {
+      final lib =
+          await getWidgetLibrary('package:widgets_pkg/complex_types_widget');
+      final result = resolver.resolveFromLibrary(lib, 'ComplexTypesWidget');
+
+      expect(result, isNotNull);
+      final rw = result!.resolvedWidget;
+
+      final clipParam = rw.params.firstWhere((p) => p.name == 'clipBehavior');
+      expect(clipParam.type, ResolvedParamType.argumentDecoder);
+      expect(clipParam.decoderInfo, isNotNull);
+      expect(clipParam.decoderInfo!.method, 'enumValue');
+      expect(clipParam.decoderInfo!.dartTypeName, 'Clip');
+      expect(clipParam.decoderInfo!.enumTypeName, 'Clip');
     });
 
     test('batchResolve resolves multiple widgets', () async {

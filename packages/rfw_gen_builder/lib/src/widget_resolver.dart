@@ -55,12 +55,43 @@ class ResolvedParam {
   /// The default value expression as a string, if any.
   final String? defaultValue;
 
+  /// Decoder metadata when [type] is [ResolvedParamType.argumentDecoder].
+  /// Null for all other types.
+  final DecoderInfo? decoderInfo;
+
   const ResolvedParam({
     required this.name,
     required this.type,
     required this.isRequired,
     required this.isNullable,
     this.defaultValue,
+    this.decoderInfo,
+  });
+}
+
+/// Metadata for parameters resolved as [ResolvedParamType.argumentDecoder].
+///
+/// Carries the ArgumentDecoders method name and variant information
+/// needed by the code generator.
+class DecoderInfo {
+  /// The ArgumentDecoders method name (e.g., 'color', 'edgeInsets').
+  final String method;
+
+  /// The Dart type name for metadata output (e.g., 'Color', 'EdgeInsetsGeometry').
+  final String dartTypeName;
+
+  /// Whether the decoder requires BuildContext (duration, curve only).
+  final bool needsContext;
+
+  /// The enum type name when method == 'enumValue' (e.g., 'Clip', 'BoxFit').
+  /// Null for non-enum decoders.
+  final String? enumTypeName;
+
+  const DecoderInfo({
+    required this.method,
+    required this.dartTypeName,
+    this.needsContext = false,
+    this.enumTypeName,
   });
 }
 
@@ -74,6 +105,7 @@ enum ResolvedParamType {
   optionalWidget,
   widgetList,
   voidCallback,
+  argumentDecoder,
   other,
 }
 
@@ -196,12 +228,14 @@ class WidgetResolver {
     for (final p in filteredParams) {
       final name = p.name;
       if (name == null) continue;
+      final resolved = _resolveParamType(p.type);
       resolvedParams.add(ResolvedParam(
         name: name,
-        type: _resolveParamType(p.type),
+        type: resolved.type,
         isRequired: p.isRequired,
         isNullable: p.type.nullabilitySuffix == NullabilitySuffix.question,
         defaultValue: p.hasDefaultValue ? p.defaultValueCode : null,
+        decoderInfo: resolved.decoderInfo,
       ));
     }
 
@@ -406,47 +440,124 @@ class WidgetResolver {
     return const _ChildTypeResult(ChildType.none, null, []);
   }
 
-  /// Resolves a [DartType] to a [ResolvedParamType].
-  ResolvedParamType _resolveParamType(DartType type) {
-    if (_isVoidCallbackType(type)) return ResolvedParamType.voidCallback;
-    if (_isWidgetListType(type)) return ResolvedParamType.widgetList;
+  /// Maps Dart type names to their ArgumentDecoders info.
+  static const _typeToDecoder = <String, DecoderInfo>{
+    // Standard decoders
+    'Color': DecoderInfo(method: 'color', dartTypeName: 'Color'),
+    'AlignmentGeometry':
+        DecoderInfo(method: 'alignment', dartTypeName: 'AlignmentGeometry'),
+    'Alignment':
+        DecoderInfo(method: 'alignment', dartTypeName: 'AlignmentGeometry'),
+    'EdgeInsetsGeometry':
+        DecoderInfo(method: 'edgeInsets', dartTypeName: 'EdgeInsetsGeometry'),
+    'EdgeInsets':
+        DecoderInfo(method: 'edgeInsets', dartTypeName: 'EdgeInsetsGeometry'),
+    'EdgeInsetsDirectional':
+        DecoderInfo(method: 'edgeInsets', dartTypeName: 'EdgeInsetsGeometry'),
+    'TextStyle': DecoderInfo(method: 'textStyle', dartTypeName: 'TextStyle'),
+    'ShapeBorder':
+        DecoderInfo(method: 'shapeBorder', dartTypeName: 'ShapeBorder'),
+    'BorderRadiusGeometry': DecoderInfo(
+        method: 'borderRadius', dartTypeName: 'BorderRadiusGeometry'),
+    'BorderRadius': DecoderInfo(
+        method: 'borderRadius', dartTypeName: 'BorderRadiusGeometry'),
+    'Decoration': DecoderInfo(method: 'decoration', dartTypeName: 'Decoration'),
+    'BoxDecoration':
+        DecoderInfo(method: 'decoration', dartTypeName: 'Decoration'),
+    'IconThemeData':
+        DecoderInfo(method: 'iconThemeData', dartTypeName: 'IconThemeData'),
+    'VisualDensity':
+        DecoderInfo(method: 'visualDensity', dartTypeName: 'VisualDensity'),
+    'ImageProvider':
+        DecoderInfo(method: 'imageProvider', dartTypeName: 'ImageProvider'),
+    'TextHeightBehavior': DecoderInfo(
+        method: 'textHeightBehavior', dartTypeName: 'TextHeightBehavior'),
+    'IconData': DecoderInfo(method: 'iconData', dartTypeName: 'IconData'),
+    'Matrix4': DecoderInfo(method: 'matrix', dartTypeName: 'Matrix4'),
+    'SliverGridDelegate':
+        DecoderInfo(method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
+    'SliverGridDelegateWithFixedCrossAxisCount':
+        DecoderInfo(method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
+    'SliverGridDelegateWithMaxCrossAxisExtent':
+        DecoderInfo(method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
+    'BoxConstraints':
+        DecoderInfo(method: 'boxConstraints', dartTypeName: 'BoxConstraints'),
+    // Context decoders
+    'Duration': DecoderInfo(
+        method: 'duration', dartTypeName: 'Duration', needsContext: true),
+    'Curve':
+        DecoderInfo(method: 'curve', dartTypeName: 'Curve', needsContext: true),
+  };
+
+  /// Resolves a [DartType] to a [ResolvedParamType] and optional [DecoderInfo].
+  ({ResolvedParamType type, DecoderInfo? decoderInfo}) _resolveParamType(
+      DartType type) {
+    if (_isVoidCallbackType(type)) {
+      return (type: ResolvedParamType.voidCallback, decoderInfo: null);
+    }
+    if (_isWidgetListType(type)) {
+      return (type: ResolvedParamType.widgetList, decoderInfo: null);
+    }
     if (_isWidgetType(type)) {
       if (type.nullabilitySuffix == NullabilitySuffix.question) {
-        return ResolvedParamType.optionalWidget;
+        return (type: ResolvedParamType.optionalWidget, decoderInfo: null);
       }
-      return ResolvedParamType.widget;
+      return (type: ResolvedParamType.widget, decoderInfo: null);
     }
 
     if (type is InterfaceType) {
       final name = type.element.name;
+
+      // Check primitives first
       switch (name) {
         case 'String':
-          return ResolvedParamType.string;
+          return (type: ResolvedParamType.string, decoderInfo: null);
         case 'int':
-          return ResolvedParamType.int;
+          return (type: ResolvedParamType.int, decoderInfo: null);
         case 'double':
-          return ResolvedParamType.double;
+          return (type: ResolvedParamType.double, decoderInfo: null);
         case 'bool':
-          return ResolvedParamType.bool;
+          return (type: ResolvedParamType.bool, decoderInfo: null);
+      }
+
+      // Check ArgumentDecoders mapping table
+      final decoderInfo = _typeToDecoder[name];
+      if (decoderInfo != null) {
+        return (
+          type: ResolvedParamType.argumentDecoder,
+          decoderInfo: decoderInfo,
+        );
+      }
+
+      // Check if it's an enum type
+      if (type.element is EnumElement && name != null) {
+        return (
+          type: ResolvedParamType.argumentDecoder,
+          decoderInfo: DecoderInfo(
+            method: 'enumValue',
+            dartTypeName: name,
+            enumTypeName: name,
+          ),
+        );
       }
     }
 
-    // Check for dart:core types that might not be InterfaceType
+    // Fallback for dart:core types not detected as InterfaceType
     final displayString = type.getDisplayString();
     if (displayString == 'String' || displayString == 'String?') {
-      return ResolvedParamType.string;
+      return (type: ResolvedParamType.string, decoderInfo: null);
     }
     if (displayString == 'int' || displayString == 'int?') {
-      return ResolvedParamType.int;
+      return (type: ResolvedParamType.int, decoderInfo: null);
     }
     if (displayString == 'double' || displayString == 'double?') {
-      return ResolvedParamType.double;
+      return (type: ResolvedParamType.double, decoderInfo: null);
     }
     if (displayString == 'bool' || displayString == 'bool?') {
-      return ResolvedParamType.bool;
+      return (type: ResolvedParamType.bool, decoderInfo: null);
     }
 
-    return ResolvedParamType.other;
+    return (type: ResolvedParamType.other, decoderInfo: null);
   }
 }
 

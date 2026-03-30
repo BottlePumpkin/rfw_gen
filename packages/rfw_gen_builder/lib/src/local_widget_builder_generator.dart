@@ -160,6 +160,18 @@ class LocalWidgetBuilderGenerator {
       case ResolvedParamType.voidCallback:
         return "$name: source.voidHandler(['$name'])";
 
+      case ResolvedParamType.argumentDecoder:
+        final info = param.decoderInfo!;
+        if (info.enumTypeName != null) {
+          return "$name: ArgumentDecoders.enumValue<${info.enumTypeName}>"
+              "(${info.enumTypeName}.values, source, ['$name'])";
+        } else if (info.needsContext) {
+          return "$name: ArgumentDecoders.${info.method}"
+              "(source, ['$name'], context)";
+        } else {
+          return "$name: ArgumentDecoders.${info.method}(source, ['$name'])";
+        }
+
       case ResolvedParamType.other:
         return "$name: source.v<dynamic>(['$name'])";
     }
@@ -204,7 +216,7 @@ class LocalWidgetBuilderGenerator {
             p.type != ResolvedParamType.voidCallback)
         .map((p) => {
               'name': p.name,
-              'type': _resolvedTypeToString(p.type),
+              'type': _resolvedTypeToString(p),
               'required': p.isRequired,
             })
         .toList();
@@ -258,8 +270,8 @@ class LocalWidgetBuilderGenerator {
     return 'none';
   }
 
-  String _resolvedTypeToString(ResolvedParamType type) {
-    return switch (type) {
+  String _resolvedTypeToString(ResolvedParam param) {
+    return switch (param.type) {
       ResolvedParamType.string => 'String',
       ResolvedParamType.int => 'int',
       ResolvedParamType.double => 'double',
@@ -268,6 +280,8 @@ class LocalWidgetBuilderGenerator {
       ResolvedParamType.widget => 'Widget',
       ResolvedParamType.optionalWidget => 'Widget?',
       ResolvedParamType.widgetList => 'List<Widget>',
+      ResolvedParamType.argumentDecoder =>
+        param.decoderInfo?.dartTypeName ?? 'dynamic',
       ResolvedParamType.other => 'dynamic',
     };
   }

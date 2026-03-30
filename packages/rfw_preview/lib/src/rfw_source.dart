@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:rfw/rfw.dart';
@@ -5,7 +6,7 @@ import 'package:rfw/rfw.dart';
 /// Source for RFW widget library data.
 ///
 /// Defines how to load the widget library — from an asset bundle,
-/// an rfwtxt string, or raw binary bytes.
+/// an rfwtxt string, a local file, or raw binary bytes.
 sealed class RfwSource {
   const RfwSource({required this.library});
 
@@ -52,6 +53,23 @@ sealed class RfwSource {
     Uint8List bytes, {
     required LibraryName library,
   }) = RfwBinarySource;
+
+  /// Load from a local `.rfwtxt` file on disk.
+  ///
+  /// Reads the file as a UTF-8 string and parses it as rfwtxt.
+  /// Useful during development to preview generated `.rfwtxt` files
+  /// without adding them to the asset bundle.
+  ///
+  /// ```dart
+  /// RfwSource.file(
+  ///   'lib/widgets.rfwtxt',
+  ///   library: LibraryName(['main']),
+  /// )
+  /// ```
+  const factory RfwSource.file(
+    String path, {
+    required LibraryName library,
+  }) = RfwFileSource;
 }
 
 /// Loads RFW library from a `.rfw` binary asset.
@@ -76,4 +94,15 @@ final class RfwBinarySource extends RfwSource {
 
   /// The raw `.rfw` binary data.
   final Uint8List bytes;
+}
+
+/// Loads RFW library from a local `.rfwtxt` file.
+final class RfwFileSource extends RfwSource {
+  const RfwFileSource(this.path, {required super.library});
+
+  /// File path to a `.rfwtxt` file (e.g., `'lib/widgets.rfwtxt'`).
+  final String path;
+
+  /// Reads the file content synchronously.
+  String readAsString() => File(path).readAsStringSync();
 }

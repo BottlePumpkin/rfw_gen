@@ -181,6 +181,11 @@ class _RfwPreviewState extends State<RfwPreview> {
             source.library,
             decodeLibraryBlob(source.bytes),
           );
+        case RfwFileSource():
+          _runtime.update(
+            source.library,
+            parseLibraryFile(source.readAsString()),
+          );
       }
       if (mounted) {
         setState(() => _isLoaded = true);

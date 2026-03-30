@@ -20,6 +20,28 @@ Standardized workflow for adding a new widget mapping to rfw_gen.
 4. Add unit tests in `packages/rfw_gen/test/`
 5. Add integration tests in `packages/rfw_gen/test/integration_test.dart`
 6. Add an `@RfwWidget` demo function in `example/lib/catalog/catalog_widgets.dart`
+
+### Step 6.5: (Optional) Add playground gallery example
+
+If the widget is commonly used and would benefit from a live playground example:
+
+1. Create `rfw_gen_playground/lib/screens/gallery/widget_detail_{snake_name}.dart`
+   - Include an `@RfwWidget` function demonstrating the widget's key parameters
+   - Show 2-3 usage variations (basic, with styling, with interaction if applicable)
+2. Add entry to `rfw_gen_playground/remote/manifest.json` under `gallery_detail`:
+   ```json
+   {
+     "id": "widget_detail_{snake_name}",
+     "title": "{WidgetName}",
+     "category": "gallery_detail",
+     "rfwtxt": "screens/widget_detail_{snake_name}.rfwtxt",
+     "keywords": ["{widget_name}", "gallery"]
+   }
+   ```
+3. Run `cd rfw_gen_playground && flutter build web` to verify the example compiles
+
+> **Skip this step** if the widget is niche (e.g., AnimationDefaults, Directionality) or if it's an animated alias of an already-covered widget.
+
 7. Add golden tests in `example/test/golden_catalog_{category}_test.dart`
 8. Verify all tests pass:
    ```bash

@@ -7,6 +7,17 @@ on:
     branches: [main]
 
 jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+      - name: Check version consistency
+        run: dart tool/sync_versions.dart --check
+      - name: Check playground widget coverage
+        run: dart tool/check_playground_coverage.dart
+        continue-on-error: true
+
   analyze-and-test:
     runs-on: ubuntu-latest
     steps:

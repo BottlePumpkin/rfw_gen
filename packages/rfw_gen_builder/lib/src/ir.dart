@@ -13,8 +13,7 @@ class IrStringValue extends IrValue {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is IrStringValue && value == other.value;
+      identical(this, other) || other is IrStringValue && value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -27,8 +26,7 @@ class IrNumberValue extends IrValue {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is IrNumberValue && value == other.value;
+      identical(this, other) || other is IrNumberValue && value == other.value;
 
   @override
   int get hashCode => value.hashCode;
@@ -123,9 +121,7 @@ class IrSetStateValue extends IrValue {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is IrSetStateValue &&
-          field == other.field &&
-          value == other.value;
+      other is IrSetStateValue && field == other.field && value == other.value;
 
   @override
   int get hashCode => Object.hash(field, value);

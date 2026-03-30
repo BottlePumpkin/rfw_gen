@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'widget_resolver.dart';
 
-/// Generates Dart source and JSON metadata from [ResolvedWidget] objects.
+/// Generates Dart source from [ResolvedWidget] objects.
 ///
-/// Produces two outputs:
-/// - `.rfw_library.dart` via [generate] — a `Map<String, LocalWidgetBuilder>`
-///   that wires RFW's `DataSource` API to real Flutter widget constructors.
-/// - `.rfw_meta.json` via [generateMeta] — machine-readable widget metadata
-///   for MCP server consumption.
+/// Produces `.rfw_library.dart` via [generate] — a `Map<String, LocalWidgetBuilder>`
+/// that wires RFW's `DataSource` API to real Flutter widget constructors.
+///
+/// Also provides [buildWidgetMeta] for building per-widget JSON metadata entries,
+/// used by [RfwWidgetBuilder] when generating `.rfw_meta.json`.
 class LocalWidgetBuilderGenerator {
   /// Generates the `.rfw_library.dart` file content.
   ///

@@ -339,6 +339,106 @@ void main() {
               "clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior'])"));
     });
 
+    test('argumentDecoder edgeInsets → ArgumentDecoders.edgeInsets', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('padding', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'edgeInsets',
+                  dartTypeName: 'EdgeInsetsGeometry')),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(output,
+          contains("padding: ArgumentDecoders.edgeInsets(source, ['padding'])"));
+    });
+
+    test('argumentDecoder textStyle → ArgumentDecoders.textStyle', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('style', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'textStyle', dartTypeName: 'TextStyle')),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(output,
+          contains("style: ArgumentDecoders.textStyle(source, ['style'])"));
+    });
+
+    test('argumentDecoder alignment → ArgumentDecoders.alignment', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('alignment', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'alignment',
+                  dartTypeName: 'AlignmentGeometry')),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(
+          output,
+          contains(
+              "alignment: ArgumentDecoders.alignment(source, ['alignment'])"));
+    });
+
+    test('argumentDecoder curve with context', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('curve', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'curve',
+                  dartTypeName: 'Curve',
+                  needsContext: true)),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(
+          output,
+          contains(
+              "curve: ArgumentDecoders.curve(source, ['curve'], context)"));
+    });
+
+    test('mixed: primitives + argumentDecoder + widget', () {
+      final widget = makeWidget(
+        className: 'StyledCard',
+        params: [
+          param('title', ResolvedParamType.string),
+          param('color', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo:
+                  const DecoderInfo(method: 'color', dartTypeName: 'Color')),
+          param('padding', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'edgeInsets',
+                  dartTypeName: 'EdgeInsetsGeometry')),
+          param('child', ResolvedParamType.widget),
+        ],
+      );
+      final output = gen.generate({'StyledCard': widget});
+      expect(output, contains("title: source.v<String>(['title']) ?? ''"));
+      expect(output,
+          contains("color: ArgumentDecoders.color(source, ['color'])"));
+      expect(output,
+          contains("padding: ArgumentDecoders.edgeInsets(source, ['padding'])"));
+      expect(output, contains("child: source.child(['child'])"));
+    });
+
     // --- Multiple widgets ---
 
     test('multiple widgets → all present in map', () {
@@ -579,6 +679,33 @@ void main() {
       final meta = gen.generateMeta({});
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
       expect(decoded['widgets'], isEmpty);
+    });
+
+    test('argumentDecoder params appear in meta params list', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('title', ResolvedParamType.string),
+          param('color', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo:
+                  const DecoderInfo(method: 'color', dartTypeName: 'Color')),
+          param('onTap', ResolvedParamType.voidCallback,
+              isRequired: false, isNullable: true),
+        ],
+      );
+      final meta = gen.generateMeta({'MyWidget': widget});
+      final decoded = jsonDecode(meta) as Map<String, dynamic>;
+      final w = (decoded['widgets'] as Map<String, dynamic>)['MyWidget']!
+          as Map<String, dynamic>;
+      final params = (w['params'] as List<dynamic>).cast<Map<String, dynamic>>();
+      final names = params.map((p) => p['name']).toList();
+
+      // argumentDecoder should be in params, voidCallback should not
+      expect(names, contains('title'));
+      expect(names, contains('color'));
+      expect(names, isNot(contains('onTap')));
     });
 
     test('argumentDecoder params have correct dartTypeName in meta', () {

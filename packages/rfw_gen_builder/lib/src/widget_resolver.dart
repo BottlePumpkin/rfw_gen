@@ -474,12 +474,12 @@ class WidgetResolver {
         method: 'textHeightBehavior', dartTypeName: 'TextHeightBehavior'),
     'IconData': DecoderInfo(method: 'iconData', dartTypeName: 'IconData'),
     'Matrix4': DecoderInfo(method: 'matrix', dartTypeName: 'Matrix4'),
-    'SliverGridDelegate': DecoderInfo(
-        method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
-    'SliverGridDelegateWithFixedCrossAxisCount': DecoderInfo(
-        method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
-    'SliverGridDelegateWithMaxCrossAxisExtent': DecoderInfo(
-        method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
+    'SliverGridDelegate':
+        DecoderInfo(method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
+    'SliverGridDelegateWithFixedCrossAxisCount':
+        DecoderInfo(method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
+    'SliverGridDelegateWithMaxCrossAxisExtent':
+        DecoderInfo(method: 'gridDelegate', dartTypeName: 'SliverGridDelegate'),
     'BoxConstraints':
         DecoderInfo(method: 'boxConstraints', dartTypeName: 'BoxConstraints'),
     // Context decoders

@@ -290,13 +290,13 @@ void main() {
           param('color', ResolvedParamType.argumentDecoder,
               isRequired: false,
               isNullable: true,
-              decoderInfo: const DecoderInfo(
-                  method: 'color', dartTypeName: 'Color')),
+              decoderInfo:
+                  const DecoderInfo(method: 'color', dartTypeName: 'Color')),
         ],
       );
       final output = gen.generate({'MyWidget': widget});
-      expect(output,
-          contains("color: ArgumentDecoders.color(source, ['color'])"));
+      expect(
+          output, contains("color: ArgumentDecoders.color(source, ['color'])"));
     });
 
     test('argumentDecoder context → includes context parameter', () {
@@ -347,13 +347,14 @@ void main() {
               isRequired: false,
               isNullable: true,
               decoderInfo: const DecoderInfo(
-                  method: 'edgeInsets',
-                  dartTypeName: 'EdgeInsetsGeometry')),
+                  method: 'edgeInsets', dartTypeName: 'EdgeInsetsGeometry')),
         ],
       );
       final output = gen.generate({'MyWidget': widget});
-      expect(output,
-          contains("padding: ArgumentDecoders.edgeInsets(source, ['padding'])"));
+      expect(
+          output,
+          contains(
+              "padding: ArgumentDecoders.edgeInsets(source, ['padding'])"));
     });
 
     test('argumentDecoder textStyle → ArgumentDecoders.textStyle', () {
@@ -380,8 +381,7 @@ void main() {
               isRequired: false,
               isNullable: true,
               decoderInfo: const DecoderInfo(
-                  method: 'alignment',
-                  dartTypeName: 'AlignmentGeometry')),
+                  method: 'alignment', dartTypeName: 'AlignmentGeometry')),
         ],
       );
       final output = gen.generate({'MyWidget': widget});
@@ -399,9 +399,7 @@ void main() {
               isRequired: false,
               isNullable: true,
               decoderInfo: const DecoderInfo(
-                  method: 'curve',
-                  dartTypeName: 'Curve',
-                  needsContext: true)),
+                  method: 'curve', dartTypeName: 'Curve', needsContext: true)),
         ],
       );
       final output = gen.generate({'MyWidget': widget});
@@ -425,17 +423,18 @@ void main() {
               isRequired: false,
               isNullable: true,
               decoderInfo: const DecoderInfo(
-                  method: 'edgeInsets',
-                  dartTypeName: 'EdgeInsetsGeometry')),
+                  method: 'edgeInsets', dartTypeName: 'EdgeInsetsGeometry')),
           param('child', ResolvedParamType.widget),
         ],
       );
       final output = gen.generate({'StyledCard': widget});
       expect(output, contains("title: source.v<String>(['title']) ?? ''"));
-      expect(output,
-          contains("color: ArgumentDecoders.color(source, ['color'])"));
-      expect(output,
-          contains("padding: ArgumentDecoders.edgeInsets(source, ['padding'])"));
+      expect(
+          output, contains("color: ArgumentDecoders.color(source, ['color'])"));
+      expect(
+          output,
+          contains(
+              "padding: ArgumentDecoders.edgeInsets(source, ['padding'])"));
       expect(output, contains("child: source.child(['child'])"));
     });
 
@@ -699,7 +698,8 @@ void main() {
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
       final w = (decoded['widgets'] as Map<String, dynamic>)['MyWidget']!
           as Map<String, dynamic>;
-      final params = (w['params'] as List<dynamic>).cast<Map<String, dynamic>>();
+      final params =
+          (w['params'] as List<dynamic>).cast<Map<String, dynamic>>();
       final names = params.map((p) => p['name']).toList();
 
       // argumentDecoder should be in params, voidCallback should not
@@ -715,8 +715,8 @@ void main() {
           param('color', ResolvedParamType.argumentDecoder,
               isRequired: false,
               isNullable: true,
-              decoderInfo: const DecoderInfo(
-                  method: 'color', dartTypeName: 'Color')),
+              decoderInfo:
+                  const DecoderInfo(method: 'color', dartTypeName: 'Color')),
           param('clipBehavior', ResolvedParamType.argumentDecoder,
               isRequired: false,
               isNullable: true,

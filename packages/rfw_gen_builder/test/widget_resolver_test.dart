@@ -570,8 +570,7 @@ void main() {
       expect(result, isNotNull);
       final rw = result!.resolvedWidget;
 
-      final bgParam =
-          rw.params.firstWhere((p) => p.name == 'backgroundColor');
+      final bgParam = rw.params.firstWhere((p) => p.name == 'backgroundColor');
       expect(bgParam.type, ResolvedParamType.argumentDecoder);
       expect(bgParam.decoderInfo, isNotNull);
       expect(bgParam.decoderInfo!.method, 'color');
@@ -588,8 +587,7 @@ void main() {
       expect(result, isNotNull);
       final rw = result!.resolvedWidget;
 
-      final clipParam =
-          rw.params.firstWhere((p) => p.name == 'clipBehavior');
+      final clipParam = rw.params.firstWhere((p) => p.name == 'clipBehavior');
       expect(clipParam.type, ResolvedParamType.argumentDecoder);
       expect(clipParam.decoderInfo, isNotNull);
       expect(clipParam.decoderInfo!.method, 'enumValue');

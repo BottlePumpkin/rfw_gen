@@ -19,6 +19,11 @@ AlignmentDirectional: `{start: double, y: double}`
 ## BoxDecoration
 `{ type: "box", color: 0xFF000000, border: [...], borderRadius: [...], boxShadow: [...], gradient: {...}, shape: "rectangle"|"circle" }`
 
+## BoxConstraints
+Map: `{ minWidth: 0.0, maxWidth: 250.0, minHeight: 0.0, maxHeight: 500.0 }`
+
+Omitted keys use RFW runtime defaults: minWidth=0.0, maxWidth=infinity, minHeight=0.0, maxHeight=infinity.
+
 ## BorderRadius
 List of 1-4 radius: `[{x: 8.0}]` (all corners) or `[topStart, topEnd, bottomStart, bottomEnd]`
 

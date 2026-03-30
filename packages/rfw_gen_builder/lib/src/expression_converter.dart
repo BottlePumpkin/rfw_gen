@@ -233,6 +233,12 @@ class ExpressionConverter {
       return _convertBorderSide(expr.argumentList);
     }
 
+    // BoxConstraints.xxx(...) — parses as MethodInvocation with target 'BoxConstraints'
+    if (target is SimpleIdentifier && target.name == 'BoxConstraints') {
+      return _convertBoxConstraintsNamed(methodName, expr.argumentList,
+          offset: expr.offset);
+    }
+
     // Border.all(...) — parses as MethodInvocation with target 'Border'
     if (target is SimpleIdentifier && target.name == 'Border') {
       if (methodName == 'all') return _convertBorderAll(expr.argumentList);
@@ -253,6 +259,11 @@ class ExpressionConverter {
         const {'RoundedRectangleBorder', 'CircleBorder', 'StadiumBorder'}
             .contains(methodName)) {
       return _convertShapeBorder(methodName, expr.argumentList);
+    }
+
+    // BoxConstraints(...) — parses as MethodInvocation with no target
+    if (target == null && methodName == 'BoxConstraints') {
+      return _convertBoxConstraints(expr.argumentList);
     }
 
     throw UnsupportedExpressionError(
@@ -300,6 +311,9 @@ class ExpressionConverter {
         'Radius' when constructorName == 'circular' =>
           IrMapValue({'x': IrNumberValue(_toDouble(argList.arguments.first))}),
         'Border' when constructorName == 'all' => _convertBorderAll(argList),
+        'BoxConstraints' => _convertBoxConstraintsNamed(
+            constructorName, argList,
+            offset: expr.offset),
         _ => throw UnsupportedExpressionError(
             'Unsupported const constructor: $className.$constructorName',
             offset: expr.offset,
@@ -328,6 +342,7 @@ class ExpressionConverter {
       'RoundedRectangleBorder' => _convertShapeBorder(className, argList),
       'CircleBorder' => _convertShapeBorder(className, argList),
       'StadiumBorder' => _convertShapeBorder(className, argList),
+      'BoxConstraints' => _convertBoxConstraints(argList),
       _ when _knownGridDelegates.contains(className) =>
         _convertGridDelegateFromArgs(argList),
       _ => throw UnsupportedExpressionError(
@@ -345,6 +360,7 @@ class ExpressionConverter {
       'BorderRadius',
       'Radius',
       'Border',
+      'BoxConstraints',
     }.contains(name);
   }
 
@@ -948,6 +964,128 @@ class ExpressionConverter {
       }
     }
     return IrMapValue(entries);
+  }
+
+  /// Converts `BoxConstraints(minWidth: ..., maxWidth: ..., ...)` to IrMapValue.
+  ///
+  /// Only includes params that are explicitly provided.
+  /// RFW runtime defaults: minWidth=0.0, maxWidth=infinity,
+  /// minHeight=0.0, maxHeight=infinity.
+  IrMapValue _convertBoxConstraints(ArgumentList argList) {
+    final entries = <String, IrValue>{};
+    for (final arg in argList.arguments) {
+      if (arg is NamedExpression) {
+        final name = arg.name.label.name;
+        switch (name) {
+          case 'minWidth':
+          case 'maxWidth':
+          case 'minHeight':
+          case 'maxHeight':
+            entries[name] = IrNumberValue(_toDouble(arg.expression));
+        }
+      }
+    }
+    return IrMapValue(entries);
+  }
+
+  /// Converts named BoxConstraints constructors to IrMapValue.
+  ///
+  /// Supported: `.tight(Size)`, `.loose(Size)`, `.tightFor(width:, height:)`,
+  /// `.expand(width:, height:)`.
+  IrMapValue _convertBoxConstraintsNamed(
+    String constructorName,
+    ArgumentList argList, {
+    required int? offset,
+  }) {
+    switch (constructorName) {
+      case 'tight':
+        final sizeArgs = _extractSizeArgs(argList, offset: offset);
+        return IrMapValue({
+          'minWidth': IrNumberValue(sizeArgs.$1),
+          'maxWidth': IrNumberValue(sizeArgs.$1),
+          'minHeight': IrNumberValue(sizeArgs.$2),
+          'maxHeight': IrNumberValue(sizeArgs.$2),
+        });
+      case 'loose':
+        final sizeArgs = _extractSizeArgs(argList, offset: offset);
+        return IrMapValue({
+          'maxWidth': IrNumberValue(sizeArgs.$1),
+          'maxHeight': IrNumberValue(sizeArgs.$2),
+        });
+      case 'tightFor':
+        final entries = <String, IrValue>{};
+        for (final arg in argList.arguments) {
+          if (arg is NamedExpression) {
+            final name = arg.name.label.name;
+            final value = IrNumberValue(_toDouble(arg.expression));
+            if (name == 'width') {
+              entries['minWidth'] = value;
+              entries['maxWidth'] = value;
+            } else if (name == 'height') {
+              entries['minHeight'] = value;
+              entries['maxHeight'] = value;
+            }
+          }
+        }
+        return IrMapValue(entries);
+      case 'expand':
+        final entries = <String, IrValue>{};
+        for (final arg in argList.arguments) {
+          if (arg is NamedExpression) {
+            final name = arg.name.label.name;
+            final value = IrNumberValue(_toDouble(arg.expression));
+            if (name == 'width') {
+              entries['minWidth'] = value;
+              entries['maxWidth'] = value;
+            } else if (name == 'height') {
+              entries['minHeight'] = value;
+              entries['maxHeight'] = value;
+            }
+          }
+        }
+        return IrMapValue(entries);
+      default:
+        throw UnsupportedExpressionError(
+          'Unsupported BoxConstraints constructor: BoxConstraints.$constructorName',
+          offset: offset,
+        );
+    }
+  }
+
+  /// Extracts (width, height) from a Size(w, h) positional argument.
+  (double, double) _extractSizeArgs(
+    ArgumentList argList, {
+    required int? offset,
+  }) {
+    final args = argList.arguments;
+    if (args.length != 1) {
+      throw UnsupportedExpressionError(
+        'BoxConstraints.tight/loose expects exactly one Size argument',
+        offset: offset,
+      );
+    }
+    final sizeExpr = args.first;
+    // Handle: BoxConstraints.tight(Size(100.0, 200.0))
+    if (sizeExpr is MethodInvocation && sizeExpr.methodName.name == 'Size') {
+      final sizeArgs = sizeExpr.argumentList.arguments;
+      if (sizeArgs.length == 2) {
+        return (_toDouble(sizeArgs[0]), _toDouble(sizeArgs[1]));
+      }
+    }
+    // Handle: const BoxConstraints.tight(Size(100.0, 200.0))
+    if (sizeExpr is InstanceCreationExpression) {
+      final typeName = sizeExpr.constructorName.type.name.lexeme;
+      if (typeName == 'Size') {
+        final sizeArgs = sizeExpr.argumentList.arguments;
+        if (sizeArgs.length == 2) {
+          return (_toDouble(sizeArgs[0]), _toDouble(sizeArgs[1]));
+        }
+      }
+    }
+    throw UnsupportedExpressionError(
+      'Expected Size(width, height) argument',
+      offset: offset,
+    );
   }
 
   /// Converts `Alignment(x, y)` to `{x: double, y: double}`.

@@ -55,12 +55,43 @@ class ResolvedParam {
   /// The default value expression as a string, if any.
   final String? defaultValue;
 
+  /// Decoder metadata when [type] is [ResolvedParamType.argumentDecoder].
+  /// Null for all other types.
+  final DecoderInfo? decoderInfo;
+
   const ResolvedParam({
     required this.name,
     required this.type,
     required this.isRequired,
     required this.isNullable,
     this.defaultValue,
+    this.decoderInfo,
+  });
+}
+
+/// Metadata for parameters resolved as [ResolvedParamType.argumentDecoder].
+///
+/// Carries the ArgumentDecoders method name and variant information
+/// needed by the code generator.
+class DecoderInfo {
+  /// The ArgumentDecoders method name (e.g., 'color', 'edgeInsets').
+  final String method;
+
+  /// The Dart type name for metadata output (e.g., 'Color', 'EdgeInsetsGeometry').
+  final String dartTypeName;
+
+  /// Whether the decoder requires BuildContext (duration, curve only).
+  final bool needsContext;
+
+  /// The enum type name when method == 'enumValue' (e.g., 'Clip', 'BoxFit').
+  /// Null for non-enum decoders.
+  final String? enumTypeName;
+
+  const DecoderInfo({
+    required this.method,
+    required this.dartTypeName,
+    this.needsContext = false,
+    this.enumTypeName,
   });
 }
 
@@ -74,6 +105,7 @@ enum ResolvedParamType {
   optionalWidget,
   widgetList,
   voidCallback,
+  argumentDecoder,
   other,
 }
 

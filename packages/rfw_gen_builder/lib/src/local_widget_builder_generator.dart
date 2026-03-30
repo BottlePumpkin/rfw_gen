@@ -160,6 +160,10 @@ class LocalWidgetBuilderGenerator {
       case ResolvedParamType.voidCallback:
         return "$name: source.voidHandler(['$name'])";
 
+      case ResolvedParamType.argumentDecoder:
+        // Full decoder codegen is handled in Task 3; fall back to dynamic for now.
+        return "$name: source.v<dynamic>(['$name'])";
+
       case ResolvedParamType.other:
         return "$name: source.v<dynamic>(['$name'])";
     }
@@ -268,6 +272,7 @@ class LocalWidgetBuilderGenerator {
       ResolvedParamType.widget => 'Widget',
       ResolvedParamType.optionalWidget => 'Widget?',
       ResolvedParamType.widgetList => 'List<Widget>',
+      ResolvedParamType.argumentDecoder => 'dynamic',
       ResolvedParamType.other => 'dynamic',
     };
   }

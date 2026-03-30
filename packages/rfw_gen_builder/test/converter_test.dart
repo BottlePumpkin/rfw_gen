@@ -69,7 +69,8 @@ Widget buildSomething() {
       expect(result.rfwtxt, contains('text: "Annotated"'));
     });
 
-    test('@RfwWidget() without name warns and falls back to function name (#74)',
+    test(
+        '@RfwWidget() without name warns and falls back to function name (#74)',
         () {
       const input = '''
 @RfwWidget()

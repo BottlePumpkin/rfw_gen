@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# Block direct commits to main
 branch=$(git branch --show-current)
 if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
   echo ""
@@ -7,4 +8,19 @@ if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
   echo "브랜치를 만드세요: git checkout -b feat/your-feature"
   echo ""
   exit 1
+fi
+
+# Check dart format on staged .dart files
+staged_dart=$(git diff --cached --name-only --diff-filter=ACM | grep '\.dart$' || true)
+if [ -n "$staged_dart" ]; then
+  unformatted=$(dart format --set-exit-if-changed --output=none $staged_dart 2>&1 | grep "^Changed" || true)
+  if [ -n "$unformatted" ]; then
+    echo ""
+    echo "ERROR: 포맷이 맞지 않는 파일이 있습니다."
+    echo "$unformatted"
+    echo ""
+    echo "다음 명령어로 수정하세요: dart format <file>"
+    echo ""
+    exit 1
+  fi
 fi

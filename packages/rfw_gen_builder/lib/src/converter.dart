@@ -175,7 +175,8 @@ class RfwConverter {
   /// 1. `@RfwWidget('name')` annotation value
   /// 2. Function name with 'build' prefix stripped and first letter lowercased
   /// 3. Function name as-is if no 'build' prefix
-  String _extractWidgetName(FunctionDeclaration function, [IssueCollector? collector]) {
+  String _extractWidgetName(FunctionDeclaration function,
+      [IssueCollector? collector]) {
     // Check for @RfwWidget annotation.
     for (final annotation in function.metadata) {
       if (annotation.name.name == 'RfwWidget') {
@@ -190,8 +191,7 @@ class RfwConverter {
         if (arguments != null && arguments.arguments.isEmpty) {
           collector?.warning(
             '@RfwWidget() requires a name parameter',
-            suggestion:
-                "Use @RfwWidget('widgetName'). "
+            suggestion: "Use @RfwWidget('widgetName'). "
                 'Falling back to function name: '
                 '${_deriveNameFromFunction(function)}',
           );

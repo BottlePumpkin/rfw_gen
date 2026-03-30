@@ -739,12 +739,14 @@ void main() {
       // We need to extract the FunctionExpression from an argument position.
       final source = 'f(onTap: () {})';
       final parseResult = parseString(content: 'void main() { $source; }');
-      final body = parseResult.unit.declarations.first
-          as FunctionDeclaration;
+      final body = parseResult.unit.declarations.first as FunctionDeclaration;
       final stmt = (body.functionExpression.body as BlockFunctionBody)
-          .block.statements.first as ExpressionStatement;
+          .block
+          .statements
+          .first as ExpressionStatement;
       final invocation = stmt.expression as MethodInvocation;
-      final namedArg = invocation.argumentList.arguments.first as NamedExpression;
+      final namedArg =
+          invocation.argumentList.arguments.first as NamedExpression;
       final funcExpr = namedArg.expression;
 
       final result = converter.convertHandler(funcExpr);
@@ -754,12 +756,14 @@ void main() {
     test('returns null for () => null function literal (#76)', () {
       final source = 'f(onTap: () => null)';
       final parseResult = parseString(content: 'void main() { $source; }');
-      final body = parseResult.unit.declarations.first
-          as FunctionDeclaration;
+      final body = parseResult.unit.declarations.first as FunctionDeclaration;
       final stmt = (body.functionExpression.body as BlockFunctionBody)
-          .block.statements.first as ExpressionStatement;
+          .block
+          .statements
+          .first as ExpressionStatement;
       final invocation = stmt.expression as MethodInvocation;
-      final namedArg = invocation.argumentList.arguments.first as NamedExpression;
+      final namedArg =
+          invocation.argumentList.arguments.first as NamedExpression;
       final funcExpr = namedArg.expression;
 
       final result = converter.convertHandler(funcExpr);

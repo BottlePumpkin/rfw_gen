@@ -82,7 +82,8 @@ class RfwWidgetBuilder implements Builder {
     final iconsClass = IconResolver.findIconsClass(inputLibrary);
     final iconResolver = iconsClass != null ? IconResolver(iconsClass) : null;
 
-    final converter = RfwConverter(registry: registry, iconResolver: iconResolver);
+    final converter =
+        RfwConverter(registry: registry, iconResolver: iconResolver);
     final parts = <String>[];
 
     for (final function in annotatedFunctions) {

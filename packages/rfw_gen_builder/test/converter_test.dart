@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:rfw_gen/rfw_gen.dart';
 import 'package:rfw_gen_builder/rfw_gen_builder.dart';
 import 'package:rfw_gen_builder/src/ast_visitor.dart';
+import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -336,6 +337,58 @@ Widget buildExpenseList() {
 ''';
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('widget expenseList'));
+    });
+  });
+
+  group('ConvertResult metadata', () {
+    test('simple widget has empty metadata', () {
+      const input = "Widget buildGreeting() { return Text('Hello'); }";
+      final result = converter.convertFromSource(input);
+      expect(result.widgetName, equals('greeting'));
+      expect(result.stateDecl, isNull);
+      expect(result.metadata.dataRefs, isEmpty);
+      expect(result.metadata.stateRefs, isEmpty);
+      expect(result.metadata.events, isEmpty);
+    });
+
+    test('widget with DataRef collects dataRefs', () {
+      const input = '''
+Widget buildProfile() {
+  return Text(DataRef('user.name'));
+}
+''';
+      final result = converter.convertFromSource(input);
+      expect(result.metadata.dataRefs, contains('user.name'));
+    });
+
+    test('widget with state collects stateDecl', () {
+      const input = """
+import 'package:rfw_gen/rfw_gen.dart';
+
+@RfwWidget('counter', state: {'count': 0})
+Widget buildCounter() {
+  return Text(StateRef('count'));
+}
+""";
+      final result = converter.convertFromSource(input);
+      expect(result.widgetName, equals('counter'));
+      expect(result.stateDecl, isNotNull);
+      expect(result.stateDecl!['count'], isA<IrIntValue>());
+      expect(result.metadata.stateRefs, contains('count'));
+    });
+
+    test('widget with event collects events', () {
+      const input = """
+Widget buildButton() {
+  return GestureDetector(
+    onTap: RfwHandler.event('button.tap', {'id': DataRef('item.id')}),
+    child: Text('Click'),
+  );
+}
+""";
+      final result = converter.convertFromSource(input);
+      expect(result.metadata.events, contains('button.tap'));
+      expect(result.metadata.dataRefs, contains('item.id'));
     });
   });
 }

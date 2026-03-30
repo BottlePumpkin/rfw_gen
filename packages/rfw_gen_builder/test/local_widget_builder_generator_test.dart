@@ -38,6 +38,7 @@ void main() {
     bool isRequired = true,
     bool isNullable = false,
     String? defaultValue,
+    DecoderInfo? decoderInfo,
   }) =>
       ResolvedParam(
         name: name,
@@ -45,6 +46,7 @@ void main() {
         isRequired: isRequired,
         isNullable: isNullable,
         defaultValue: defaultValue,
+        decoderInfo: decoderInfo,
       );
 
   // ---------------------------------------------------------------------------
@@ -277,6 +279,64 @@ void main() {
       );
       final output = gen.generate({'MyWidget': widget});
       expect(output, contains("data: source.v<dynamic>(['data'])"));
+    });
+
+    // --- ArgumentDecoder types ---
+
+    test('argumentDecoder standard → ArgumentDecoders.method(source, key)', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('color', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'color', dartTypeName: 'Color')),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(output,
+          contains("color: ArgumentDecoders.color(source, ['color'])"));
+    });
+
+    test('argumentDecoder context → includes context parameter', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('duration', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'duration',
+                  dartTypeName: 'Duration',
+                  needsContext: true)),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(
+          output,
+          contains(
+              "duration: ArgumentDecoders.duration(source, ['duration'], context)"));
+    });
+
+    test('argumentDecoder enum → enumValue with type and values', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('clipBehavior', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'enumValue',
+                  dartTypeName: 'Clip',
+                  enumTypeName: 'Clip')),
+        ],
+      );
+      final output = gen.generate({'MyWidget': widget});
+      expect(
+          output,
+          contains(
+              "clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior'])"));
     });
 
     // --- Multiple widgets ---
@@ -519,6 +579,36 @@ void main() {
       final meta = gen.generateMeta({});
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
       expect(decoded['widgets'], isEmpty);
+    });
+
+    test('argumentDecoder params have correct dartTypeName in meta', () {
+      final widget = makeWidget(
+        className: 'MyWidget',
+        params: [
+          param('color', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'color', dartTypeName: 'Color')),
+          param('clipBehavior', ResolvedParamType.argumentDecoder,
+              isRequired: false,
+              isNullable: true,
+              decoderInfo: const DecoderInfo(
+                  method: 'enumValue',
+                  dartTypeName: 'Clip',
+                  enumTypeName: 'Clip')),
+        ],
+      );
+      final meta = gen.generateMeta({'MyWidget': widget});
+      final decoded = jsonDecode(meta) as Map<String, dynamic>;
+      final w = (decoded['widgets'] as Map<String, dynamic>)['MyWidget']!
+          as Map<String, dynamic>;
+      final params =
+          (w['params'] as List<dynamic>).cast<Map<String, dynamic>>();
+
+      final typeMap = {for (final p in params) p['name'] as String: p['type']};
+      expect(typeMap['color'], equals('Color'));
+      expect(typeMap['clipBehavior'], equals('Clip'));
     });
   });
 }

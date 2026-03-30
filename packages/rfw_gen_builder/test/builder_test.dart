@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:test/test.dart';
@@ -26,6 +28,14 @@ Widget buildGreeting() {
             ),
           ),
           'a|lib/widgets.rfw': isNotEmpty,
+          'a|lib/widgets.rfw_meta.json': decodedMatches(
+            predicate<String>((s) {
+              final meta = jsonDecode(s) as Map<String, dynamic>;
+              final widgets = meta['widgets'] as Map<String, dynamic>;
+              final greeting = widgets['greeting'] as Map<String, dynamic>;
+              return greeting['type'] == 'remote';
+            }, 'valid .rfw_meta.json with remote type'),
+          ),
         },
       );
       expect(result.succeeded, isTrue);
@@ -72,6 +82,16 @@ Widget buildSecond() {
             ),
           ),
           'a|lib/multi.rfw': isNotEmpty,
+          'a|lib/multi.rfw_meta.json': decodedMatches(
+            predicate<String>((s) {
+              final meta = jsonDecode(s) as Map<String, dynamic>;
+              final widgets = meta['widgets'] as Map<String, dynamic>;
+              return widgets.containsKey('first') &&
+                  widgets.containsKey('second') &&
+                  (widgets['first'] as Map)['type'] == 'remote' &&
+                  (widgets['second'] as Map)['type'] == 'remote';
+            }, 'valid .rfw_meta.json with both remote widgets'),
+          ),
         },
       );
       expect(result.succeeded, isTrue);

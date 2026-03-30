@@ -497,7 +497,7 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('generateMeta()', () {
-    test('produces valid JSON', () {
+    test('produces valid JSON with type local', () {
       final widget = makeWidget(
         className: 'CouponCard',
         dartImport: 'package:mystique/widgets/coupon_card.dart',
@@ -511,6 +511,9 @@ void main() {
       // Should not throw
       final decoded = jsonDecode(meta) as Map<String, dynamic>;
       expect(decoded, mapContainsKey('widgets'));
+      final coupon = (decoded['widgets'] as Map<String, dynamic>)['CouponCard']!
+          as Map<String, dynamic>;
+      expect(coupon['type'], equals('local'));
     });
 
     test('widget entry contains import package name', () {

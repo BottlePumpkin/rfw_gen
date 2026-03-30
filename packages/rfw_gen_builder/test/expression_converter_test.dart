@@ -1743,6 +1743,25 @@ void main() {
       expect(warnings, isEmpty);
     });
 
+    test('DataRef path equals loop variable does not throw RangeError', () {
+      final warnings = <String>[];
+      final conv = ExpressionConverter(
+        onWarning: (msg, {int? offset}) => warnings.add(msg),
+      );
+      conv.loopVarNames.add('item');
+
+      final expr = parseExpression("DataRef('item')");
+      final result = conv.convert(expr);
+
+      expect(result, isA<IrDataRef>());
+      expect(warnings, hasLength(1));
+      expect(warnings.first, contains('item'));
+      expect(
+        warnings.first,
+        contains("Use item directly instead of DataRef('item')"),
+      );
+    });
+
     test('does not warn when no loop variables are set', () {
       final warnings = <String>[];
       final conv = ExpressionConverter(

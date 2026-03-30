@@ -93,9 +93,14 @@ class RfwtxtEmitter {
     };
   }
 
-  /// Emits a string literal with escaping for `\` and `"`.
+  /// Emits a string literal with escaping for `\`, `"`, and control characters.
   String _emitString(String s) {
-    final escaped = s.replaceAll(r'\', r'\\').replaceAll('"', r'\"');
+    final escaped = s
+        .replaceAll(r'\', r'\\')
+        .replaceAll('"', r'\"')
+        .replaceAll('\n', r'\n')
+        .replaceAll('\r', r'\r')
+        .replaceAll('\t', r'\t');
     return '"$escaped"';
   }
 

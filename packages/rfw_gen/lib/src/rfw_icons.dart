@@ -25,14 +25,13 @@ class RfwIcon {
   static const int expandLess = 0xe232;
   static const int moreVert = 0xe3e1;
   static const int moreHoriz = 0xe3df;
-  static const int arrowBackIos =
-      0xe093; // alias for arrowForward codepoint varies
-  static const int arrowForwardIos = 0xe093;
+  static const int arrowBackIos = 0xe5e7;
+  static const int arrowForwardIos = 0xe5e8;
   static const int firstPage = 0xe268;
   static const int lastPage = 0xe39b;
   static const int navigateBefore = 0xe41b;
   static const int navigateNext = 0xe41c;
-  static const int subjectoryArrowLeft = 0xe5e0;
+  static const int subdirectoryArrowLeft = 0xe5e0;
   static const int fullscreen = 0xe28a;
   static const int fullscreenExit = 0xe28b;
 
@@ -99,7 +98,7 @@ class RfwIcon {
   static const int contactPhone = 0xe18e;
   static const int contactMail = 0xe18d;
   static const int chatBubble = 0xe15c;
-  static const int chatBubbleOutline = 0xe15d;
+  static const int chatBubbleOutline = 0xe0ca;
   static const int notificationsActive = 0xe42e;
   static const int notificationsOff = 0xe430;
 
@@ -113,7 +112,7 @@ class RfwIcon {
   static const int thumbUp = 0xe62a;
   static const int thumbDown = 0xe628;
   static const int thumbUpOffAlt = 0xe62b;
-  static const int thumbDownOffAlt = 0xe629;
+  static const int thumbDownOffAlt = 0xe816;
   static const int publicIcon = 0xe4a7; // 'public' is reserved
 
   // --- Media ---
@@ -123,7 +122,7 @@ class RfwIcon {
   static const int pause = 0xe49b;
   static const int volumeUp = 0xe64d;
   static const int volumeOff = 0xe64f;
-  static const int stop = 0xe5fa;
+  static const int stop = 0xe614;
   static const int skipNext = 0xe5ad;
   static const int skipPrevious = 0xe5ae;
   static const int fastForward = 0xe258;
@@ -152,7 +151,7 @@ class RfwIcon {
   // --- File ---
   static const int folder = 0xe27b;
   static const int folderOpen = 0xe27c;
-  static const int fileCopy = 0xe265;
+  static const int fileCopy = 0xe173;
   static const int createNewFolder = 0xe19b;
   static const int cloud = 0xe16b;
   static const int cloudUpload = 0xe16d;
@@ -184,7 +183,7 @@ class RfwIcon {
   static const int map = 0xe3c6;
   static const int myLocation = 0xe41a;
   static const int locationOn = 0xe3a3;
-  static const int locationOff = 0xe3a4;
+  static const int locationOff = 0xe3a5;
   static const int directions = 0xe1c4;
   static const int navigation = 0xe41d;
 
@@ -220,6 +219,8 @@ class RfwIcon {
     'moreVert': moreVert, 'moreHoriz': moreHoriz,
     'firstPage': firstPage, 'lastPage': lastPage,
     'navigateBefore': navigateBefore, 'navigateNext': navigateNext,
+    'arrowBackIos': arrowBackIos, 'arrowForwardIos': arrowForwardIos,
+    'subdirectoryArrowLeft': subdirectoryArrowLeft,
     'fullscreen': fullscreen, 'fullscreenExit': fullscreenExit,
 
     // Action
@@ -229,7 +230,8 @@ class RfwIcon {
     'filterList': filterList, 'sort': sort, 'clear': clear,
     'download': download, 'upload': upload, 'openInNew': openInNew,
     'checkCircle': checkCircle, 'checkCircleOutline': checkCircleOutline,
-    'doneAll': doneAll, 'print': print, 'undo': undo, 'redo': redo,
+    'doneAll': doneAll, 'power': power, 'print': print, 'undo': undo,
+    'redo': redo,
     'zoomIn': zoomIn, 'zoomOut': zoomOut, 'login': login, 'logout': logout,
 
     // Content

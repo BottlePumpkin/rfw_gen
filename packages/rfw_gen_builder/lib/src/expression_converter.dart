@@ -1248,10 +1248,13 @@ class ExpressionConverter {
       if (refType == 'DataRef' && loopVarNames.isNotEmpty) {
         final firstSegment = path.split('.').first;
         if (loopVarNames.contains(firstSegment)) {
+          final suggestion = path.length > firstSegment.length + 1
+              ? "Use $firstSegment['${path.substring(firstSegment.length + 1)}'] instead."
+              : "Use $firstSegment directly instead of DataRef('$firstSegment').";
           onWarning?.call(
             "'$firstSegment' is a loop variable — "
             "DataRef('$path') generates data.$path which is incorrect. "
-            "Use $firstSegment['${path.substring(firstSegment.length + 1)}'] instead.",
+            "$suggestion",
             offset: expr.offset,
           );
         }

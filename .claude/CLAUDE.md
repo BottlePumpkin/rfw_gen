@@ -40,10 +40,12 @@ Monorepo structure:
 ## Commands
 
 - `melos bootstrap` — install package dependencies
-- `melos exec -- dart test` — run all tests
-- `dart analyze` — static analysis
-- `cd example && flutter test --tags golden` — run golden tests
-- `cd example && flutter test --exclude-tags golden` — run tests excluding golden
+- `melos run test --no-select` — run all tests across packages
+- `melos run analyze --no-select` — static analysis across packages
+- `melos run format --no-select` — format all packages
+- `melos run format:check --no-select` — check format without modifying
+- `melos run test:golden --no-select` — run golden tests in example
+- `melos run test:all --no-select` — run all tests including golden
 
 ## References
 

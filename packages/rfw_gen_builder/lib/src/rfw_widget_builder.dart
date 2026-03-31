@@ -95,25 +95,21 @@ class RfwWidgetBuilder implements Builder {
     final remoteWidgetMetas = <String, Map<String, dynamic>>{};
 
     for (final function in annotatedFunctions) {
-      try {
-        final result = converter.convertFromAst(function, source: source);
-        parts.add(result.rfwtxt);
-        remoteWidgetMetas[result.widgetName] = _buildRemoteWidgetMeta(result);
-        for (final issue in result.issues) {
-          if (issue.isFatal) {
-            log.severe(issue.toString());
-          } else {
-            log.warning(issue.toString());
-          }
+      final result = converter.convertFromAst(function, source: source);
+
+      // Log all issues from conversion.
+      for (final issue in result.issues) {
+        if (issue.isFatal) {
+          log.severe(issue.toString());
+        } else {
+          log.warning(issue.toString());
         }
-      } on UnsupportedWidgetError catch (e) {
-        final hasGuidance = e.message != null;
-        final suggestion = hasGuidance
-            ? ''
-            : '\n  Suggestion: Check that the widget class is imported';
-        log.severe('${function.name.lexeme}: $e$suggestion');
-      } catch (e) {
-        log.severe('Failed to convert ${function.name.lexeme}: $e');
+      }
+
+      // Only collect successful conversions.
+      if (result.rfwtxt != null) {
+        parts.add(result.rfwtxt!);
+        remoteWidgetMetas[result.widgetName] = _buildRemoteWidgetMeta(result);
       }
     }
 

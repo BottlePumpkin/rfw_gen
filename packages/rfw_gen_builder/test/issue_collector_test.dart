@@ -1,5 +1,4 @@
 import 'package:rfw_gen/rfw_gen.dart';
-import 'package:rfw_gen/rfw_gen.dart' show RfwGenIssueCode;
 import 'package:rfw_gen_builder/src/issue_collector.dart';
 import 'package:test/test.dart';
 

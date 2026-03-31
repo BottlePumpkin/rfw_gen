@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:rfw_gen/rfw_gen.dart' show RfwGenIssueCode;
 import 'package:rfw_gen_builder/src/expression_converter.dart';
 import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:test/test.dart';
@@ -941,13 +942,15 @@ void main() {
     });
 
     test('UnsupportedExpressionError stores message', () {
-      final error = UnsupportedExpressionError('test message', offset: 10);
+      final error = UnsupportedExpressionError('test message',
+          offset: 10, code: RfwGenIssueCode.unsupportedExpression);
       expect(error.message, equals('test message'));
       expect(error.offset, equals(10));
     });
 
     test('UnsupportedExpressionError is an Exception', () {
-      final error = UnsupportedExpressionError('test');
+      final error = UnsupportedExpressionError('test',
+          code: RfwGenIssueCode.unsupportedExpression);
       expect(error, isA<Exception>());
     });
   });
@@ -1834,7 +1837,8 @@ void main() {
     test('warns when DataRef path starts with a loop variable name', () {
       final warnings = <String>[];
       final conv = ExpressionConverter(
-        onWarning: (msg, {int? offset}) => warnings.add(msg),
+        onWarning: (msg, {int? offset, RfwGenIssueCode? code}) =>
+            warnings.add(msg),
       );
       conv.loopVarNames.add('contact');
 
@@ -1851,7 +1855,8 @@ void main() {
     test('does not warn when DataRef path does not match loop variable', () {
       final warnings = <String>[];
       final conv = ExpressionConverter(
-        onWarning: (msg, {int? offset}) => warnings.add(msg),
+        onWarning: (msg, {int? offset, RfwGenIssueCode? code}) =>
+            warnings.add(msg),
       );
       conv.loopVarNames.add('contact');
 
@@ -1864,7 +1869,8 @@ void main() {
     test('DataRef path equals loop variable does not throw RangeError', () {
       final warnings = <String>[];
       final conv = ExpressionConverter(
-        onWarning: (msg, {int? offset}) => warnings.add(msg),
+        onWarning: (msg, {int? offset, RfwGenIssueCode? code}) =>
+            warnings.add(msg),
       );
       conv.loopVarNames.add('item');
 
@@ -1883,7 +1889,8 @@ void main() {
     test('does not warn when no loop variables are set', () {
       final warnings = <String>[];
       final conv = ExpressionConverter(
-        onWarning: (msg, {int? offset}) => warnings.add(msg),
+        onWarning: (msg, {int? offset, RfwGenIssueCode? code}) =>
+            warnings.add(msg),
       );
 
       final expr = parseExpression("DataRef('contact.id')");

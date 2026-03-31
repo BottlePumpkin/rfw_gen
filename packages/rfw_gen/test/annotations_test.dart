@@ -23,6 +23,7 @@ void main() {
     test('fatal issue isFatal returns true', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.fatal,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Something went wrong',
       );
       expect(issue.isFatal, isTrue);
@@ -31,6 +32,7 @@ void main() {
     test('warning issue isFatal returns false', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.warning,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Something to note',
       );
       expect(issue.isFatal, isFalse);
@@ -39,6 +41,7 @@ void main() {
     test('toString includes error label for fatal', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.fatal,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Fatal problem',
       );
       expect(issue.toString(), contains('[rfw_gen]'));
@@ -49,6 +52,7 @@ void main() {
     test('toString includes warning label for warning', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.warning,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Minor issue',
       );
       expect(issue.toString(), contains('Warning'));
@@ -58,6 +62,7 @@ void main() {
     test('toString includes line number when provided', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.fatal,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Error on line',
         line: 42,
       );
@@ -67,6 +72,7 @@ void main() {
     test('toString includes suggestion when provided', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.warning,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Check this',
         suggestion: 'Try doing X instead',
       );
@@ -76,6 +82,7 @@ void main() {
     test('toString omits line number when not provided', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.fatal,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Some error message',
       );
       expect(issue.toString(), isNot(contains('(line')));
@@ -84,6 +91,7 @@ void main() {
     test('toString includes column when provided', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.fatal,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Error here',
         line: 12,
         column: 8,
@@ -94,6 +102,7 @@ void main() {
     test('toString shows only line when column is null', () {
       const issue = RfwGenIssue(
         severity: RfwGenSeverity.fatal,
+        code: RfwGenIssueCode.unsupportedExpression,
         message: 'Error here',
         line: 12,
       );
@@ -105,8 +114,14 @@ void main() {
   group('RfwGenException', () {
     test('toString joins all issues', () {
       const issues = [
-        RfwGenIssue(severity: RfwGenSeverity.fatal, message: 'Error one'),
-        RfwGenIssue(severity: RfwGenSeverity.warning, message: 'Warning two'),
+        RfwGenIssue(
+            severity: RfwGenSeverity.fatal,
+            code: RfwGenIssueCode.unsupportedExpression,
+            message: 'Error one'),
+        RfwGenIssue(
+            severity: RfwGenSeverity.warning,
+            code: RfwGenIssueCode.unsupportedExpression,
+            message: 'Warning two'),
       ];
       const exception = RfwGenException(issues);
       final str = exception.toString();
@@ -116,7 +131,10 @@ void main() {
 
     test('stores issues list', () {
       const issues = [
-        RfwGenIssue(severity: RfwGenSeverity.fatal, message: 'Test'),
+        RfwGenIssue(
+            severity: RfwGenSeverity.fatal,
+            code: RfwGenIssueCode.unsupportedExpression,
+            message: 'Test'),
       ];
       const exception = RfwGenException(issues);
       expect(exception.issues, hasLength(1));

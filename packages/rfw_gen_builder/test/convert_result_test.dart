@@ -9,7 +9,12 @@ void main() {
     test('hasErrors is true when fatal issue present', () {
       final result = ConvertResult(
         rfwtxt: 'widget foo = Text();',
-        issues: [RfwGenIssue(severity: RfwGenSeverity.fatal, message: 'bad')],
+        issues: [
+          RfwGenIssue(
+              severity: RfwGenSeverity.fatal,
+              code: RfwGenIssueCode.unsupportedExpression,
+              message: 'bad')
+        ],
         widgetName: 'test',
         stateDecl: null,
         metadata:
@@ -21,7 +26,12 @@ void main() {
     test('hasErrors is false when only warnings', () {
       final result = ConvertResult(
         rfwtxt: 'widget foo = Text();',
-        issues: [RfwGenIssue(severity: RfwGenSeverity.warning, message: 'meh')],
+        issues: [
+          RfwGenIssue(
+              severity: RfwGenSeverity.warning,
+              code: RfwGenIssueCode.unsupportedExpression,
+              message: 'meh')
+        ],
         widgetName: 'test',
         stateDecl: null,
         metadata:
@@ -33,7 +43,12 @@ void main() {
     test('hasWarnings is true when warning present', () {
       final result = ConvertResult(
         rfwtxt: '',
-        issues: [RfwGenIssue(severity: RfwGenSeverity.warning, message: 'w')],
+        issues: [
+          RfwGenIssue(
+              severity: RfwGenSeverity.warning,
+              code: RfwGenIssueCode.unsupportedExpression,
+              message: 'w')
+        ],
         widgetName: 'test',
         stateDecl: null,
         metadata:

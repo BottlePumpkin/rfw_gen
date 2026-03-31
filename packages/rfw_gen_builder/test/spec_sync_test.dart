@@ -152,7 +152,7 @@ Widget build() {
 }
 ''';
       final result = rfwConverter.convertFromSource(input);
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('Card with shape produces parseable rfwtxt', () {
@@ -171,7 +171,7 @@ Widget build() {
 }
 ''';
       final result = rfwConverter.convertFromSource(input);
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('Row with textDirection produces parseable rfwtxt', () {
@@ -185,7 +185,7 @@ Widget build() {
 }
 ''';
       final result = rfwConverter.convertFromSource(input);
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
   });
 }

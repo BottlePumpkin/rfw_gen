@@ -95,7 +95,7 @@ void main() {
 
     test('stores defaultCase', () {
       const sw = RfwSwitch(
-        value: 'x',
+        value: StateRef('x'),
         cases: {1: 'one'},
         defaultCase: 'other',
       );
@@ -104,7 +104,7 @@ void main() {
 
     test('defaultCase is null by default', () {
       const sw = RfwSwitch(
-        value: 'x',
+        value: StateRef('x'),
         cases: {},
       );
       expect(sw.defaultCase, isNull);
@@ -127,7 +127,7 @@ void main() {
 
     test('defaultCase is null by default', () {
       final sw = RfwSwitchValue<String>(
-        value: 'x',
+        value: StateRef('x'),
         cases: {'a': 'alpha'},
       );
       expect(sw.defaultCase, isNull);

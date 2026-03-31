@@ -1,8 +1,18 @@
+/// Sealed base class for dynamic references in rfwtxt.
+///
+/// [DataRef], [StateRef], and [ArgsRef] all implement this type,
+/// enabling type-safe usage in [RfwSwitch.value] and [RfwSwitchValue.value].
+sealed class RfwRef {
+  /// Dot-separated path into the referenced data.
+  String get path;
+}
+
 /// Reference to `data.path` in rfwtxt.
 ///
 /// Use this to bind a widget parameter to dynamic data provided at runtime.
-class DataRef {
+class DataRef implements RfwRef {
   /// Dot-separated path into the data model (e.g. `'user.name'`).
+  @override
   final String path;
 
   /// Creates a data reference to [path].
@@ -12,8 +22,9 @@ class DataRef {
 /// Reference to `args.path` in rfwtxt.
 ///
 /// Use this to forward constructor arguments through to the widget tree.
-class ArgsRef {
+class ArgsRef implements RfwRef {
   /// Dot-separated path into the widget's constructor arguments.
+  @override
   final String path;
 
   /// Creates an args reference to [path].
@@ -23,8 +34,9 @@ class ArgsRef {
 /// Reference to `state.path` in rfwtxt.
 ///
 /// Use this to read widget-local state declared via [RfwWidget.state].
-class StateRef {
+class StateRef implements RfwRef {
   /// Dot-separated path into the widget's local state.
+  @override
   final String path;
 
   /// Creates a state reference to [path].
@@ -67,8 +79,8 @@ class RfwConcat {
 ///
 /// Use when the widget itself varies based on a condition.
 class RfwSwitch {
-  /// The expression to switch on (typically a [StateRef] or [DataRef]).
-  final Object value;
+  /// The expression to switch on (must be a [DataRef] or [StateRef]).
+  final RfwRef value;
 
   /// Map of case values to widget results.
   final Map<Object, Object> cases;
@@ -88,8 +100,8 @@ class RfwSwitch {
 ///
 /// Use when a scalar parameter varies based on a condition.
 class RfwSwitchValue<T> {
-  /// The expression to switch on (typically a [StateRef] or [DataRef]).
-  final Object value;
+  /// The expression to switch on (must be a [DataRef] or [StateRef]).
+  final RfwRef value;
 
   /// Map of case values to typed results.
   final Map<Object, T> cases;
@@ -109,8 +121,8 @@ class RfwSwitchValue<T> {
 ///
 /// Generates a list spread in rfwtxt that iterates over [items].
 class RfwFor {
-  /// The collection to iterate (typically a [DataRef]).
-  final Object items;
+  /// The collection to iterate (must be a [DataRef]).
+  final DataRef items;
 
   /// The loop variable name used in the generated rfwtxt.
   final String itemName;

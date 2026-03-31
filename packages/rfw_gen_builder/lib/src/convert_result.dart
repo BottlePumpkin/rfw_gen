@@ -6,8 +6,8 @@ import 'metadata_collector.dart';
 /// The result of an RFW conversion, containing the generated rfwtxt output
 /// and any diagnostic issues encountered during conversion.
 class ConvertResult {
-  /// The generated rfwtxt content.
-  final String rfwtxt;
+  /// The generated rfwtxt content, or null if fatal errors prevented generation.
+  final String? rfwtxt;
 
   /// Diagnostic issues collected during conversion.
   final List<RfwGenIssue> issues;

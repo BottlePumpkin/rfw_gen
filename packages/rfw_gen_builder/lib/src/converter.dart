@@ -3,8 +3,9 @@ import 'dart:typed_data';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:rfw/formats.dart';
+import 'package:rfw_gen/rfw_gen.dart' show RfwGenIssueCode;
 
-import 'ast_visitor.dart';
+import 'ast_visitor.dart' show WidgetAstVisitor, UnsupportedWidgetError;
 import 'convert_result.dart';
 import 'expression_converter.dart';
 import 'icon_resolver.dart';
@@ -72,23 +73,55 @@ class RfwConverter {
       registry: registry,
       expressionConverter: ExpressionConverter(
         iconResolver: iconResolver,
-        onWarning: (message, {int? offset}) {
-          collector.warning(message, offset: offset);
+        onWarning: (message, {int? offset, RfwGenIssueCode? code}) {
+          collector.warning(message,
+              code: code ?? RfwGenIssueCode.unsupportedExpression,
+              offset: offset);
         },
       ),
       collector: collector,
     );
-    final irTree = visitor.extractWidgetTree(function);
+
+    IrValue? irTree;
+    try {
+      irTree = visitor.extractWidgetTree(function);
+    } on UnsupportedWidgetError catch (e) {
+      collector.fatal(
+        e.message ?? '${e.widgetName} is not registered',
+        code: e.code,
+      );
+    } catch (e) {
+      collector.fatal(
+        'Conversion failed: $e',
+        code: RfwGenIssueCode.unsupportedExpression,
+      );
+    }
+
+    if (irTree == null) {
+      return ConvertResult(
+        rfwtxt: null,
+        issues: collector.issues,
+      );
+    }
 
     final imports = _collectImports(irTree);
     final metadata = collectMetadata(irTree);
     final emitter = RfwtxtEmitter();
-    final rfwtxt = emitter.emit(
-      widgetName: widgetName,
-      root: irTree,
-      imports: imports,
-      stateDecl: stateDecl,
-    );
+
+    String? rfwtxt;
+    try {
+      rfwtxt = emitter.emit(
+        widgetName: widgetName,
+        root: irTree,
+        imports: imports,
+        stateDecl: stateDecl,
+      );
+    } catch (e) {
+      collector.fatal(
+        'Emission failed: $e',
+        code: RfwGenIssueCode.invalidFloatValue,
+      );
+    }
 
     return ConvertResult(
       rfwtxt: rfwtxt,
@@ -126,6 +159,7 @@ class RfwConverter {
                   } on UnsupportedExpressionError catch (e) {
                     collector.warning(
                       'Failed to convert state field "$key": ${e.message}',
+                      code: RfwGenIssueCode.stateFieldConversionFailed,
                       offset: e.offset,
                       suggestion:
                           'State initial values only support literals (string, number, boolean)',
@@ -199,6 +233,7 @@ class RfwConverter {
         if (arguments != null && arguments.arguments.isEmpty) {
           collector?.warning(
             '@RfwWidget() requires a name parameter',
+            code: RfwGenIssueCode.unsupportedExpression,
             suggestion: "Use @RfwWidget('widgetName'). "
                 'Falling back to function name: '
                 '${_deriveNameFromFunction(function)}',

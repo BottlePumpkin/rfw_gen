@@ -1,3 +1,6 @@
+import 'package:rfw_gen/rfw_gen.dart' show RfwGenIssueCode;
+
+import 'expression_converter.dart';
 import 'ir.dart';
 
 /// Emits an IR widget tree as an rfwtxt string.
@@ -107,7 +110,10 @@ class RfwtxtEmitter {
   /// Emits a double value. Whole numbers always show `.0`.
   String _emitNumber(double v) {
     if (v.isNaN || v.isInfinite) {
-      throw StateError('Cannot emit special float value: $v');
+      throw UnsupportedExpressionError(
+        'Cannot emit special float value: $v',
+        code: RfwGenIssueCode.invalidFloatValue,
+      );
     }
     if (v == v.truncateToDouble()) {
       // Whole number — format without scientific notation.

@@ -15,7 +15,7 @@ and custom widget support.
 
 ```yaml
 dev_dependencies:
-  rfw_preview: ^0.5.0
+  rfw_preview: ^0.5.2
 ```
 
 ## Quick Start

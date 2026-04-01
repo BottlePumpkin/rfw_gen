@@ -13,10 +13,10 @@ to your dev dependencies:
 ```yaml
 dependencies:
   rfw: ^1.0.17
-  rfw_gen: ^0.5.0
+  rfw_gen: ^0.5.2
 
 dev_dependencies:
-  rfw_gen_builder: ^0.5.0
+  rfw_gen_builder: ^0.5.2
   build_runner: ^2.4.0
 ```
 
@@ -52,30 +52,45 @@ dart run build_runner build
 
 ## Supported Widgets
 
-65 widgets are supported across two categories.
+66 widgets are supported across two categories.
 
-### Core Widgets (~48)
+### Core Widgets (49)
 
+- **Text**: Text
 - **Layout**: Align, AspectRatio, Center, Column, Expanded, Flexible,
   FittedBox, FractionallySizedBox, IntrinsicHeight, IntrinsicWidth, Row,
   SizedBox, SizedBoxExpand, SizedBoxShrink, Spacer, Stack, Wrap
 - **Scrolling**: GridView, ListBody, ListView, SingleChildScrollView
 - **Styling**: ClipRRect, ColoredBox, Container, DefaultTextStyle,
-  Directionality, Icon, IconTheme, Image, Opacity, Padding, Placeholder, Text
+  Directionality, Icon, IconTheme, Image, Opacity, Padding, Placeholder
 - **Transform**: Positioned, Rotation, Scale
 - **Interaction**: GestureDetector
 - **Other**: AnimationDefaults, SafeArea
+- **Animated Aliases**: AnimatedAlign, AnimatedContainer, AnimatedPadding,
+  AnimatedDefaultTextStyle, AnimatedOpacity, AnimatedPositionedDirectional,
+  PositionedDirectional
 
-### Material Widgets (~17)
+### Material Widgets (17)
 
 AppBar, Card, CircularProgressIndicator, Divider, Drawer, ElevatedButton,
 FloatingActionButton, InkWell, LinearProgressIndicator, ListTile, Material,
 OutlinedButton, OverflowBar, Scaffold, Slider, TextButton, VerticalDivider
 
-See [`rules/rfw-widgets.md`](https://github.com/byeonghopark-jobis/rfw_gen/blob/main/.claude/rules/rfw-widgets.md)
+See [`rules/rfw-widgets.md`](https://github.com/BottlePumpkin/rfw_gen/blob/main/.claude/rules/rfw-widgets.md)
 for the full parameter reference.
 
 ## Dynamic Features
+
+### Type-Safe References (RfwRef)
+
+All dynamic references extend the `RfwRef` sealed class, providing
+type safety at compile time:
+
+| Class | RFW Prefix | Usage |
+|-------|-----------|-------|
+| `DataRef` | `data.` | Server-supplied data |
+| `StateRef` | `state.` | Local widget state |
+| `ArgsRef` | `args.` | Widget constructor arguments |
 
 ### Data Binding
 
@@ -234,6 +249,21 @@ onTap: set state.isActive = switch state.isActive {
 },
 ```
 
+### BoxConstraints
+
+The generator supports `BoxConstraints` and its named constructors:
+
+```dart
+Container(
+  constraints: BoxConstraints(minWidth: 100, maxWidth: 300),
+  child: Text('Constrained'),
+)
+```
+
+Supported constructors: `BoxConstraints()`, `BoxConstraints.tight()`,
+`BoxConstraints.loose()`, `BoxConstraints.tightFor()`,
+`BoxConstraints.tightForFinite()`.
+
 ## Custom Widgets
 
 Custom widgets are automatically detected and supported. When you use a
@@ -279,7 +309,7 @@ For each `.dart` file containing `@RfwWidget` functions, the generator produces:
 | `.rfwtxt` | Human-readable RFW text format |
 | `.rfw` | Binary format for production use |
 | `.rfw_library.dart` | `LocalWidgetBuilder` map for custom widgets |
-| `.rfw_meta.json` | Widget metadata (params, child type, handlers) |
+| `.rfw_meta.json` | Widget metadata: local widgets (params, child type, handlers) and remote @RfwWidget entries (state, dataRefs, stateRefs, events) |
 
 ## Rendering Generated Widgets
 
@@ -369,10 +399,18 @@ Widget iconDemo() => Icon(icon: RfwIcon.home, size: 24);
 If your icon is not in `RfwIcon`, the builder will attempt to resolve it via the Dart
 analyzer as a fallback. See `RfwIcon` for the full list of supported icons.
 
+## Error Reporting
+
+Build-time issues include a structured `RfwGenIssueCode` for programmatic
+error handling. Each issue has a severity (fatal or warning) and a machine-readable
+code such as `unsupportedExpression`, `widgetNotRegistered`, or
+`boxConstraintsUnsupportedConstructor`. See the `RfwGenIssueCode` enum for the
+full list of 48 error codes.
+
 ## Limitations
 
 - `@RfwWidget` must be applied to top-level functions only.
-- Only the 65 built-in widgets (core + material) are supported out of the box.
+- Only the 66 built-in widgets (core + material) are supported out of the box.
   Other widgets are auto-detected and require their source to be importable.
 - `double.infinity` is not supported in RFW. Use `SizedBoxExpand` to fill
   available space, or set a fixed size.
@@ -404,7 +442,6 @@ analyzer as a fallback. See `RfwIcon` for the full list of supported icons.
   )
   ```
 
-## Pre-1.0 Note
+## Changelog
 
-This package is pre-1.0. Minor version bumps may include breaking changes.
-Pin to a specific version if stability is critical for your project.
+See [CHANGELOG.md](CHANGELOG.md) for release history and migration guides.

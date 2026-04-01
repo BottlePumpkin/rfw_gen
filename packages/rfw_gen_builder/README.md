@@ -8,10 +8,10 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  rfw_gen: ^0.5.0
+  rfw_gen: ^0.5.2
 
 dev_dependencies:
-  rfw_gen_builder: ^0.5.0
+  rfw_gen_builder: ^0.5.2
   build_runner: ^2.4.0
 ```
 
@@ -38,7 +38,7 @@ This generates:
 - `.rfwtxt` — human-readable RFW text
 - `.rfw` — binary format for production
 - `.rfw_library.dart` — `LocalWidgetBuilder` map for custom widgets
-- `.rfw_meta.json` — widget metadata for MCP/tooling
+- `.rfw_meta.json` — widget metadata for MCP/tooling (includes both local custom widget params and remote @RfwWidget state/dataRefs/events)
 
 ## Documentation
 

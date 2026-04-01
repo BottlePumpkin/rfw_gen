@@ -23,10 +23,10 @@ and `.rfw` files ready for server-driven UI.
 
 ```yaml
 dependencies:
-  rfw_gen: ^0.5.0
+  rfw_gen: ^0.5.2
 
 dev_dependencies:
-  rfw_gen_builder: ^0.5.0
+  rfw_gen_builder: ^0.5.2
   build_runner: ^2.4.0
 ```
 
@@ -76,7 +76,7 @@ Flutter Widget Code
 
 Core components in `packages/rfw_gen/`:
 - **RfwConverter** — traverses the Flutter widget tree and emits rfwtxt
-- **WidgetRegistry** — maps Flutter widgets to their RFW equivalents (65 widgets)
+- **WidgetRegistry** — maps Flutter widgets to their RFW equivalents (66 widgets)
 - **WidgetResolver** — analyzes custom widget constructors via Dart analyzer
 - **Annotations** — `@RfwWidget`, `DataRef`, `StateRef`, `ArgsRef`, `RfwHandler`, etc.
 
@@ -96,17 +96,23 @@ melos bootstrap
 ### Commands
 
 ```bash
-# Run all tests
-melos exec -- dart test
+# Run all tests across packages
+melos run test --no-select
 
-# Static analysis
-dart analyze
+# Static analysis across packages
+melos run analyze --no-select
+
+# Format all packages
+melos run format --no-select
+
+# Check format without modifying
+melos run format:check --no-select
 
 # Golden tests (example app)
-cd example && flutter test --tags golden
+melos run test:golden --no-select
 
-# Non-golden tests (example app)
-cd example && flutter test --exclude-tags golden
+# All tests including golden
+melos run test:all --no-select
 ```
 
 ### Branch Rules
@@ -115,10 +121,9 @@ cd example && flutter test --exclude-tags golden
 - Branch naming: `<type>/<description>` (e.g., `feat/data-binding`, `fix/offset-missing`)
 - Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `release`
 
-## Pre-1.0 Notice
+## Changelog
 
-This project is pre-1.0. Minor version bumps may include breaking changes.
-Pin to a specific version if stability is critical.
+See individual package CHANGELOGs for release history and migration guides.
 
 ## License
 

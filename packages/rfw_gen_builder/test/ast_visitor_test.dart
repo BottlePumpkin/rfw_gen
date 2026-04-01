@@ -698,7 +698,7 @@ void doNothing() {
 
       expect(
         () => visitor.extractWidgetTree(fn),
-        throwsStateError,
+        throwsA(isA<UnsupportedWidgetError>()),
       );
     });
 

@@ -1,4 +1,6 @@
 import 'package:rfw/formats.dart' show parseLibraryFile;
+import 'package:rfw_gen_builder/src/expression_converter.dart'
+    show UnsupportedExpressionError;
 import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:rfw_gen_builder/src/rfwtxt_emitter.dart';
 import 'package:test/test.dart';
@@ -747,7 +749,7 @@ void main() {
             root: node,
             imports: {'core.widgets'},
           ),
-          throwsStateError,
+          throwsA(isA<UnsupportedExpressionError>()),
         );
       });
 
@@ -762,7 +764,7 @@ void main() {
             root: node,
             imports: {'core.widgets'},
           ),
-          throwsStateError,
+          throwsA(isA<UnsupportedExpressionError>()),
         );
       });
 
@@ -777,7 +779,7 @@ void main() {
             root: node,
             imports: {'core.widgets'},
           ),
-          throwsStateError,
+          throwsA(isA<UnsupportedExpressionError>()),
         );
       });
     });

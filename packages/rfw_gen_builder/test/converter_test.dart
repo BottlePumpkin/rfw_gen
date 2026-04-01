@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:rfw_gen/rfw_gen.dart';
 import 'package:rfw_gen_builder/rfw_gen_builder.dart';
-import 'package:rfw_gen_builder/src/ast_visitor.dart';
 import 'package:rfw_gen_builder/src/ir.dart';
 import 'package:test/test.dart';
 
@@ -117,16 +116,15 @@ Widget buildToolbar() {
       expect(result.rfwtxt, contains('mainAxisAlignment: "center"'));
     });
 
-    test('throws on unsupported widget', () {
+    test('returns errors for unsupported widget', () {
       const input = '''
 Widget buildBad() {
   return CupertinoButton(child: Text('hello'));
 }
 ''';
-      expect(
-        () => converter.convertFromSource(input),
-        throwsA(isA<UnsupportedWidgetError>()),
-      );
+      final result = converter.convertFromSource(input);
+      expect(result.hasErrors, isTrue);
+      expect(result.rfwtxt, isNull);
     });
 
     test('arrow function body works', () {
@@ -247,7 +245,7 @@ widget greeting = Text(
     test('round-trip: source -> rfwtxt -> blob produces valid binary', () {
       const input = "Widget buildGreeting() { return Text('Hello'); }";
       final result = converter.convertFromSource(input);
-      final blob = converter.toBlob(result.rfwtxt);
+      final blob = converter.toBlob(result.rfwtxt!);
       expect(blob, isA<Uint8List>());
       expect(blob.isNotEmpty, isTrue);
     });

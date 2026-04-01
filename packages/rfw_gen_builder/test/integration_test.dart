@@ -13,7 +13,7 @@ void main() {
     test('Text widget parses without error', () {
       const input = "Widget buildGreeting() { return Text('Hello World'); }";
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -30,7 +30,7 @@ Widget buildList() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -53,7 +53,7 @@ Widget buildNested() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -70,7 +70,7 @@ Widget buildToolbar() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -85,7 +85,7 @@ Widget buildCard() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final blob = converter.toBlob(result.rfwtxt);
+      final blob = converter.toBlob(result.rfwtxt!);
       final decoded = decodeLibraryBlob(blob);
       expect(decoded.widgets, isNotEmpty);
     });
@@ -105,7 +105,7 @@ Widget buildOverlay() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -128,7 +128,7 @@ Widget buildList() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -147,7 +147,7 @@ Widget buildTags() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -167,7 +167,7 @@ Widget buildCard() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -186,7 +186,7 @@ Widget buildPage() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -206,7 +206,7 @@ Widget buildAnimated() {
 }
 ''';
       final result = converter.convertFromSource(input);
-      final blob = converter.toBlob(result.rfwtxt);
+      final blob = converter.toBlob(result.rfwtxt!);
       final decoded = decodeLibraryBlob(blob);
       expect(decoded.widgets, isNotEmpty);
     });
@@ -218,8 +218,8 @@ Widget buildAnimated() {
       final result1 = converter.convertFromSource(input1);
       final result2 = converter.convertFromSource(input2);
 
-      final blob1 = converter.toBlob(result1.rfwtxt);
-      final blob2 = converter.toBlob(result2.rfwtxt);
+      final blob1 = converter.toBlob(result1.rfwtxt!);
+      final blob2 = converter.toBlob(result2.rfwtxt!);
 
       // Each blob should be non-empty and reasonably small (< 1KB for simple widgets).
       expect(blob1, isNotEmpty);
@@ -245,7 +245,7 @@ Widget build() {
 ''';
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('set state.active = true'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -261,7 +261,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('event "button.click" {}'));
       expect(result.rfwtxt, contains('import material;'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -281,7 +281,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('import core.widgets;'));
       expect(result.rfwtxt, contains('import material;'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -298,7 +298,7 @@ Widget build() {
 ''';
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('set state.sliderValue = args.value'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -330,7 +330,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('Rotation('));
       expect(result.rfwtxt, contains('turns: 0.25'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -346,7 +346,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('Scale('));
       expect(result.rfwtxt, contains('scale: 2.0'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -358,7 +358,7 @@ Widget build() {
 ''';
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('SizedBoxShrink('));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -373,7 +373,7 @@ Widget build() {
 ''';
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('AnimationDefaults('));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -394,7 +394,7 @@ Widget build() {
       expect(result.rfwtxt, contains('Padding('));
       expect(result.rfwtxt, contains('padding:'));
       expect(result.rfwtxt, contains('duration: 300'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -415,7 +415,7 @@ Widget build() {
       expect(result.rfwtxt, contains('Opacity('));
       expect(result.rfwtxt, contains('opacity: 0.5'));
       expect(result.rfwtxt, contains('duration: 300'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
 
@@ -439,7 +439,7 @@ Widget build() {
       expect(result.rfwtxt, contains('import core.widgets;'));
       expect(result.rfwtxt, contains('Positioned('));
       expect(result.rfwtxt, contains('end: 20.0'));
-      final library = parseLibraryFile(result.rfwtxt);
+      final library = parseLibraryFile(result.rfwtxt!);
       expect(library.widgets, isNotEmpty);
     });
   });
@@ -459,7 +459,7 @@ Widget buildTest() {
 ''';
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('data.user.name'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('ArgsRef produces parseable rfwtxt', () {
@@ -470,7 +470,7 @@ Widget buildCard() {
 ''';
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('args.item.title'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('RfwFor with LoopVar produces parseable rfwtxt', () {
@@ -490,7 +490,7 @@ Widget buildList() {
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('...for item in data.items:'));
       expect(result.rfwtxt, contains('item.name'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('RfwSwitch with widget cases produces parseable rfwtxt', () {
@@ -511,7 +511,7 @@ Widget buildToggle() {
 ''';
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('switch state.active'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('RfwSwitch at root produces parseable rfwtxt', () {
@@ -529,7 +529,7 @@ Widget buildToggle() {
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('switch state.active'));
       expect(result.rfwtxt, contains('Text('));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('RfwSwitch at root with defaultCase produces parseable rfwtxt', () {
@@ -548,7 +548,7 @@ Widget buildStatus() {
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('switch data.status'));
       expect(result.rfwtxt, contains('default:'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     // Note: RfwFor at root emits a spread (`...for`) which is not valid as the
@@ -579,7 +579,7 @@ Widget buildGreeting() {
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('"Hello, "'));
       expect(result.rfwtxt, contains('data.name'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('state declaration produces parseable rfwtxt', () {
@@ -597,7 +597,7 @@ Widget buildToggle() {
       expect(result.rfwtxt, contains('widget toggle { down: false }'));
       expect(result.rfwtxt, contains('set state.down = true'));
       expect(result.rfwtxt, contains('set state.down = false'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('event with dynamic payload produces parseable rfwtxt', () {
@@ -612,7 +612,7 @@ Widget buildItem() {
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('event "shop.purchase"'));
       expect(result.rfwtxt, contains('args.product.id'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('complex: RfwFor + DataRef inside Column produces parseable rfwtxt',
@@ -635,7 +635,7 @@ Widget buildFeed() {
       expect(result.rfwtxt, contains('data.header'));
       expect(result.rfwtxt, contains('...for entry in data.feed.items:'));
       expect(result.rfwtxt, contains('entry.title'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
 
     test('spread RfwFor in children produces parseable rfwtxt', () {
@@ -656,7 +656,7 @@ Widget buildList() {
       final result = converter.convertFromSource(source);
       expect(result.rfwtxt, contains('...for item in data.items'));
       expect(result.rfwtxt, contains('Header'));
-      expect(() => parseLibraryFile(result.rfwtxt), returnsNormally);
+      expect(() => parseLibraryFile(result.rfwtxt!), returnsNormally);
     });
   });
 
@@ -790,7 +790,7 @@ Widget build() {
       expect(result.rfwtxt, contains('text: "hello"'));
       expect(result.rfwtxt, contains('fontType: "heading24Bold"'));
       expect(result.rfwtxt, contains('color: 0xFF141618'));
-      parseLibraryFile(result.rfwtxt);
+      parseLibraryFile(result.rfwtxt!);
     });
 
     test('custom widget nested inside core widget generates both imports', () {
@@ -804,7 +804,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('import core.widgets;'));
       expect(result.rfwtxt, contains('import mystique.widgets;'));
-      parseLibraryFile(result.rfwtxt);
+      parseLibraryFile(result.rfwtxt!);
     });
 
     test('widget-value param (nullChild) is preserved in output', () {
@@ -820,7 +820,7 @@ Widget build() {
       expect(result.rfwtxt, contains('nullChild: MystiqueText('));
       expect(result.rfwtxt, contains('import custom.widgets;'));
       expect(result.rfwtxt, contains('import mystique.widgets;'));
-      parseLibraryFile(result.rfwtxt);
+      parseLibraryFile(result.rfwtxt!);
     });
 
     test('custom widget with handler param', () {
@@ -835,7 +835,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('onTap: event "navigate"'));
       expect(result.rfwtxt, contains('url: "szsapp://home"'));
-      parseLibraryFile(result.rfwtxt);
+      parseLibraryFile(result.rfwtxt!);
     });
 
     test('only used imports are generated', () {
@@ -847,7 +847,7 @@ Widget build() {
       final result = converter.convertFromSource(input);
       expect(result.rfwtxt, contains('import mystique.widgets;'));
       expect(result.rfwtxt, isNot(contains('import core.widgets;')));
-      parseLibraryFile(result.rfwtxt);
+      parseLibraryFile(result.rfwtxt!);
     });
 
     test('custom namedSlots widget with slots and handler', () {
@@ -870,7 +870,7 @@ Widget build() {
       expect(result.rfwtxt, contains('import custom.widgets;'));
       expect(result.rfwtxt, contains('import core.widgets;'));
       expect(result.rfwtxt, contains('import mystique.widgets;'));
-      parseLibraryFile(result.rfwtxt);
+      parseLibraryFile(result.rfwtxt!);
     });
   });
 }

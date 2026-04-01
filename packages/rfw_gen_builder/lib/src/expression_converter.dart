@@ -2,13 +2,14 @@ import 'package:analyzer/dart/ast/ast.dart';
 
 import 'icon_resolver.dart';
 import 'ir.dart';
-import 'package:rfw_gen/rfw_gen.dart' show RfwIcon;
+import 'package:rfw_gen/rfw_gen.dart' show RfwGenIssueCode, RfwIcon;
 
 /// Thrown when an expression cannot be converted to an IR value.
 class UnsupportedExpressionError implements Exception {
   final String message;
   final int? offset;
-  UnsupportedExpressionError(this.message, {this.offset});
+  final RfwGenIssueCode code;
+  UnsupportedExpressionError(this.message, {this.offset, required this.code});
 
   @override
   String toString() => 'UnsupportedExpressionError: $message';
@@ -29,7 +30,8 @@ class ExpressionConverter {
   final List<String> loopVarNames = [];
 
   /// Optional callback for emitting warnings during conversion.
-  final void Function(String message, {int? offset})? onWarning;
+  final void Function(String message, {int? offset, RfwGenIssueCode? code})?
+      onWarning;
 
   ExpressionConverter({this.iconResolver, this.onWarning});
 
@@ -80,6 +82,7 @@ class ExpressionConverter {
       _ => throw UnsupportedExpressionError(
           'Unsupported expression type: ${expr.runtimeType}',
           offset: expr.offset,
+          code: RfwGenIssueCode.unsupportedExpression,
         ),
     };
   }
@@ -108,6 +111,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unsupported prefix expression: ${expr.operator.lexeme}',
       offset: expr.offset,
+      code: RfwGenIssueCode.unsupportedPrefixExpression,
     );
   }
 
@@ -269,6 +273,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unsupported method invocation: $methodName',
       offset: expr.offset,
+      code: RfwGenIssueCode.unsupportedMethodInvocation,
     );
   }
 
@@ -317,6 +322,7 @@ class ExpressionConverter {
         _ => throw UnsupportedExpressionError(
             'Unsupported const constructor: $className.$constructorName',
             offset: expr.offset,
+            code: RfwGenIssueCode.unsupportedConstConstructor,
           ),
       };
     }
@@ -348,6 +354,7 @@ class ExpressionConverter {
       _ => throw UnsupportedExpressionError(
           'Unsupported const constructor: $className',
           offset: expr.offset,
+          code: RfwGenIssueCode.unsupportedConstConstructor,
         ),
     };
   }
@@ -379,6 +386,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Color constructor expects a single integer argument',
       offset: argList.offset,
+      code: RfwGenIssueCode.colorInvalidConstructor,
     );
   }
 
@@ -394,6 +402,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Color.fromARGB requires 4 integer arguments',
       offset: argList.offset,
+      code: RfwGenIssueCode.colorFromArgbInvalid,
     );
   }
 
@@ -410,6 +419,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Color.fromRGBO requires 3 integers and 1 double',
       offset: argList.offset,
+      code: RfwGenIssueCode.colorFromRgboInvalid,
     );
   }
 
@@ -428,6 +438,7 @@ class ExpressionConverter {
         throw UnsupportedExpressionError(
           'Unsupported EdgeInsets constructor: $method',
           offset: offset,
+          code: RfwGenIssueCode.edgeInsetsUnsupportedConstructor,
         );
     }
   }
@@ -518,6 +529,7 @@ class ExpressionConverter {
         throw UnsupportedExpressionError(
           'Unsupported EdgeInsetsDirectional constructor: $method',
           offset: offset,
+          code: RfwGenIssueCode.edgeInsetsDirectionalUnsupported,
         );
     }
   }
@@ -592,6 +604,7 @@ class ExpressionConverter {
         'Icons.$identifier could not be resolved. '
         'Ensure the icon name is correct and flutter/material.dart is imported.',
         offset: expr.offset,
+        code: RfwGenIssueCode.iconNotResolved,
       );
     }
 
@@ -601,6 +614,7 @@ class ExpressionConverter {
         'double.infinity is not supported in RFW. '
         'Use SizedBoxExpand to fill available space, or set a fixed size.',
         offset: expr.offset,
+        code: RfwGenIssueCode.doubleInfinityUnsupported,
       );
     }
 
@@ -616,6 +630,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unknown prefixed identifier: $prefix.$identifier',
       offset: expr.offset,
+      code: RfwGenIssueCode.unknownPrefixedIdentifier,
     );
   }
 
@@ -623,7 +638,7 @@ class ExpressionConverter {
     final codepoint = RfwIcon.lookup(name);
     if (codepoint == null) {
       throw UnsupportedExpressionError('Unknown RfwIcon: $name',
-          offset: offset);
+          offset: offset, code: RfwGenIssueCode.rfwIconUnknown);
     }
     return IrMapValue({
       'icon': IrIntValue(codepoint),
@@ -652,7 +667,7 @@ class ExpressionConverter {
       });
     }
     throw UnsupportedExpressionError('Unknown Alignment constant: $name',
-        offset: offset);
+        offset: offset, code: RfwGenIssueCode.alignmentUnknownConstant);
   }
 
   static const _alignmentDirectionalConstants = <String, List<double>>{
@@ -678,6 +693,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unknown AlignmentDirectional constant: $name',
       offset: offset,
+      code: RfwGenIssueCode.alignmentDirectionalUnknown,
     );
   }
 
@@ -711,6 +727,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Duration requires milliseconds, seconds, or minutes',
       offset: argList.offset,
+      code: RfwGenIssueCode.durationInvalidArguments,
     );
   }
 
@@ -727,6 +744,7 @@ class ExpressionConverter {
         throw UnsupportedExpressionError(
           'Unsupported BorderRadius constructor: $method',
           offset: offset,
+          code: RfwGenIssueCode.borderRadiusUnsupported,
         );
     }
   }
@@ -788,6 +806,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Expected Radius.circular(), got ${expr.runtimeType}',
       offset: expr.offset,
+      code: RfwGenIssueCode.radiusExpectedCircular,
     );
   }
 
@@ -812,6 +831,7 @@ class ExpressionConverter {
       throw UnsupportedExpressionError(
         'ImageProvider requires a source argument',
         offset: argList.offset,
+        code: RfwGenIssueCode.imageProviderMissingSource,
       );
     }
     return IrMapValue({
@@ -911,6 +931,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unknown enum value: $expr',
       offset: expr.offset,
+      code: RfwGenIssueCode.enumValueUnknown,
     );
   }
 
@@ -928,6 +949,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unknown TextDecoration: $expr',
       offset: expr.offset,
+      code: RfwGenIssueCode.textDecorationUnknown,
     );
   }
 
@@ -1048,6 +1070,7 @@ class ExpressionConverter {
         throw UnsupportedExpressionError(
           'Unsupported BoxConstraints constructor: BoxConstraints.$constructorName',
           offset: offset,
+          code: RfwGenIssueCode.boxConstraintsUnsupportedConstructor,
         );
     }
   }
@@ -1062,6 +1085,7 @@ class ExpressionConverter {
       throw UnsupportedExpressionError(
         'BoxConstraints.tight/loose expects exactly one Size argument',
         offset: offset,
+        code: RfwGenIssueCode.boxConstraintsTightLooseInvalid,
       );
     }
     final sizeExpr = args.first;
@@ -1085,6 +1109,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Expected Size(width, height) argument',
       offset: offset,
+      code: RfwGenIssueCode.sizeInvalidArguments,
     );
   }
 
@@ -1100,6 +1125,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Alignment requires two positional arguments (x, y)',
       offset: argList.offset,
+      code: RfwGenIssueCode.alignmentInvalidArguments,
     );
   }
 
@@ -1251,6 +1277,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Offset requires two positional arguments (x, y)',
       offset: argList.offset,
+      code: RfwGenIssueCode.offsetInvalidArguments,
     );
   }
 
@@ -1280,6 +1307,7 @@ class ExpressionConverter {
       throw UnsupportedExpressionError(
         'Handler must be RfwHandler.setState/setStateFromArg/event',
         offset: expr.offset,
+        code: RfwGenIssueCode.handlerInvalidExpression,
       );
     }
 
@@ -1309,6 +1337,7 @@ class ExpressionConverter {
       'RfwSwitchValue/RfwSwitch cannot be used in handler positions — '
       'use RfwSwitch to swap entire widgets with different handlers instead.',
       offset: expr.offset,
+      code: RfwGenIssueCode.handlerUnsupportedMethod,
     );
   }
 
@@ -1394,6 +1423,7 @@ class ExpressionConverter {
             "DataRef('$path') generates data.$path which is incorrect. "
             "$suggestion",
             offset: expr.offset,
+            code: RfwGenIssueCode.loopVariableMisuse,
           );
         }
       }
@@ -1402,12 +1432,13 @@ class ExpressionConverter {
         'ArgsRef' => IrArgsRef(path),
         'StateRef' => IrStateRef(path),
         _ => throw UnsupportedExpressionError('Unknown ref type: $refType',
-            offset: expr.offset),
+            offset: expr.offset, code: RfwGenIssueCode.unknownRefType),
       };
     }
     throw UnsupportedExpressionError(
       '$refType requires a single string argument',
       offset: expr.offset,
+      code: RfwGenIssueCode.refInvalidArgument,
     );
   }
 
@@ -1421,6 +1452,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'RfwConcat requires a single list argument',
       offset: expr.offset,
+      code: RfwGenIssueCode.rfwConcatInvalidArgument,
     );
   }
 
@@ -1452,6 +1484,7 @@ class ExpressionConverter {
       throw UnsupportedExpressionError(
         'RfwSwitchValue requires a value parameter',
         offset: expr.offset,
+        code: RfwGenIssueCode.rfwSwitchValueMissingValue,
       );
     }
 
@@ -1476,6 +1509,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Unsupported index expression base: ${current.runtimeType}',
       offset: expr.offset,
+      code: RfwGenIssueCode.unsupportedIndexExpression,
     );
   }
 
@@ -1551,6 +1585,7 @@ class ExpressionConverter {
       _ => throw UnsupportedExpressionError(
           'Unsupported ShapeBorder: $className',
           offset: argList.offset,
+          code: RfwGenIssueCode.shapeBorderUnsupported,
         ),
     };
     final entries = <String, IrValue>{'type': IrStringValue(type)};
@@ -1580,6 +1615,7 @@ class ExpressionConverter {
     throw UnsupportedExpressionError(
       'Expected numeric literal, got ${expr.runtimeType}',
       offset: expr.offset,
+      code: RfwGenIssueCode.numericLiteralExpected,
     );
   }
 }

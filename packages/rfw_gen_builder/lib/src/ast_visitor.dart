@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:rfw_gen/rfw_gen.dart' show RfwGenIssueCode;
 
 import 'expression_converter.dart';
 import 'ir.dart';
@@ -9,7 +10,8 @@ import 'widget_registry.dart';
 class UnsupportedWidgetError implements Exception {
   final String widgetName;
   final String? message;
-  UnsupportedWidgetError(this.widgetName, {this.message});
+  final RfwGenIssueCode code;
+  UnsupportedWidgetError(this.widgetName, {this.message, required this.code});
 
   @override
   String toString() => message != null
@@ -46,9 +48,10 @@ class WidgetAstVisitor {
   IrValue extractWidgetTree(FunctionDeclaration function) {
     final expr = _findReturnExpression(function);
     if (expr == null) {
-      throw StateError(
-        'No return expression found in function '
-        '"${function.name.lexeme}"',
+      throw UnsupportedWidgetError(
+        '',
+        message: 'No return expression found in function body',
+        code: RfwGenIssueCode.functionNoReturn,
       );
     }
     return _convertWidgetOrSpecial(expr);
@@ -87,7 +90,10 @@ class WidgetAstVisitor {
   /// Converts a [MethodInvocation] (widget constructor) to an [IrWidgetNode].
   IrWidgetNode _convertWidget(Expression expr) {
     if (expr is! MethodInvocation || expr.target != null) {
-      throw UnsupportedWidgetError(expr.toString());
+      throw UnsupportedWidgetError(
+        expr.toString(),
+        code: RfwGenIssueCode.widgetNotMethodInvocation,
+      );
     }
 
     final widgetName = expr.methodName.name;
@@ -105,11 +111,15 @@ class WidgetAstVisitor {
         message: '$widgetName cannot be used as a widget. '
             'It can only be used as a parameter value of core/material widgets. '
             'If used inside a custom widget, pass a constant value instead.',
+        code: RfwGenIssueCode.helperUsedAsWidget,
       );
     }
 
     if (!registry.isSupported(widgetName)) {
-      throw UnsupportedWidgetError(widgetName);
+      throw UnsupportedWidgetError(
+        widgetName,
+        code: RfwGenIssueCode.widgetNotRegistered,
+      );
     }
 
     final mapping = registry.supportedWidgets[widgetName]!;
@@ -130,6 +140,7 @@ class WidgetAstVisitor {
           } on UnsupportedExpressionError catch (e) {
             collector?.warning(
               'Failed to convert positional parameter "${mapping.positionalParam}" of $widgetName: ${e.message}',
+              code: e.code,
               offset: e.offset,
               suggestion: _suggestFor(e.message),
             );
@@ -214,6 +225,7 @@ class WidgetAstVisitor {
       } on UnsupportedExpressionError catch (e) {
         collector?.warning(
           'Failed to convert handler "$paramName" of ${mapping.rfwName}: ${e.message}',
+          code: e.code,
           offset: e.offset,
           suggestion: _suggestFor(e.message),
         );
@@ -235,6 +247,7 @@ class WidgetAstVisitor {
       } else if (isList) {
         collector?.warning(
           'Named slot "$paramName" of ${mapping.rfwName} is not a list (${expression.runtimeType})',
+          code: RfwGenIssueCode.unsupportedExpression,
           suggestion: 'Use a list literal [...] for list slots',
         );
       } else {
@@ -262,6 +275,7 @@ class WidgetAstVisitor {
           } else {
             collector?.warning(
               'children parameter of ${mapping.rfwName} is not a list (${expression.runtimeType})',
+              code: RfwGenIssueCode.unsupportedExpression,
               suggestion: 'Use a list literal [...] for the children parameter',
             );
           }
@@ -281,6 +295,7 @@ class WidgetAstVisitor {
       } on UnsupportedExpressionError catch (e) {
         collector?.warning(
           'Failed to convert parameter "$paramName" of ${mapping.rfwName}: ${e.message}',
+          code: e.code,
           offset: e.offset,
           suggestion: _suggestFor(e.message),
         );
@@ -305,6 +320,7 @@ class WidgetAstVisitor {
     } on UnsupportedExpressionError catch (e) {
       collector?.warning(
         'Failed to convert unknown parameter "$paramName": ${e.message}',
+        code: e.code,
         offset: e.offset,
         suggestion: _suggestFor(e.message),
       );
@@ -387,7 +403,10 @@ class WidgetAstVisitor {
 
     if (items == null || itemName == null || body == null) {
       throw UnsupportedWidgetError(
-          'RfwFor requires items, itemName, and builder');
+        'RfwFor',
+        message: 'RfwFor requires items, itemName, and builder',
+        code: RfwGenIssueCode.rfwForMissingParameters,
+      );
     }
 
     return IrForLoop(items: items, itemName: itemName, body: body);
@@ -420,7 +439,11 @@ class WidgetAstVisitor {
     }
 
     if (value == null) {
-      throw UnsupportedWidgetError('RfwSwitch requires a value parameter');
+      throw UnsupportedWidgetError(
+        'RfwSwitch',
+        message: 'RfwSwitch requires a value parameter',
+        code: RfwGenIssueCode.rfwSwitchMissingValue,
+      );
     }
 
     return IrSwitchExpr(value: value, cases: cases, defaultCase: defaultCase);

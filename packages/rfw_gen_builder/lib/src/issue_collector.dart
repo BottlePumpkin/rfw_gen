@@ -15,16 +15,27 @@ class IssueCollector {
   /// Records a [RfwGenSeverity.warning] issue.
   ///
   /// If [offset] is provided and valid, it is converted to a line and column.
-  void warning(String message, {int? offset, String? suggestion}) {
+  void warning(
+    String message, {
+    required RfwGenIssueCode code,
+    int? offset,
+    String? suggestion,
+  }) {
     _add(RfwGenSeverity.warning, message,
-        offset: offset, suggestion: suggestion);
+        code: code, offset: offset, suggestion: suggestion);
   }
 
   /// Records a [RfwGenSeverity.fatal] issue.
   ///
   /// If [offset] is provided and valid, it is converted to a line and column.
-  void fatal(String message, {int? offset, String? suggestion}) {
-    _add(RfwGenSeverity.fatal, message, offset: offset, suggestion: suggestion);
+  void fatal(
+    String message, {
+    required RfwGenIssueCode code,
+    int? offset,
+    String? suggestion,
+  }) {
+    _add(RfwGenSeverity.fatal, message,
+        code: code, offset: offset, suggestion: suggestion);
   }
 
   /// Whether any of the accumulated issues are fatal.
@@ -36,6 +47,7 @@ class IssueCollector {
   void _add(
     RfwGenSeverity severity,
     String message, {
+    required RfwGenIssueCode code,
     int? offset,
     String? suggestion,
   }) {
@@ -48,6 +60,7 @@ class IssueCollector {
     }
     issues.add(RfwGenIssue(
       severity: severity,
+      code: code,
       message: message,
       suggestion: suggestion,
       line: line,

@@ -10,6 +10,7 @@ import 'expression_converter.dart';
 import 'icon_resolver.dart';
 import 'ir.dart';
 import 'issue_collector.dart';
+import 'metadata_collector.dart';
 import 'rfwtxt_emitter.dart';
 import 'widget_registry.dart';
 
@@ -80,6 +81,7 @@ class RfwConverter {
     final irTree = visitor.extractWidgetTree(function);
 
     final imports = _collectImports(irTree);
+    final metadata = collectMetadata(irTree);
     final emitter = RfwtxtEmitter();
     final rfwtxt = emitter.emit(
       widgetName: widgetName,
@@ -88,7 +90,13 @@ class RfwConverter {
       stateDecl: stateDecl,
     );
 
-    return ConvertResult(rfwtxt: rfwtxt, issues: collector.issues);
+    return ConvertResult(
+      rfwtxt: rfwtxt,
+      issues: collector.issues,
+      widgetName: widgetName,
+      stateDecl: stateDecl,
+      metadata: metadata,
+    );
   }
 
   /// Extracts the state declaration map from the `@RfwWidget` annotation,

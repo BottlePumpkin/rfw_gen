@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'widget_resolver.dart';
 
-/// Generates Dart source and JSON metadata from [ResolvedWidget] objects.
+/// Generates Dart source from [ResolvedWidget] objects.
 ///
-/// Produces two outputs:
-/// - `.rfw_library.dart` via [generate] — a `Map<String, LocalWidgetBuilder>`
-///   that wires RFW's `DataSource` API to real Flutter widget constructors.
-/// - `.rfw_meta.json` via [generateMeta] — machine-readable widget metadata
-///   for MCP server consumption.
+/// Produces `.rfw_library.dart` via [generate] — a `Map<String, LocalWidgetBuilder>`
+/// that wires RFW's `DataSource` API to real Flutter widget constructors.
+///
+/// Also provides [buildWidgetMeta] for building per-widget JSON metadata entries,
+/// used by [RfwWidgetBuilder] when generating `.rfw_meta.json`.
 class LocalWidgetBuilderGenerator {
   /// Generates the `.rfw_library.dart` file content.
   ///
@@ -58,7 +58,7 @@ class LocalWidgetBuilderGenerator {
     for (final entry in widgets.entries) {
       final widgetName = entry.key;
       final widget = entry.value;
-      widgetsMap[widgetName] = _buildWidgetMeta(widget);
+      widgetsMap[widgetName] = buildWidgetMeta(widget);
     }
 
     final meta = {'widgets': widgetsMap};
@@ -194,7 +194,7 @@ class LocalWidgetBuilderGenerator {
   // Private helpers — JSON metadata
   // ---------------------------------------------------------------------------
 
-  Map<String, dynamic> _buildWidgetMeta(ResolvedWidget widget) {
+  static Map<String, dynamic> buildWidgetMeta(ResolvedWidget widget) {
     // Derive import package name from dartImport URI
     final importName = _extractPackageName(widget.dartImport);
 
@@ -222,6 +222,7 @@ class LocalWidgetBuilderGenerator {
         .toList();
 
     return {
+      'type': 'local',
       'import': importName,
       'childType': childType,
       'handlers': handlers,
@@ -229,7 +230,7 @@ class LocalWidgetBuilderGenerator {
     };
   }
 
-  String _extractPackageName(String dartImport) {
+  static String _extractPackageName(String dartImport) {
     final uri = Uri.parse(dartImport);
     if (uri.scheme == 'package' && uri.pathSegments.isNotEmpty) {
       return uri.pathSegments.first;
@@ -237,7 +238,7 @@ class LocalWidgetBuilderGenerator {
     return dartImport;
   }
 
-  String _inferChildTypeName(List<ResolvedParam> params) {
+  static String _inferChildTypeName(List<ResolvedParam> params) {
     final widgetParams = params.where((p) =>
         p.type == ResolvedParamType.widget ||
         p.type == ResolvedParamType.optionalWidget ||
@@ -270,7 +271,7 @@ class LocalWidgetBuilderGenerator {
     return 'none';
   }
 
-  String _resolvedTypeToString(ResolvedParam param) {
+  static String _resolvedTypeToString(ResolvedParam param) {
     return switch (param.type) {
       ResolvedParamType.string => 'String',
       ResolvedParamType.int => 'int',

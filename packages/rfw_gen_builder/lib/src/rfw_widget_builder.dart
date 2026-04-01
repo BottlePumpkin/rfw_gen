@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
@@ -8,8 +9,11 @@ import 'package:build/build.dart';
 import 'package:rfw/formats.dart';
 
 import 'ast_visitor.dart';
+import 'convert_result.dart';
 import 'converter.dart';
 import 'icon_resolver.dart';
+import 'ir.dart';
+import 'local_widget_builder_generator.dart';
 import 'widget_registry.dart';
 import 'widget_resolver.dart';
 
@@ -25,7 +29,7 @@ class RfwWidgetBuilder implements Builder {
   /// Maps each `.dart` input to `.rfwtxt` (text) and `.rfw` (binary) outputs.
   @override
   Map<String, List<String>> get buildExtensions => const {
-        '.dart': ['.rfwtxt', '.rfw'],
+        '.dart': ['.rfwtxt', '.rfw', '.rfw_meta.json'],
       };
 
   /// Scans [buildStep] for `@RfwWidget` functions, converts each to rfwtxt,
@@ -55,6 +59,8 @@ class RfwWidgetBuilder implements Builder {
       buildStep.inputId,
     );
 
+    final resolvedWidgets = <String, ResolvedWidget>{};
+
     if (unknownNames.isNotEmpty) {
       final resolver = WidgetResolver();
       for (final name in unknownNames) {
@@ -74,6 +80,7 @@ class RfwWidgetBuilder implements Builder {
         }
         if (result != null) {
           registry.register(name, result.widgetMapping);
+          resolvedWidgets[name] = result.resolvedWidget;
         }
       }
     }
@@ -85,11 +92,13 @@ class RfwWidgetBuilder implements Builder {
     final converter =
         RfwConverter(registry: registry, iconResolver: iconResolver);
     final parts = <String>[];
+    final remoteWidgetMetas = <String, Map<String, dynamic>>{};
 
     for (final function in annotatedFunctions) {
       try {
         final result = converter.convertFromAst(function, source: source);
         parts.add(result.rfwtxt);
+        remoteWidgetMetas[result.widgetName] = _buildRemoteWidgetMeta(result);
         for (final issue in result.issues) {
           if (issue.isFatal) {
             log.severe(issue.toString());
@@ -106,6 +115,26 @@ class RfwWidgetBuilder implements Builder {
       } catch (e) {
         log.severe('Failed to convert ${function.name.lexeme}: $e');
       }
+    }
+
+    // Generate .rfw_meta.json (always, if we have any metadata).
+    if (resolvedWidgets.isNotEmpty || remoteWidgetMetas.isNotEmpty) {
+      final widgetsMap = <String, dynamic>{};
+
+      // Local (custom) widget entries.
+      for (final entry in resolvedWidgets.entries) {
+        widgetsMap[entry.key] =
+            LocalWidgetBuilderGenerator.buildWidgetMeta(entry.value);
+      }
+
+      // Remote (@RfwWidget function) entries.
+      widgetsMap.addAll(remoteWidgetMetas);
+
+      final meta = {'widgets': widgetsMap};
+      await buildStep.writeAsString(
+        buildStep.inputId.changeExtension('.rfw_meta.json'),
+        const JsonEncoder.withIndent('  ').convert(meta),
+      );
     }
 
     if (parts.isEmpty) return;
@@ -142,6 +171,33 @@ class RfwWidgetBuilder implements Builder {
     } catch (e) {
       log.warning('Failed to encode binary: $e');
     }
+  }
+
+  /// Builds a remote widget metadata map from a [ConvertResult].
+  static Map<String, dynamic> _buildRemoteWidgetMeta(ConvertResult result) {
+    return {
+      'type': 'remote',
+      'state': result.stateDecl != null
+          ? {
+              for (final e in result.stateDecl!.entries)
+                e.key: _irValueToJson(e.value),
+            }
+          : null,
+      'dataRefs': result.metadata.dataRefs.toList()..sort(),
+      'stateRefs': result.metadata.stateRefs.toList()..sort(),
+      'events': result.metadata.events.toList()..sort(),
+    };
+  }
+
+  /// Converts an [IrValue] literal to a JSON-compatible value.
+  static Object? _irValueToJson(IrValue value) {
+    return switch (value) {
+      IrBoolValue() => value.value,
+      IrIntValue() => value.value,
+      IrNumberValue() => value.value,
+      IrStringValue() => value.value,
+      _ => value.toString(),
+    };
   }
 
   /// Merges multiple complete rfwtxt outputs into a single valid file.

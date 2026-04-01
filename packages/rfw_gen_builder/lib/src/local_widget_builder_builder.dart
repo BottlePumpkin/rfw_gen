@@ -10,8 +10,7 @@ import 'widget_registry.dart';
 import 'widget_resolver.dart';
 
 /// A [Builder] that generates `.rfw_library.dart` (LocalWidgetBuilder map)
-/// and `.rfw_meta.json` (machine-readable metadata) for `@RfwWidget`-annotated
-/// files containing custom (non-core) widgets.
+/// for `@RfwWidget`-annotated files containing custom (non-core) widgets.
 ///
 /// Uses the Dart analyzer's Resolver to inspect imported widget classes
 /// and extract constructor parameter information automatically.
@@ -24,7 +23,7 @@ class LocalWidgetBuilderBuilder implements Builder {
 
   @override
   Map<String, List<String>> get buildExtensions => const {
-        '.dart': ['.rfw_library.dart', '.rfw_meta.json'],
+        '.dart': ['.rfw_library.dart'],
       };
 
   @override
@@ -86,17 +85,13 @@ class LocalWidgetBuilderBuilder implements Builder {
       buildStep.inputId.changeExtension('.rfw_library.dart'),
       generator.generate(resolvedWidgets),
     );
-    await buildStep.writeAsString(
-      buildStep.inputId.changeExtension('.rfw_meta.json'),
-      generator.generateMeta(resolvedWidgets),
-    );
   }
 
   /// Skips output generation when no custom widgets are found.
   ///
   /// Previously wrote empty placeholder files, but this cluttered projects
-  /// with unnecessary .rfw_library.dart and .rfw_meta.json files for every
-  /// .dart file without @RfwWidget annotations.
+  /// with unnecessary .rfw_library.dart files for every .dart file without
+  /// @RfwWidget annotations.
   void _skipOutputs() {
     // Intentionally empty — do not generate files for non-@RfwWidget sources.
   }

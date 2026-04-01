@@ -8,7 +8,6 @@ import 'package:build/build.dart';
 
 import 'package:rfw/formats.dart';
 
-import 'ast_visitor.dart';
 import 'convert_result.dart';
 import 'converter.dart';
 import 'icon_resolver.dart';

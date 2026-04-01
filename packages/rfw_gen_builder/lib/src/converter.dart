@@ -101,6 +101,10 @@ class RfwConverter {
       return ConvertResult(
         rfwtxt: null,
         issues: collector.issues,
+        widgetName: widgetName,
+        stateDecl: stateDecl,
+        metadata:
+            const RfwWidgetMetadata(dataRefs: {}, stateRefs: {}, events: {}),
       );
     }
 

@@ -17,3 +17,28 @@ melos:
   command:
     bootstrap:
       usePubspecOverrides: true
+  scripts:
+    analyze:
+      description: Run dart analyze on all packages
+      exec: dart analyze .
+    format:
+      description: Run dart format on all packages
+      exec: dart format .
+    format:check:
+      description: Check dart format without modifying files
+      exec: dart format --set-exit-if-changed .
+    test:
+      description: Run tests on all packages (excludes golden tests)
+      exec: dart test
+      packageFilters:
+        dirExists: test
+    test:golden:
+      description: Run golden tests in example
+      exec: flutter test --tags golden
+      packageFilters:
+        scope: rfw_gen_example
+    test:all:
+      description: Run all tests including golden
+      exec: flutter test
+      packageFilters:
+        dirExists: test
